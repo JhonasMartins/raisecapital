@@ -94,7 +94,7 @@ export default function Home() {
               ].map((o) => {
                 const pct = Math.min(100, Math.round((o.raised / o.goal) * 100));
                 return (
-                  <Card key={o.name} className="flex flex-col overflow-hidden">
+                  <Card key={o.name} className="flex flex-col overflow-hidden p-0 gap-0">
                     <div className="relative h-40 w-full">
                       <Image
                         src={o.cover}
@@ -486,7 +486,7 @@ export default function Home() {
                   read: "4 min"
                 }
               ].map((p, i) => (
-                <Card key={i} className="flex flex-col overflow-hidden">
+                <Card key={i} className="flex flex-col overflow-hidden p-0 gap-0">
                   <div className="relative h-40 w-full">
                     <Image
                       src={p.cover}
