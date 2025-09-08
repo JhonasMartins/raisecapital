@@ -442,48 +442,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Mercado em tempo real (TradingView) */}
-        <section id="mercado" className="py-16 border-t">
-          <div className="mx-auto max-w-6xl px-6">
-            <div className="text-center mb-10">
-              <h2 className="text-2xl font-semibold">Mercado em tempo real</h2>
-              <p className="mt-2 text-muted-foreground">Cotações em tempo real via TradingView</p>
-            </div>
-
-            {/* Ticker Tape */}
-            <div className="rounded-lg border bg-card p-2 relative">
-              <iframe
-                title="Ticker Tape"
-                className="w-full h-[64px]"
-                src={tvUrl("ticker-tape", {
-                  symbols: [
-                    { proName: "ECONOMICS:BRINTR", description: "CDI (proxy)" },
-                    { proName: "ECONOMICS:BRSELIC", description: "SELIC" },
-                    { proName: "CRYPTO:BTCUSD", description: "Bitcoin" },
-                    { proName: "CRYPTO:ETHUSD", description: "Ethereum" },
-                    { proName: "CRYPTO:SOLUSD", description: "Solana" },
-                    { proName: "CRYPTO:BNBUSD", description: "BNB" },
-                  ],
-                  showSymbolLogo: true,
-                  colorTheme: "light",
-                  isTransparent: true,
-                  displayMode: "adaptive",
-                })}
-                style={{ border: 0 }}
-                loading="lazy"
-              />
-              <a
-                href="https://raisecapital.com.br"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Abrir raisecapital.com.br"
-                className="absolute inset-0 z-10 block"
-              />
-            </div>
-
-          </div>
-        </section>
-
         {/* Para Investidores */}
         <section id="investidores" className="py-16 border-t bg-[#f2f2f2]">
           <div className="mx-auto max-w-6xl px-6">
