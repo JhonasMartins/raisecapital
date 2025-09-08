@@ -60,7 +60,16 @@ export default function Home() {
               </div>
             </motion.div>
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="relative">
-              <div className="aspect-video rounded-xl border bg-muted" />
+              <div className="relative aspect-video rounded-xl overflow-hidden border bg-muted">
+                <Image
+                  src="/background-hero.png"
+                  alt="Imagem destaque do hero"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                  priority
+                />
+              </div>
               <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-xl bg-primary/10" />
               <div className="absolute -top-4 -right-4 h-16 w-16 rounded-full bg-primary/10" />
             </motion.div>
@@ -201,25 +210,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Steps */}
-        <section id="como-funciona" className="py-16 border-t">
-          <div className="mx-auto max-w-6xl px-6">
-            <h2 className="text-2xl font-semibold">Como funciona</h2>
-            <div className="mt-8 grid sm:grid-cols-3 gap-6">
-              {[{n:1,t:"Crie sua conta",d:"Verificação simples e segura"},{n:2,t:"Escolha projetos",d:"Analise tese, equipe e indicadores"},{n:3,t:"Invista e acompanhe",d:"Relatórios e atualizações periódicas"}].map((s) => (
-                <Card key={s.n}>
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-3">
-                      <span className="text-3xl font-bold text-primary">{s.n}</span> {s.t}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-sm text-muted-foreground">{s.d}</CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* Mercado em tempo real (TradingView) */}
         <section id="mercado" className="py-16 border-t">
           <div className="mx-auto max-w-6xl px-6">
@@ -278,7 +268,7 @@ export default function Home() {
                 {/* Coluna Esquerda: Imagem 2:3 */}
                 <div className="relative aspect-[2/3] md:aspect-auto md:h-full rounded-xl border bg-muted overflow-hidden">
                   <Image
-                    src="/globe.svg"
+                    src="/beneficios.png"
                     alt="Benefícios para investidores na Raise Capital"
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
@@ -380,71 +370,279 @@ export default function Home() {
 
             <div className="mt-10">
               <h3 className="text-lg font-medium">Processo de Captação</h3>
-              <div className="mt-6 grid sm:grid-cols-3 gap-6">
+              <div className="mt-6 grid sm:grid-cols-3 gap-6 items-stretch">
                 {[{n:1,t:"Submeta seu projeto",d:"Envie sua proposta e nossa equipe fará uma análise detalhada."},{n:2,t:"Estruturação",d:"Conte com nossa expertise para preparar seu projeto para captação."},{n:3,t:"Campanha de captação",d:"Divulgue sua campanha e conecte-se com investidores interessados."}].map((s) => (
-                  <Card key={s.n}>
-                    <CardHeader>
+                  <Card key={s.n} className="h-full border-none shadow-none bg-transparent">
+                    <CardHeader className="pb-2">
                       <CardTitle className="text-base flex items-center gap-3">
-                        <span className="text-3xl font-bold text-primary">{s.n}</span> {s.t}
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold">{s.n}</span>
+                        {s.t}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="text-sm text-muted-foreground">{s.d}</CardContent>
                   </Card>
                 ))}
               </div>
+
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <Button asChild>
+                  <a href="#">Submeter projeto</a>
+                </Button>
+                <Button variant="outline" asChild>
+                  <a href="#">Falar com especialista</a>
+                </Button>
+              </div>
             </div>
 
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-3">
-                  <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center text-primary">
-                    <TrendingUp className="size-5" />
-                  </div>
-                  <CardTitle className="text-base">Captação Eficiente</CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
-                  Levante recursos de maneira rápida e sem burocracia.
-                </CardContent>
-              </Card>
+            <div className="mt-10">
+              <h3 className="text-lg font-medium">Diferenciais</h3>
+              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                <Card className="border-none shadow-none bg-transparent">
+                  <CardHeader className="flex flex-row items-center gap-3">
+                    <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center text-primary">
+                      <TrendingUp className="size-5" />
+                    </div>
+                    <CardTitle className="text-base">Captação Eficiente</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground">
+                    Levante recursos de maneira rápida e sem burocracia.
+                  </CardContent>
+                </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-3">
-                  <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center text-primary">
-                    <Users className="size-5" />
-                  </div>
-                  <CardTitle className="text-base">Rede de Investidores</CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
-                  Conecte-se com investidores interessados em apoiar sua ideia.
-                </CardContent>
-              </Card>
+                <Card className="border-none shadow-none bg-transparent">
+                  <CardHeader className="flex flex-row items-center gap-3">
+                    <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center text-primary">
+                      <Users className="size-5" />
+                    </div>
+                    <CardTitle className="text-base">Rede de Investidores</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground">
+                    Conecte-se com investidores interessados em apoiar sua ideia.
+                  </CardContent>
+                </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-3">
-                  <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center text-primary">
-                    <BarChart3 className="size-5" />
-                  </div>
-                  <CardTitle className="text-base">Visibilidade Estratégica</CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
-                  Apresente seu projeto para uma ampla base de potenciais parceiros.
-                </CardContent>
-              </Card>
+                <Card className="border-none shadow-none bg-transparent">
+                  <CardHeader className="flex flex-row items-center gap-3">
+                    <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center text-primary">
+                      <BarChart3 className="size-5" />
+                    </div>
+                    <CardTitle className="text-base">Visibilidade Estratégica</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground">
+                    Apresente seu projeto para uma ampla base de potenciais parceiros.
+                  </CardContent>
+                </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-3">
-                  <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center text-primary">
-                    <Shield className="size-5" />
-                  </div>
-                  <CardTitle className="text-base">Apoio Especializado</CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
-                  Conte com uma equipe experiente para auxiliar na estruturação do seu plano de captação.
-                </CardContent>
-              </Card>
+                <Card className="border-none shadow-none bg-transparent">
+                  <CardHeader className="flex flex-row items-center gap-3">
+                    <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center text-primary">
+                      <Shield className="size-5" />
+                    </div>
+                    <CardTitle className="text-base">Apoio Especializado</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground">
+                    Conte com uma equipe experiente para auxiliar na estruturação do seu plano de captação.
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </section>
+
+        {/* Blog: Aprenda sobre o mercado */}
+        <section id="blog" className="py-16 border-t">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-semibold">Aprenda sobre o mercado</h2>
+                <p className="mt-2 text-muted-foreground">Conteúdos e insights para investir melhor</p>
+              </div>
+              <Button variant="outline" asChild>
+                <a href="#">Ver todos os artigos</a>
+              </Button>
+            </div>
+
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                {
+                  title: "O que é equity crowdfunding?",
+                  excerpt: "Como funciona o modelo e para quem ele é indicado.",
+                  cover: "/offers/fintech.svg",
+                  date: "05 Set 2025",
+                  read: "5 min"
+                },
+                {
+                  title: "Como avaliar um projeto para investir",
+                  excerpt: "Principais métricas e sinais para sua análise.",
+                  cover: "/offers/agrotech.svg",
+                  date: "28 Ago 2025",
+                  read: "7 min"
+                },
+                {
+                  title: "Diversificação: por que importa",
+                  excerpt: "Estratégias para reduzir risco e melhorar retorno.",
+                  cover: "/offers/health.svg",
+                  date: "14 Ago 2025",
+                  read: "4 min"
+                }
+              ].map((p, i) => (
+                <Card key={i} className="flex flex-col overflow-hidden">
+                  <div className="relative h-40 w-full">
+                    <Image
+                      src={p.cover}
+                      alt={`Capa do artigo ${p.title}`}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  <CardHeader className="space-y-2">
+                    <CardTitle className="text-base font-semibold">{p.title}</CardTitle>
+                    <div className="text-xs text-muted-foreground">{p.date} • {p.read} de leitura</div>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground">
+                    {p.excerpt}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Nossa Equipe */}
+        <section id="equipe" className="py-16 border-t">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-2xl font-semibold">Nossa Equipe</h2>
+              <p className="mt-2 text-muted-foreground">Conheça os Profissionais</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Uma equipe experiente e multidisciplinar pronta para te ajudar
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 items-start">
+              {[
+                {
+                  name: "Ricardo C. Leite",
+                  role: "CEO",
+                  img: "/nossaequipe/RicardoC.webp",
+                  bio:
+                    "Sócio-fundador da Cerqueira Leite Advogados Associados; Mestre em Direito Comercial Internacional (LL.M.) pela UC-Davis (Califórnia); Especialista em Direito Tributário e Empresarial.",
+                },
+                {
+                  name: "Paulo C. Souza",
+                  role: "CFO",
+                  img: "/nossaequipe/PauloC.webp",
+                  bio:
+                    "Especialista em finanças corporativas com mais de 15 anos de experiência em gestão de investimentos e planejamento financeiro estratégico.",
+                },
+                {
+                  name: "Nathalia Carlet",
+                  role: "Diretora Jurídica",
+                  img: "/nossaequipe/NathaliaCarlet.webp",
+                  bio:
+                    "Advogada especializada em direito empresarial e regulatório, com expertise em estruturação de operações de investimento.",
+                },
+              ].map((m, i) => (
+                <Card
+                  key={m.name}
+                  className="overflow-hidden border-none shadow-none bg-transparent"
+                >
+                  <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg">
+                    <Image
+                      src={m.img}
+                      alt={`Foto de ${m.name}`}
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover"
+                      priority={i === 0}
+                    />
+                  </div>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">{m.name}</CardTitle>
+                    <p className="text-xs text-muted-foreground">{m.role}</p>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground">
+                    {m.bio}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Conselho Consultivo */}
+         <section id="conselho" className="py-16 border-t bg-[#0f172a] text-white">
+           <div className="mx-auto max-w-6xl px-6">
+             <div className="max-w-3xl">
+               <h2 className="text-2xl font-semibold">Conselho Consultivo</h2>
+               <p className="mt-2 text-white/70">Experiência executiva e estratégica para orientar nosso crescimento</p>
+             </div>
+ 
+             <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 items-start">
+               {[
+                 {
+                   name: "Ricardo C. Leite",
+                   role: "Conselheiro",
+                   img: "/conselho/RicardoC.webp",
+                   bio:
+                     "Sócio-fundador da Cerqueira Leite Advogados Associados. Mestre em Direito Comercial Internacional (LL.M.) pela UC-Davis (Califórnia). Especialista em Direito Tributário pelo Centro de Extensão Universitário. Especialista em Direito Empresarial pela PUC/SP.",
+                 },
+                 {
+                   name: "Leonardo Chamsim",
+                   role: "Conselheiro",
+                   img: "/conselho/LeonardoChamsim.webp",
+                   bio:
+                     "Diretor Financeiro com mais de 21 anos de experiência em gestão empresarial e finanças corporativas. Especialista em planejamento estratégico, reestruturação de empresas e negociações globais. Participou de um IPO na NASDAQ e liderou operações em mercados internacionais. Engenheiro Mecânico, com MBA nos EUA. Inglês fluente e proficiente em espanhol. Bacharel em Direito pela Universidade São Francisco e mais. Idiomas: Português | Inglês | Espanhol",
+                 },
+                 {
+                   name: "Oswaldo G. Schimdt",
+                   role: "Conselheiro",
+                   img: "/conselho/oswaldo.webp",
+                   bio:
+                     "Carreira consolidada em gestão de investimentos, com passagens pelo Unibanco, onde estruturou a primeira gestora de recursos independente de um grande banco varejista brasileiro, e pelo Citibank, como diretor de operações estruturadas. Engenheiro pela PUC-RJ, com MBA pela Universidade da Califórnia em Berkeley, é atualmente Diretor de Gestão na Versal Finance.",
+                 },
+                 {
+                   name: "Álvaro Marangoni",
+                   role: "Conselheiro",
+                   img: "/conselho/lvaroMarangoni.webp",
+                   bio:
+                     "US Country Manager na Warren Financial Services, com ampla experiência no setor financeiro em posições de liderança no Morgan Stanley e Goldman Sachs. Fundador e parceiro da Quadrante Investimentos, é formado em Economia pela Universidade de San Francisco e possui cidadania americana, italiana e brasileira.",
+                 },
+                 {
+                   name: "Paulo Amorim",
+                   role: "Conselheiro",
+                   img: "/conselho/paulo-amorim.webp",
+                   bio:
+                     "Conselheiro certificado pelo IBGC, com mais de 20 anos de experiência em liderança em empresas multinacionais e brasileiras dos setores automotivo, consumo, defesa, segurança e consultoria. Atuou como Conselheiro na Condor Química, Vigzul e na Marriott Graduate School of Business. Sócio responsável pela área de Board Services da Korn-Ferry Brasil.",
+                 },
+               ].map((m, i) => (
+                 <Card
+                   key={m.name}
+                   className="overflow-hidden border-none shadow-none bg-transparent"
+                 >
+                   <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg">
+                     <Image
+                       src={m.img}
+                       alt={`Foto de ${m.name}`}
+                       fill
+                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                       className="object-cover"
+                       priority={i === 0}
+                     />
+                   </div>
+                   <CardHeader className="pb-2">
+                    <CardTitle className="text-base text-white">{m.name}</CardTitle>
+                    <p className="text-xs text-white/80">{m.role}</p>
+                  </CardHeader>
+                   <CardContent className="text-sm text-white/70">
+                     {m.bio}
+                   </CardContent>
+                 </Card>
+               ))}
+             </div>
+           </div>
+         </section>
 
         {/* CTA */}
         <section className="py-16 border-t">
