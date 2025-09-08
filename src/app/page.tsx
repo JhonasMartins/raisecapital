@@ -105,13 +105,13 @@ export default function Home() {
                         priority={false}
                       />
                     </div>
-                    <CardHeader className="space-y-2">
+                    <CardHeader className="space-y-2 px-6 pt-4 pb-2">
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-base font-semibold">{o.name}</CardTitle>
                         <Badge variant="secondary">{o.category}</Badge>
                       </div>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-4 px-6 pt-2 pb-6">
                       <div>
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                           <span>Progresso</span>
@@ -486,7 +486,7 @@ export default function Home() {
                   read: "4 min"
                 }
               ].map((p, i) => (
-                <Card key={i} className="flex flex-col overflow-hidden p-0 gap-0">
+                <Card key={p.title} className="flex flex-col overflow-hidden p-0 gap-0">
                   <div className="relative h-40 w-full">
                     <Image
                       src={p.cover}
@@ -496,11 +496,11 @@ export default function Home() {
                       className="object-cover"
                     />
                   </div>
-                  <CardHeader className="space-y-2">
+                  <CardHeader className="space-y-2 px-6 pt-4 pb-2">
                     <CardTitle className="text-base font-semibold">{p.title}</CardTitle>
                     <div className="text-xs text-muted-foreground">{p.date} • {p.read} de leitura</div>
                   </CardHeader>
-                  <CardContent className="text-sm text-muted-foreground">
+                  <CardContent className="text-sm text-muted-foreground px-6 pt-2 pb-6">
                     {p.excerpt}
                   </CardContent>
                 </Card>
