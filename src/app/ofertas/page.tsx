@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Filter, XCircle } from 'lucide-react'
+import { XCircle, Search, ChevronDown } from 'lucide-react'
 
 
 export default function OfertasPage() {
@@ -15,10 +15,11 @@ export default function OfertasPage() {
 
   const [selectedCategory, setSelectedCategory] = useState<(typeof categories)[number]>('Todos')
   const [selectedModality, setSelectedModality] = useState<(typeof modalities)[number]>('Todas')
+  const [query, setQuery] = useState('')
 
-  // Evita redundância nos controles desktop: remove opções padrão das pills
-  const categoriesNoAll = categories.filter((c) => c !== 'Todos')
-  const modalitiesNoAll = modalities.filter((m) => m !== 'Todas')
+  // Removido: pills desktop (redundância)
+  // const categoriesNoAll = categories.filter((c) => c !== 'Todos')
+  // const modalitiesNoAll = modalities.filter((m) => m !== 'Todas')
 
   const offers = [
     {
@@ -91,12 +92,14 @@ export default function OfertasPage() {
 
   const filteredOffers = useMemo(
     () =>
-      offers.filter(
-        (o) =>
-          (selectedCategory === 'Todos' || o.category === selectedCategory) &&
-          (selectedModality === 'Todas' || o.modality === selectedModality)
-      ),
-    [offers, selectedCategory, selectedModality]
+      offers
+        .filter(
+          (o) =>
+            (selectedCategory === 'Todos' || o.category === selectedCategory) &&
+            (selectedModality === 'Todas' || o.modality === selectedModality)
+        )
+        .filter((o) => query.trim() === '' || o.name.toLowerCase().includes(query.trim().toLowerCase())),
+    [offers, selectedCategory, selectedModality, query]
   )
 
   const isDefaultFilters = selectedCategory === 'Todos' && selectedModality === 'Todas'
@@ -133,45 +136,64 @@ export default function OfertasPage() {
           {/* Filtros */}
           <Card className="border bg-background/60 backdrop-blur">
             <CardContent className="p-4">
-              {/* Mobile: selects nativos */}
+              {/* Mobile: busca + selects nativos */}
               <div className="sm:hidden grid gap-3">
+                {/* Busca */}
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Buscar por nome da oferta"
+                    className="h-9 w-full rounded-md border bg-background pl-9 pr-3 text-sm"
+                    aria-label="Buscar ofertas"
+                  />
+                </div>
+
+                {/* Categoria */}
                 <div className="grid gap-1">
                   <label className="text-xs text-muted-foreground">Categoria</label>
                   <div className="relative">
                     <select
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value as typeof categories[number])}
-                      className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+                      className="h-9 w-full rounded-md border bg-background pl-3 pr-8 text-sm"
+                      aria-label="Filtrar por categoria"
                     >
                       {categories.map((c) => (
                         <option key={c} value={c}>{c}</option>
                       ))}
                     </select>
+                    <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   </div>
                 </div>
 
+                {/* Modalidade */}
                 <div className="grid gap-1">
                   <label className="text-xs text-muted-foreground">Modalidade</label>
                   <div className="relative">
                     <select
                       value={selectedModality}
                       onChange={(e) => setSelectedModality(e.target.value as typeof modalities[number])}
-                      className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+                      className="h-9 w-full rounded-md border bg-background pl-3 pr-8 text-sm"
+                      aria-label="Filtrar por modalidade"
                     >
                       {modalities.map((m) => (
                         <option key={m} value={m}>{m}</option>
                       ))}
                     </select>
+                    <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   </div>
                 </div>
 
-                {!isDefaultFilters && (
+                {(!isDefaultFilters || query.trim() !== '') && (
                   <div className="pt-1">
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => { setSelectedCategory('Todos'); setSelectedModality('Todas'); }}
+                      onClick={() => { setSelectedCategory('Todos'); setSelectedModality('Todas'); setQuery('') }}
                       className="w-full justify-center gap-1 text-muted-foreground hover:text-foreground"
                     >
                       <XCircle className="size-4" /> Limpar filtros
@@ -180,51 +202,64 @@ export default function OfertasPage() {
                 )}
               </div>
 
-              {/* Desktop: botões segmentados */}
-              <div className="hidden sm:flex items-center justify-between gap-4">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                    <Filter className="size-3.5" /> Categoria
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {categoriesNoAll.map((c) => (
-                      <Button
-                        key={c}
-                        size="sm"
-                        className="rounded-full h-8 px-3"
-                        variant={selectedCategory === c ? 'default' : 'outline'}
-                        onClick={() => setSelectedCategory(c)}
-                      >
-                        {c}
-                      </Button>
-                    ))}
+              {/* Desktop: barra profissional com busca + dropdowns */}
+              <div className="hidden sm:grid sm:grid-cols-[1fr_auto_auto_auto] sm:items-center gap-4">
+                {/* Busca */}
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Buscar por nome da oferta"
+                    className="h-9 w-full min-w-[320px] rounded-md border bg-background pl-9 pr-3 text-sm"
+                    aria-label="Buscar ofertas"
+                  />
+                </div>
+
+                {/* Categoria */}
+                <div className="grid gap-1">
+                  <span className="text-xs text-muted-foreground">Categoria</span>
+                  <div className="relative">
+                    <select
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value as typeof categories[number])}
+                      className="h-9 w-[200px] rounded-md border bg-background pl-3 pr-8 text-sm"
+                      aria-label="Filtrar por categoria"
+                    >
+                      {categories.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
+                {/* Modalidade */}
+                <div className="grid gap-1">
                   <span className="text-xs text-muted-foreground">Modalidade</span>
-                  <div className="flex flex-wrap gap-2">
-                    {modalitiesNoAll.map((m) => (
-                      <Button
-                        key={m}
-                        size="sm"
-                        className="rounded-full h-8 px-3"
-                        variant={selectedModality === m ? 'default' : 'outline'}
-                        onClick={() => setSelectedModality(m)}
-                      >
-                        {m}
-                      </Button>
-                    ))}
+                  <div className="relative">
+                    <select
+                      value={selectedModality}
+                      onChange={(e) => setSelectedModality(e.target.value as typeof modalities[number])}
+                      className="h-9 w-[200px] rounded-md border bg-background pl-3 pr-8 text-sm"
+                      aria-label="Filtrar por modalidade"
+                    >
+                      {modalities.map((m) => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   </div>
                 </div>
 
-                {!isDefaultFilters && (
-                  <div className="ml-auto">
+                {(!isDefaultFilters || query.trim() !== '') && (
+                  <div className="sm:ml-auto">
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => { setSelectedCategory('Todos'); setSelectedModality('Todas'); }}
+                      onClick={() => { setSelectedCategory('Todos'); setSelectedModality('Todas'); setQuery('') }}
                       className="gap-1 text-muted-foreground hover:text-foreground"
                     >
                       <XCircle className="size-4" /> Limpar
@@ -232,36 +267,6 @@ export default function OfertasPage() {
                   </div>
                 )}
               </div>
-
-              {(!isDefaultFilters) && (
-                <div className="hidden sm:flex items-center gap-2 mt-3 text-xs">
-                  <span className="text-muted-foreground">Filtros ativos:</span>
-                  {selectedCategory !== 'Todos' && (
-                    <span className="inline-flex items-center gap-1 rounded-full border px-2 py-1 bg-background">
-                      <span>Categoria: {selectedCategory}</span>
-                      <button
-                        aria-label="Limpar categoria"
-                        className="ml-1 text-muted-foreground hover:text-foreground"
-                        onClick={() => setSelectedCategory('Todos')}
-                      >
-                        <XCircle className="size-3.5" />
-                      </button>
-                    </span>
-                  )}
-                  {selectedModality !== 'Todas' && (
-                    <span className="inline-flex items-center gap-1 rounded-full border px-2 py-1 bg-background">
-                      <span>Modalidade: {selectedModality}</span>
-                      <button
-                        aria-label="Limpar modalidade"
-                        className="ml-1 text-muted-foreground hover:text-foreground"
-                        onClick={() => setSelectedModality('Todas')}
-                      >
-                        <XCircle className="size-3.5" />
-                      </button>
-                    </span>
-                  )}
-                </div>
-              )}
             </CardContent>
           </Card>
 
