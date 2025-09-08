@@ -79,11 +79,28 @@ export default function RootLayout({
               </div>
             </div>
 
-            {/* Barra inferior */}
-            <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t pt-6 text-xs text-muted-foreground md:flex-row">
-              <p>© {new Date().getFullYear()} Raise Capital. Todos os direitos reservados.</p>
-              <div className="flex items-center gap-4">
-                <Image src="/cvm.webp" alt="CVM" width={32} height={32} className="rounded-sm" />
+            {/* Aviso regulatório + CVM + Créditos */}
+            <div className="mt-10 border-t pt-6">
+              <div className="text-xs leading-relaxed text-muted-foreground">
+                <p>
+                  Este website ("Site") é gerido e operado pela RAISE CAPITAL LTDA, com CNPJ 52.422.948/0001-39.
+                </p>
+                <p className="mt-3">
+                  As sociedades empresárias de pequeno porte e as ofertas apresentadas nesta plataforma estão automaticamente dispensadas de registro pela Comissão de Valores Mobiliários - CVM. A CVM não analisa previamente as ofertas. As ofertas realizadas não implicam por parte da CVM a garantia da veracidade das informações prestadas, de adequação à legislação vigente ou julgamento sobre a qualidade da sociedade empresária de pequeno porte. Antes de aceitar uma oferta leia com atenção as informações essenciais da oferta, em especial a seção de alertas sobre riscos.
+                </p>
+              </div>
+
+              {/* Logo CVM */}
+              <div className="mt-6 flex justify-center">
+                <Image src="/cvm.webp" alt="CVM" width={96} height={96} className="h-10 w-auto md:h-12" />
+              </div>
+
+              {/* Créditos */}
+              <div className="mt-6 flex flex-col items-center justify-between gap-4 text-xs text-muted-foreground md:flex-row">
+                <p>© {new Date().getFullYear()} Raise Capital</p>
+                <p>
+                  Desenvolvido por <a href="https://codnodo.com" className="hover:underline" target="_blank" rel="noopener noreferrer">Codnodo Studio</a>
+                </p>
               </div>
             </div>
           </div>
