@@ -168,6 +168,146 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Mercado em tempo real */}
+        <section id="mercado" className="py-16 border-t">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="flex items-end justify-between gap-4">
+              <h2 className="text-2xl font-semibold">Mercado em tempo real</h2>
+              <Badge variant="secondary" className="hidden sm:inline">Dados dinâmicos</Badge>
+            </div>
+
+            {/* Ticker de cotações */}
+            <div className="mt-6">
+              <div className="rounded-lg border bg-background overflow-hidden">
+                <iframe
+                  src={tvUrl('ticker-tape', {
+                    symbols: [
+                      { proName: 'BMFBOVESPA:IBOV', title: 'IBOV' },
+                      { proName: 'FX_IDC:USDBRL', title: 'USD/BRL' },
+                      { proName: 'BMFBOVESPA:PETR4', title: 'PETR4' },
+                      { proName: 'BMFBOVESPA:VALE3', title: 'VALE3' },
+                      { proName: 'BINANCE:BTCUSDT', title: 'BTC/USDT' },
+                      { proName: 'NASDAQ:TSLA', title: 'TSLA' },
+                    ],
+                    showSymbolLogo: true,
+                    isTransparent: true,
+                    displayMode: 'adaptive',
+                    colorTheme: 'light',
+                  })}
+                  className="w-full h-14"
+                  style={{ boxSizing: 'border-box' }}
+                  frameBorder="0"
+                  scrolling="no"
+                  title="Ticker em tempo real"
+                />
+              </div>
+            </div>
+
+            {/* Widgets principais */}
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              {/* Panorama: tabela de cotações */}
+              <Card className="overflow-hidden">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Panorama de mercado</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="relative h-[460px] -mx-4 md:mx-0">
+                    <iframe
+                      src={tvUrl('market-quotes', {
+                        isTransparent: true,
+                        colorTheme: 'light',
+                        width: '100%',
+                        height: 460,
+                        showSymbolLogo: true,
+                        locale: 'br',
+                        symbolsGroups: [
+                          {
+                            name: 'Ações BR',
+                            symbols: [
+                              { name: 'BMFBOVESPA:IBOV' },
+                              { name: 'BMFBOVESPA:PETR4' },
+                              { name: 'BMFBOVESPA:VALE3' },
+                              { name: 'BMFBOVESPA:ITUB4' },
+                              { name: 'BMFBOVESPA:BBDC4' },
+                            ],
+                          },
+                          {
+                            name: 'Câmbio',
+                            symbols: [
+                              { name: 'FX_IDC:USDBRL' },
+                              { name: 'OANDA:EURUSD' },
+                              { name: 'OANDA:GBPUSD' },
+                            ],
+                          },
+                          {
+                            name: 'Cripto',
+                            symbols: [
+                              { name: 'BINANCE:BTCUSDT' },
+                              { name: 'BINANCE:ETHUSDT' },
+                            ],
+                          },
+                        ],
+                      })}
+                      className="w-full h-full"
+                      frameBorder="0"
+                      title="Cotações do mercado"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Mini gráficos lado direito */}
+              <div className="grid gap-6">
+                <Card className="overflow-hidden">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">USD/BRL</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="relative h-[220px] -mx-4 md:mx-0">
+                      <iframe
+                        src={tvUrl('mini-symbol-overview', {
+                          symbol: 'FX_IDC:USDBRL',
+                          locale: 'br',
+                          dateRange: '1M',
+                          colorTheme: 'light',
+                          isTransparent: true,
+                          autosize: true,
+                        })}
+                        className="w-full h-full"
+                        frameBorder="0"
+                        title="USD/BRL em tempo real"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="overflow-hidden">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">BTC/USDT</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="relative h-[220px] -mx-4 md:mx-0">
+                      <iframe
+                        src={tvUrl('mini-symbol-overview', {
+                          symbol: 'BINANCE:BTCUSDT',
+                          locale: 'br',
+                          dateRange: '1M',
+                          colorTheme: 'light',
+                          isTransparent: true,
+                          autosize: true,
+                        })}
+                        className="w-full h-full"
+                        frameBorder="0"
+                        title="BTC/USDT em tempo real"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Ofertas / Projetos */}
         <section id="projetos" className="py-16 border-t">
           <div className="mx-auto max-w-6xl px-6">
