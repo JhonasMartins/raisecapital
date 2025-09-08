@@ -34,14 +34,14 @@ export default function Home() {
 
       <main className="pt-28">
         {/* Hero */}
-        <section className="relative overflow-hidden pb-16">
+        <section className="relative overflow-hidden pb-16 -mt-28 pt-28">
           {/* Background image + overlay */}
           <div className="absolute inset-0 -z-10">
             <Image src="/background-hero.png" alt="Fundo do hero" fill priority className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-blue-950/70 to-[#0b1020]/85" />
           </div>
 
-          <div className="mx-auto max-w-6xl px-6 grid lg:grid-cols-2 gap-10 items-center">
+          <div className="mx-auto max-w-6xl px-6 grid lg:grid-cols-2 gap-10 items-center min-h-[60vh] md:min-h-[68vh]">
             {/* Conteúdo à esquerda */}
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <Badge className="mb-4 bg-white/10 text-white border border-white/20" variant="secondary">Equity Crowdfunding</Badge>
@@ -58,7 +58,7 @@ export default function Home() {
                     Explorar oportunidades <ArrowRight className="size-4" />
                   </a>
                 </Button>
-                <Button variant="outline" asChild className="border-white/30 text-white hover:bg-white/10">
+                <Button variant="outline" asChild className="bg-transparent border-white/40 text-white hover:bg-white/10">
                   <a href="#como-funciona">Como funciona</a>
                 </Button>
               </div>
