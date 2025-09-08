@@ -34,44 +34,136 @@ export default function Home() {
 
       <main className="pt-28">
         {/* Hero */}
-        <section className="pb-16">
+        <section className="relative overflow-hidden pb-16">
+          {/* Background image + overlay */}
+          <div className="absolute inset-0 -z-10">
+            <Image src="/background-hero.png" alt="Fundo do hero" fill priority className="object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-blue-950/70 to-[#0b1020]/85" />
+          </div>
+
           <div className="mx-auto max-w-6xl px-6 grid lg:grid-cols-2 gap-10 items-center">
+            {/* Conteúdo à esquerda */}
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <Badge className="mb-4" variant="secondary">Equity Crowdfunding</Badge>
-              <h1 className="text-4xl/tight sm:text-5xl/tight font-semibold">
+              <Badge className="mb-4 bg-white/10 text-white border border-white/20" variant="secondary">Equity Crowdfunding</Badge>
+              <h1 className="text-4xl/tight sm:text-5xl/tight font-semibold text-white">
                 Invista em startups e projetos de alto potencial
               </h1>
-              <p className="mt-4 text-muted-foreground">
+              <p className="mt-4 text-white/80">
                 A Raise Capital conecta você a oportunidades selecionadas de investimento
                 com transparência, curadoria e segurança.
               </p>
               <div className="mt-6 flex gap-3">
-                <Button asChild>
+                <Button asChild className="bg-white text-blue-950 hover:bg-white/90">
                   <a href="#projetos" className="inline-flex items-center gap-2">
                     Explorar oportunidades <ArrowRight className="size-4" />
                   </a>
                 </Button>
-                <Button variant="outline" asChild>
+                <Button variant="outline" asChild className="border-white/30 text-white hover:bg-white/10">
                   <a href="#como-funciona">Como funciona</a>
                 </Button>
               </div>
-              <div className="mt-6 text-xs text-muted-foreground">
+              <div className="mt-6 text-xs text-white/70">
                 Risco de perda total do capital investido. Invista com responsabilidade.
               </div>
             </motion.div>
+
+            {/* Card translúcido com efeito de vídeo e gráfico de renda fixa (mais completo) */}
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="relative">
-              <div className="relative aspect-video rounded-xl overflow-hidden border bg-muted">
-                <Image
-                  src="/background-hero.png"
-                  alt="Imagem destaque do hero"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
-                  priority
-                />
+              <div className="relative rounded-xl border border-white/20 bg-white/10 backdrop-blur-md p-5 shadow-2xl">
+                <div className="relative h-72 w-full overflow-hidden rounded-lg bg-white/5">
+                  {/* camadas para efeito "vídeo" translúcido */}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-white/5 opacity-30" />
+                  <div className="pointer-events-none absolute inset-0 [background:repeating-linear-gradient(transparent_0px,transparent_2px,rgba(255,255,255,0.04)_2px,rgba(255,255,255,0.04)_3px)] opacity-30" />
+                  <div className="pointer-events-none absolute -inset-x-10 -inset-y-10 animate-[spin_16s_linear_infinite] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.12),transparent_45%)]" />
+
+                  {/* gráfico detalhado */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg viewBox="0 0 320 200" className="h-full w-full" aria-label="Comparativo Renda Fixa">
+                      <defs>
+                        <linearGradient id="areaCDI" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.35" />
+                          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+
+                      {/* grid */}
+                      <g stroke="white" strokeOpacity="0.08" strokeWidth="1">
+                        <path d="M40 170 H300" />
+                        <path d="M40 130 H300" />
+                        <path d="M40 90 H300" />
+                        <path d="M40 50 H300" />
+                        <path d="M40 10 H300" />
+                      </g>
+
+                      {/* eixos */}
+                      <g stroke="white" strokeOpacity="0.3" strokeWidth="1.5">
+                        <path d="M40 170 H300" />
+                        <path d="M40 170 V20" />
+                      </g>
+
+                      {/* rótulos eixo Y */}
+                      <g fill="white" fillOpacity="0.65" fontSize="10">
+                        <text x="10" y="174">0%</text>
+                        <text x="2" y="134">5%</text>
+                        <text x="2" y="94">10%</text>
+                        <text x="2" y="54">15%</text>
+                        <text x="2" y="14">20%</text>
+                      </g>
+
+                      {/* rótulos eixo X */}
+                      <g fill="white" fillOpacity="0.65" fontSize="10">
+                        <text x="45" y="188">Jan</text>
+                        <text x="95" y="188">Mar</text>
+                        <text x="145" y="188">Mai</text>
+                        <text x="195" y="188">Jul</text>
+                        <text x="245" y="188">Set</text>
+                        <text x="285" y="188">Nov</text>
+                      </g>
+
+                      {/* Série CDI (linha + área) */}
+                      <path d="M40 150 L90 142 L140 132 L190 120 L240 110 L290 104" fill="url(#areaCDI)" stroke="none" />
+                      <path d="M40 150 L90 142 L140 132 L190 120 L240 110 L290 104" stroke="white" strokeWidth="2" fill="none" />
+
+                      {/* Série CDB Médio */}
+                      <path d="M40 158 L90 150 L140 138 L190 126 L240 114 L290 107" stroke="#A5B4FC" strokeWidth="2" fill="none" strokeDasharray="4 4" />
+
+                      {/* pontos e valores finais */}
+                      <g>
+                        <circle cx="290" cy="104" r="3.5" fill="white" />
+                        <text x="296" y="108" fontSize="10" fill="white" fillOpacity="0.9">12,3%</text>
+                        <circle cx="290" cy="107" r="3.5" fill="#A5B4FC" />
+                        <text x="296" y="112" fontSize="10" fill="#A5B4FC">12,0%</text>
+                      </g>
+
+                      {/* legenda */}
+                      <g>
+                        <rect x="48" y="28" width="10" height="2" fill="white" />
+                        <text x="64" y="31" fontSize="11" fill="white" fillOpacity="0.9">CDI</text>
+                        <rect x="98" y="28" width="10" height="2" fill="#A5B4FC" />
+                        <text x="114" y="31" fontSize="11" fill="#A5B4FC">CDB Médio</text>
+                      </g>
+                    </svg>
+                  </div>
+
+                  <div className="absolute bottom-3 left-3 text-white/80 text-xs">Renda Fixa</div>
+                </div>
+
+                {/* KPIs abaixo do gráfico */}
+                <div className="mt-4 grid grid-cols-3 gap-3 text-white/80 text-xs">
+                  <div className="rounded-md border border-white/15 bg-white/5 p-2">
+                    <div className="text-[11px]">CDI</div>
+                    <div className="text-white text-sm font-medium">12,30% a.a.</div>
+                  </div>
+                  <div className="rounded-md border border-white/15 bg-white/5 p-2">
+                    <div className="text-[11px]">Tesouro Selic</div>
+                    <div className="text-white text-sm font-medium">12,15% a.a.</div>
+                  </div>
+                  <div className="rounded-md border border-white/15 bg-white/5 p-2">
+                    <div className="text-[11px]">CDB Médio</div>
+                    <div className="text-white text-sm font-medium">12,00% a.a.</div>
+                  </div>
+                </div>
               </div>
-              <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-xl bg-primary/10" />
-              <div className="absolute -top-4 -right-4 h-16 w-16 rounded-full bg-primary/10" />
             </motion.div>
           </div>
         </section>
