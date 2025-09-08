@@ -148,9 +148,9 @@ export default function Home() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1"><TrendingUp className="size-4" /> Potencial de crescimento</div>
-                        <div className="flex items-center gap-1"><Users className="size-4" /> Equipe experiente</div>
+                      {/* Removidos badges de features do card */}
+                      <div className="hidden">
+                        {/* antes havia: Potencial de crescimento / Equipe experiente */}
                       </div>
 
                       <div className="pt-2">
@@ -660,16 +660,28 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t py-10">
-        <div className="mx-auto max-w-6xl px-6 text-sm text-muted-foreground flex items-center justify-between">
-          <div>© {new Date().getFullYear()} Raise Capital</div>
-          <div className="flex gap-4">
-            <a href="#">Termos</a>
-            <a href="#">Privacidade</a>
+      {/* Newsletter */}
+      <section className="border-t py-12">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="grid gap-6 md:grid-cols-2 md:items-center">
+            <div>
+              <h3 className="text-xl font-semibold">Inscreva-se na newsletter</h3>
+              <p className="mt-1 text-muted-foreground text-sm">
+                Receba novidades sobre ofertas, atualizações e conteúdos da Raise Capital.
+              </p>
+            </div>
+            <form className="flex w-full items-center gap-3" onSubmit={(e) => e.preventDefault()}>
+              <input
+                type="email"
+                required
+                placeholder="Seu e-mail"
+                className="h-11 w-full max-w-md rounded-md border bg-background px-3 text-sm outline-none ring-0 focus:border-foreground/30"
+              />
+              <Button type="submit">Inscrever</Button>
+            </form>
           </div>
         </div>
-      </footer>
+      </section>
     </div>
   );
 }
