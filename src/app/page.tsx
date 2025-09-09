@@ -217,26 +217,75 @@ export default function Home() {
             </div>
 
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {latestPosts.map((a) => (
-                <Link key={a.slug} href={`/blog/${a.slug}`} className="block group" aria-label={`Abrir artigo: ${a.title}`}>
-                  <Card className="flex flex-col overflow-hidden p-0 gap-0 transition-shadow group-hover:shadow-md">
-                    <div className="relative h-40 w-full overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={a.cover} alt={`Capa do artigo ${a.title}`} className="h-full w-full object-cover border" />
+              {[
+                { name: "Fintech XYZ", category: "Fintech", modality: "Equity", min: 1000, raised: 350000, goal: 500000, deadline: "25 dias", cover: "/offers/fintech.svg" },
+                { name: "Agrotech Verde", category: "Agrotech", modality: "Dívida", min: 500, raised: 120000, goal: 300000, deadline: "18 dias", cover: "/offers/agrotech.svg" },
+                { name: "HealthTech Vida", category: "HealthTech", modality: "Revenue Share", min: 2000, raised: 450000, goal: 450000, deadline: "Encerrando", cover: "/offers/health.svg" },
+              ].map((o) => {
+                const pct = Math.min(100, Math.round((o.raised / o.goal) * 100));
+                return (
+                  <Card key={o.name} className="flex flex-col overflow-hidden p-0 gap-0">
+                    <div className="relative h-40 w-full">
+                      <Image
+                        src={o.cover}
+                        alt={`Capa da oferta ${o.name}`}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover"
+                        priority={false}
+                      />
                     </div>
                     <CardHeader className="space-y-2 px-6 pt-4 pb-2">
-                      <CardTitle className="text-base font-semibold">{a.title}</CardTitle>
-                      <div className="text-xs text-muted-foreground">{new Date(a.date).toLocaleDateString('pt-BR')}</div>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-base font-semibold">{o.name}</CardTitle>
+                        <Badge variant="secondary">{o.category}</Badge>
+                      </div>
                     </CardHeader>
-                    <CardContent className="text-sm text-muted-foreground px-6 pt-2 pb-6">
-                      {a.excerpt}
+                    <CardContent className="space-y-4 px-6 pt-2 pb-6">
+                      <div>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span>Progresso</span>
+                          <span>{pct}%</span>
+                        </div>
+                        <div className="mt-2 h-2 w-full rounded-full bg-secondary">
+                          <div className="h-2 rounded-full bg-primary" style={{ width: `${pct}%` }} />
+                        </div>
+                        <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+                          <span>R$ {o.raised.toLocaleString("pt-BR")}</span>
+                          <span>Meta R$ {o.goal.toLocaleString("pt-BR")}</span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 pt-2">
+                        <div>
+                          <div className="text-xs text-muted-foreground">Modalidade</div>
+                          <div className="text-sm font-medium">{o.modality}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Investimento mínimo</div>
+                          <div className="text-sm font-medium">R$ {o.min.toLocaleString("pt-BR")}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Prazo</div>
+                          <div className="text-sm font-medium">{o.deadline}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Total captado</div>
+                          <div className="text-sm font-medium">R$ {o.raised.toLocaleString("pt-BR")}</div>
+                        </div>
+                      </div>
+
+                      <div className="pt-2">
+                        <Button className="w-full" asChild>
+                          <a href="#">
+                            <DollarSign className="mr-2 size-4" /> Investir agora
+                          </a>
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
-                </Link>
-              ))}
-              {latestPosts.length === 0 && (
-                <div className="col-span-full text-sm text-muted-foreground">Nenhum artigo publicado ainda.</div>
-              )}
+                );
+              })}
             </div>
           </div>
         </section>
