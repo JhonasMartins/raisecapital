@@ -4,6 +4,7 @@ import "./globals.css";
 import Image from "next/image";
 import Link from "next/link";
 import FooterGate from "@/components/footer-gate";
+import { Button } from "@/components/ui/button";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +30,35 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* Navbar (oculta em /auth via FooterGate) */}
+        <FooterGate>
+          <header className="sticky top-0 inset-x-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="mx-auto max-w-6xl px-6 h-16 grid grid-cols-[1fr_auto_1fr] items-center">
+              {/* Logo à esquerda */}
+              <div className="flex items-center justify-start">
+                <Link href="/" className="flex items-center" aria-label="Ir para a página inicial">
+                  <Image src="/logo.avif" alt="Raise Capital" width={180} height={44} sizes="180px" quality={100} className="block" priority />
+                </Link>
+              </div>
+
+              {/* Menu central */}
+              <nav className="hidden sm:flex items-center justify-center gap-6 text-sm text-muted-foreground">
+                <Link href="/#como-funciona" className="hover:text-foreground transition-colors">Como funciona</Link>
+                <Link href="/#projetos" className="hover:text-foreground transition-colors">Projetos</Link>
+                <Link href="/#sobre" className="hover:text-foreground transition-colors">Sobre</Link>
+              </nav>
+
+              {/* Ações à direita */}
+              <div className="flex items-center justify-end gap-3">
+                <Link href="/auth/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Entrar</Link>
+                <Button asChild>
+                  <Link href="/auth/criar-conta">Criar Conta</Link>
+                </Button>
+              </div>
+            </div>
+          </header>
+        </FooterGate>
+
         {children}
 
         {/* Footer (oculto em rotas /auth via FooterGate) */}
