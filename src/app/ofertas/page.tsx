@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { XCircle, Search, ChevronDown } from 'lucide-react'
+import { slugify } from '@/lib/utils'
 
 
 export default function OfertasPage() {
@@ -318,7 +319,7 @@ export default function OfertasPage() {
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>Prazo: {o.deadline}</span>
                       <Button asChild size="sm">
-                        <Link href="#">Ver oferta</Link>
+                        <Link href={`/ofertas/${slugify(o.name)}`}>Ver oferta</Link>
                       </Button>
                     </div>
                   </CardContent>

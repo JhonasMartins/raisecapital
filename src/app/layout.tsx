@@ -83,7 +83,7 @@ export default function RootLayout({
             <div className="mt-10 border-t pt-6">
               <div className="text-xs leading-relaxed text-muted-foreground">
                 <p>
-                  Este website ("Site") é gerido e operado pela RAISE CAPITAL LTDA, com CNPJ 52.422.948/0001-39.
+                  Este website (&quot;Site&quot;) é gerido e operado pela RAISE CAPITAL LTDA, com CNPJ 52.422.948/0001-39.
                 </p>
                 <p className="mt-3">
                   As sociedades empresárias de pequeno porte e as ofertas apresentadas nesta plataforma estão automaticamente dispensadas de registro pela Comissão de Valores Mobiliários - CVM. A CVM não analisa previamente as ofertas. As ofertas realizadas não implicam por parte da CVM a garantia da veracidade das informações prestadas, de adequação à legislação vigente ou julgamento sobre a qualidade da sociedade empresária de pequeno porte. Antes de aceitar uma oferta leia com atenção as informações essenciais da oferta, em especial a seção de alertas sobre riscos.
