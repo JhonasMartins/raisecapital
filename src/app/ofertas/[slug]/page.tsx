@@ -8,7 +8,36 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { slugify } from '@/lib/utils'
 
-const offers = [
+type Entrepreneur = { name: string; role?: string }
+type KeyVal = { label: string; value: string }
+type DocumentLink = { label: string; url: string }
+type Investor = { name: string }
+
+interface Offer {
+  name: string
+  subtitle?: string
+  category: string
+  modality: string
+  product?: string
+  min: number
+  raised: number
+  goal: number
+  deadline: string
+  payment?: string
+  tir?: number
+  cover: string
+  status: string
+  summaryPdf?: string
+  aboutOperation?: string
+  aboutCompany?: string
+  entrepreneurs?: Entrepreneur[]
+  financials?: KeyVal[]
+  documents?: DocumentLink[]
+  essentialInfo?: KeyVal[]
+  investors?: Investor[]
+}
+
+const offers: Offer[] = [
   {
     name: 'Fintech XYZ',
     subtitle: 'Plataforma de pagamentos B2B com foco em PMEs',
@@ -331,7 +360,7 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
                 <div className="grid gap-3 text-sm">
                   <div className="rounded-md border p-3">
                     <div className="text-xs text-muted-foreground">Rentabilidade alvo (TIR)</div>
-                    <div className="mt-1 font-medium">{offer.tir}% a.a.</div>
+                    <div className="mt-1 font-medium">{offer.tir != null ? `${offer.tir}% a.a.` : '—'}</div>
                   </div>
                   <div className="rounded-md border p-3">
                     <div className="text-xs text-muted-foreground">Valor captado</div>
@@ -343,7 +372,7 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
                   </div>
                   <div className="rounded-md border p-3">
                     <div className="text-xs text-muted-foreground">Pagamento</div>
-                    <div className="mt-1 font-medium">{offer.payment}</div>
+                    <div className="mt-1 font-medium">{offer.payment ?? '—'}</div>
                   </div>
                   <div className="rounded-md border p-3">
                     <div className="text-xs text-muted-foreground">Prazo</div>
@@ -355,7 +384,7 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
                   </div>
                   <div className="rounded-md border p-3">
                     <div className="text-xs text-muted-foreground">Produto</div>
-                    <div className="mt-1 font-medium">{offer.product}</div>
+                    <div className="mt-1 font-medium">{offer.product ?? '—'}</div>
                   </div>
                   <div className="rounded-md border p-3">
                     <div className="text-xs text-muted-foreground">Status</div>
