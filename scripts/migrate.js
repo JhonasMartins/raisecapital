@@ -97,8 +97,25 @@ async function main() {
       CREATE INDEX IF NOT EXISTS blog_data_publicacao_idx ON blog (data_publicacao);
     `)
 
+    // Novas colunas/estruturas para blog
+    await client.query(`
+      ALTER TABLE blog ADD COLUMN IF NOT EXISTS corpo_html TEXT;
+    `)
+
+    // Tabela de comentários do blog
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS blog_comments (
+        id BIGSERIAL PRIMARY KEY,
+        blog_id BIGINT NOT NULL REFERENCES blog(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        message TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS blog_comments_blog_id_idx ON blog_comments (blog_id);
+    `)
+
     await client.query('COMMIT')
-    console.log('Database setup successful: tables ofertas and blog are ready.')
+    console.log('Database setup successful: tables ofertas, blog and blog_comments are ready.')
   } catch (err) {
     await client.query('ROLLBACK')
     console.error('Database setup failed:', err.message)

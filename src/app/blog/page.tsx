@@ -1,46 +1,45 @@
-import Image from 'next/image'
+import { getDb } from '@/lib/db'
 import Link from 'next/link'
-import { listArticles } from '@/lib/blog'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-export const dynamic = 'force-static'
+export const dynamic = 'force-dynamic'
 
-export default function BlogPage() {
-  const items = listArticles()
+export default async function BlogPage() {
+  const db = getDb()
+  const { rows } = await db.query(
+    `SELECT titulo, slug, resumo, capa, data_publicacao FROM blog ORDER BY data_publicacao DESC, created_at DESC`
+  )
+
+  const items = rows.map((r: any) => ({
+    title: r.titulo as string,
+    slug: r.slug as string,
+    excerpt: r.resumo as string,
+    cover: (r.capa ?? '/file.svg') as string,
+    date: typeof r.data_publicacao === 'string' ? r.data_publicacao : (r.data_publicacao?.toISOString?.().slice(0, 10) ?? ''),
+  }))
+
   return (
     <div className="min-h-dvh font-sans pt-28">
-      {/* navbar local removido — usamos o global do layout */}
-
       <header className="border-b">
-        <div className="mx-auto max-w-6xl px-6 py-10">
-          <h1 className="text-3xl font-semibold">Artigos</h1>
-          <p className="mt-2 text-muted-foreground">Conteúdo para ajudar você a investir melhor.</p>
+        <div className="mx-auto max-w-4xl px-6 py-8">
+          <h1 className="text-2xl font-semibold">Blog</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Últimos artigos e novidades</p>
         </div>
       </header>
 
-      <main className="py-10 bg-[#fcfcfc]">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((a) => (
-              <Link key={a.slug} href={`/blog/${a.slug}`} className="group block">
-                <Card className="flex flex-col overflow-hidden p-0 gap-0">
-                  <div className="relative h-40 w-full">
-                    <Image src={a.cover} alt={a.title} fill className="object-cover" />
-                  </div>
-                  <CardHeader className="space-y-2 px-6 pt-4 pb-2">
-                    <CardTitle className="text-base font-semibold">{a.title}</CardTitle>
-                    <div className="text-xs text-muted-foreground">
-                      {new Date(a.date).toLocaleDateString('pt-BR')}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="text-sm text-muted-foreground px-6 pt-2 pb-6">
-                    {a.excerpt}
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+      <main className="py-10">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-6 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((a) => (
+            <Link key={a.slug} href={`/blog/${a.slug}`} className="group rounded-lg border p-3 hover:shadow-sm transition">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={a.cover} alt="" className="h-40 w-full rounded object-cover border" />
+              <div className="mt-3 text-xs text-muted-foreground">{new Date(a.date).toLocaleDateString('pt-BR')}</div>
+              <div className="mt-1 line-clamp-2 font-medium group-hover:underline">{a.title}</div>
+              <div className="mt-1 text-sm text-muted-foreground line-clamp-3">{a.excerpt}</div>
+            </Link>
+          ))}
+          {items.length === 0 && (
+            <div className="col-span-full text-sm text-muted-foreground">Nenhum artigo publicado ainda.</div>
+          )}
         </div>
       </main>
     </div>
