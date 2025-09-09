@@ -254,7 +254,7 @@ export default function CreateAccountPage() {
 
             <div className="space-y-1 md:col-span-2">
               <label className="text-sm font-medium" htmlFor="email">E-mail</label>
-              <input type="email" id="email" value={invEmail} onChange={(e)=>setInvEmail(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required />
+              <input type="email" id="email" placeholder="seu@email.com" value={invEmail} onChange={(e)=>setInvEmail(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required />
             </div>
             <div className="space-y-1">
               <label className="text-sm font-medium" htmlFor="inv_tel">Telefone celular</label>
