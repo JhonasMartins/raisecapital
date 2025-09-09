@@ -796,7 +796,6 @@ export default function Home() {
         {/* CTA */}
         <section className="relative py-20 border-t overflow-hidden">
           <Image src="/backcta.webp" alt="" fill sizes="100vw" className="object-cover" priority />
-          <div className="absolute inset-0 bg-[#0A2F57]/85 md:bg-gradient-to-r md:from-[#0A2F57]/90 md:via-[#0A2F57]/70 md:to-transparent" />
           <div className="relative mx-auto max-w-6xl px-6 text-center">
             <h2 className="text-2xl font-semibold text-white">Pronto para investir com a Raise Capital?</h2>
             <p className="mt-2 text-white/80">
