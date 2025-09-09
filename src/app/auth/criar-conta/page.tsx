@@ -82,7 +82,13 @@ export default function CreateAccountPage() {
     const dv2 = calcDV(cnpj.substring(0, 12) + dv1, 6)
     return cnpj.endsWith(`${dv1}${dv2}`)
   }
-  const [invDocumento, setInvDocumento] = useState("")
+  // --- Estados (Investidor) ---
+  const [invPessoa, setInvPessoa] = useState<"" | "pf" | "pj">("")
+  const [invCpf, setInvCpf] = useState("")
+  const [invRg, setInvRg] = useState("")
+  const [invCnpj, setInvCnpj] = useState("")
+  const [invRepCpf, setInvRepCpf] = useState("")
+  const [invRepRg, setInvRepRg] = useState("")
   const [invNascimento, setInvNascimento] = useState("")
   const [invGenero, setInvGenero] = useState("")
   const [invTelefone, setInvTelefone] = useState("")
@@ -114,7 +120,8 @@ export default function CreateAccountPage() {
   const [codigoConvite, setCodigoConvite] = useState("")
   const [prefSetores, setPrefSetores] = useState<string[]>([])
   // Erros de documento
-  const [invDocumentoError, setInvDocumentoError] = useState<string | null>(null)
+  const [invCpfError, setInvCpfError] = useState<string | null>(null)
+  const [invCnpjError, setInvCnpjError] = useState<string | null>(null)
   const [empCnpjError, setEmpCnpjError] = useState<string | null>(null)
 
   // Empresa (captar): somente CNPJ
@@ -214,40 +221,92 @@ export default function CreateAccountPage() {
               <label className="text-sm font-medium" htmlFor="nome">Nome completo</label>
               <input id="nome" placeholder="Ex.: João da Silva" className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required />
             </div>
-            <div className="space-y-1">
-              <label className="text-sm font-medium" htmlFor="documento">CPF/CNPJ</label>
-              <input
-                id="documento"
-                placeholder="000.000.000-00 ou 00.000.000/0000-00"
-                value={invDocumento}
-                onChange={(e) => { const v = e.target.value; setInvDocumento(isCnpj(v) ? formatCNPJ(v) : formatCPF(v)); if (invDocumentoError) setInvDocumentoError(null) }}
-                onBlur={(e) => {
-                  const d = onlyDigits(e.target.value)
-                  if (d.length === 11) {
-                    if (!isValidCPF(d)) return setInvDocumentoError("CPF inválido")
-                    setInvDocumentoError(null)
-                  } else if (d.length === 14) {
-                    if (!isValidCNPJ(d)) return setInvDocumentoError("CNPJ inválido")
-                    setInvDocumentoError(null)
-                    lookupCnpj(e.target.value, { setRazao: setInvRazao, setFantasia: setInvFantasia })
-                  } else if (d.length > 0) {
-                    setInvDocumentoError("Informe um CPF (11 dígitos) ou CNPJ (14 dígitos)")
-                  }
-                }}
-                className={`h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30 ${invDocumentoError ? 'border-red-500 focus:border-red-500' : ''}`}
-                required />
-              {invDocumentoError && <p className="text-xs text-red-600 mt-1">{invDocumentoError}</p>}
+
+            {/* Passo 1: seleção PF ou PJ */}
+            <div className="space-y-2 md:col-span-2">
+              <span className="text-sm font-medium">Tipo de pessoa</span>
+              <div className="grid grid-cols-2 gap-2 rounded-md bg-muted p-1 text-sm">
+                <button
+                  type="button"
+                  onClick={() => { setInvPessoa("pf"); }}
+                  className={`h-9 rounded-md transition ${invPessoa === "pf" ? "bg-background shadow" : "text-muted-foreground"}`}
+                >
+                  Pessoa Física (CPF)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setInvPessoa("pj"); }}
+                  className={`h-9 rounded-md transition ${invPessoa === "pj" ? "bg-background shadow" : "text-muted-foreground"}`}
+                >
+                  Pessoa Jurídica (CNPJ)
+                </button>
+              </div>
             </div>
-            {/* Exibe dados de empresa quando o investidor informa CNPJ */}
-            {isCnpj(invDocumento) && (
+
+            {/* Passo 2: campos conforme seleção */}
+            {invPessoa === "pf" && (
               <>
+                <div className="space-y-1">
+                  <label className="text-sm font-medium" htmlFor="inv_cpf">CPF</label>
+                  <input
+                    id="inv_cpf"
+                    placeholder="000.000.000-00"
+                    value={invCpf}
+                    onChange={(e) => { setInvCpf(formatCPF(e.target.value)); if (invCpfError) setInvCpfError(null) }}
+                    onBlur={(e) => {
+                      const d = onlyDigits(e.target.value)
+                      if (d.length > 0 && !isValidCPF(d)) return setInvCpfError("CPF inválido")
+                      setInvCpfError(null)
+                    }}
+                    className={`h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30 ${invCpfError ? 'border-red-500 focus:border-red-500' : ''}`}
+                    required
+                  />
+                  {invCpfError && <p className="text-xs text-red-600 mt-1">{invCpfError}</p>}
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm font-medium" htmlFor="inv_rg">RG</label>
+                  <input id="inv_rg" placeholder="Número do RG" value={invRg} onChange={(e)=>setInvRg(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required />
+                </div>
+              </>
+            )}
+
+            {invPessoa === "pj" && (
+              <>
+                <div className="space-y-1">
+                  <label className="text-sm font-medium" htmlFor="inv_cnpj">CNPJ</label>
+                  <input
+                    id="inv_cnpj"
+                    placeholder="00.000.000/0000-00"
+                    value={invCnpj}
+                    onChange={(e) => { setInvCnpj(formatCNPJ(e.target.value)); if (invCnpjError) setInvCnpjError(null) }}
+                    onBlur={(e) => {
+                      const d = onlyDigits(e.target.value)
+                      if (d.length > 0 && !isValidCNPJ(d)) return setInvCnpjError("CNPJ inválido")
+                      setInvCnpjError(null)
+                      if (d.length === 14) lookupCnpj(e.target.value, { setRazao: setInvRazao, setFantasia: setInvFantasia })
+                    }}
+                    className={`h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30 ${invCnpjError ? 'border-red-500 focus:border-red-500' : ''}`}
+                    required
+                  />
+                  {invCnpjError && <p className="text-xs text-red-600 mt-1">{invCnpjError}</p>}
+                </div>
+
                 <div className="space-y-1 md:col-span-2">
                   <label className="text-sm font-medium" htmlFor="inv_razao">Razão social</label>
-                  <input id="inv_razao" placeholder="Razão social (quando CNPJ)" value={invRazao} onChange={(e)=>setInvRazao(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
+                  <input id="inv_razao" placeholder="Razão social" value={invRazao} onChange={(e)=>setInvRazao(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
                 </div>
                 <div className="space-y-1 md:col-span-2">
                   <label className="text-sm font-medium" htmlFor="inv_fantasia">Nome fantasia</label>
-                  <input id="inv_fantasia" placeholder="Nome fantasia (quando CNPJ)" value={invFantasia} onChange={(e)=>setInvFantasia(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
+                  <input id="inv_fantasia" placeholder="Nome fantasia" value={invFantasia} onChange={(e)=>setInvFantasia(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium" htmlFor="inv_rep_cpf">CPF do representante legal</label>
+                  <input id="inv_rep_cpf" placeholder="000.000.000-00" value={invRepCpf} onChange={(e)=>setInvRepCpf(formatCPF(e.target.value))} onBlur={(e)=>{ const d = onlyDigits(e.target.value); if (d.length>0 && !isValidCPF(d)) alert("CPF do representante inválido") }} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm font-medium" htmlFor="inv_rep_rg">RG do representante legal</label>
+                  <input id="inv_rep_rg" placeholder="Número do RG" value={invRepRg} onChange={(e)=>setInvRepRg(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required />
                 </div>
               </>
             )}
@@ -268,9 +327,9 @@ export default function CreateAccountPage() {
               <label className="text-sm font-medium" htmlFor="inv_genero">Gênero (opcional)</label>
               <select id="inv_genero" value={invGenero} onChange={(e)=>setInvGenero(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30">
                 <option value="">Selecione</option>
-                <option value="masculino">Masculino</option>
                 <option value="feminino">Feminino</option>
-                <option value="nao-binario">Não-binário</option>
+                <option value="masculino">Masculino</option>
+                <option value="outro">Outro</option>
                 <option value="prefiro-nao-dizer">Prefiro não dizer</option>
               </select>
             </div>
@@ -329,6 +388,7 @@ export default function CreateAccountPage() {
                 </button>
               </div>
             </div>
+            {/* fim investidor */}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -402,7 +462,7 @@ export default function CreateAccountPage() {
                 </button>
                </div>
              </div>
-           </div>
+          </div>
         )}
 
         {/* Compliance e KYC */}
