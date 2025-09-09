@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Eye, EyeOff, UploadCloud } from "lucide-react"
+import { Eye, EyeOff } from "lucide-react"
 
 // Mantém lógica existente de abas/validações/consultas; aqui focamos no contêiner e cabeçalhos
 export default function CreateAccountPage() {
@@ -123,6 +123,8 @@ export default function CreateAccountPage() {
   // Preferências e indicação
   const [codigoConvite, setCodigoConvite] = useState("")
   const [prefSetores, setPrefSetores] = useState<string[]>([])
+  // Removidos: docIdentidade, docResidencia, docSelfie, rendaMensal, patrimonio, investidorQualificado,
+  // banco, agencia, conta, tipoConta, codigoConvite, prefSetores
   // Erros de documento
   const [invCpfError, setInvCpfError] = useState<string | null>(null)
   const [invCnpjError, setInvCnpjError] = useState<string | null>(null)
@@ -297,11 +299,11 @@ export default function CreateAccountPage() {
 
                 <div className="space-y-1 md:col-span-2">
                   <label className="text-sm font-medium" htmlFor="inv_razao">Razão social</label>
-                  <input id="inv_razao" placeholder="Razão social" value={invRazao} onChange={(e)=>setInvRazao(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
+                  <input id="inv_razao" placeholder="Razão social" value={invRazao} onChange={(e)=>setInvRazao(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required />
                 </div>
                 <div className="space-y-1 md:col-span-2">
                   <label className="text-sm font-medium" htmlFor="inv_fantasia">Nome fantasia</label>
-                  <input id="inv_fantasia" placeholder="Nome fantasia" value={invFantasia} onChange={(e)=>setInvFantasia(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
+                  <input id="inv_fantasia" placeholder="Nome fantasia" value={invFantasia} onChange={(e)=>setInvFantasia(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required />
                 </div>
 
                 <div className="space-y-1">
@@ -321,15 +323,15 @@ export default function CreateAccountPage() {
             </div>
             <div className="space-y-1">
               <label className="text-sm font-medium" htmlFor="inv_tel">Telefone celular</label>
-              <input id="inv_tel" value={invTelefone} onChange={(e)=>setInvTelefone(formatPhone(e.target.value))} placeholder="(11) 90000-0000" className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
+              <input id="inv_tel" value={invTelefone} onChange={(e)=>setInvTelefone(formatPhone(e.target.value))} placeholder="(11) 90000-0000" className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required />
             </div>
             <div className="space-y-1">
               <label className="text-sm font-medium" htmlFor="inv_nasc">Data de nascimento</label>
-              <input type="date" id="inv_nasc" value={invNascimento} onChange={(e)=>setInvNascimento(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
+              <input type="date" id="inv_nasc" value={invNascimento} onChange={(e)=>setInvNascimento(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required />
             </div>
             <div className="space-y-1">
-              <label className="text-sm font-medium" htmlFor="inv_genero">Gênero (opcional)</label>
-              <select id="inv_genero" value={invGenero} onChange={(e)=>setInvGenero(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30">
+              <label className="text-sm font-medium" htmlFor="inv_genero">Gênero</label>
+              <select id="inv_genero" value={invGenero} onChange={(e)=>setInvGenero(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required>
                 <option value="">Selecione</option>
                 <option value="feminino">Feminino</option>
                 <option value="masculino">Masculino</option>
@@ -396,7 +398,7 @@ export default function CreateAccountPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1 md:col-span-2">
+            <div className="space-y-1">
               <label className="text-sm font-medium" htmlFor="razao">Razão social</label>
               <input id="razao" placeholder="Razão social da empresa" value={empRazao} onChange={(e)=>setEmpRazao(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required />
             </div>
@@ -418,7 +420,7 @@ export default function CreateAccountPage() {
             </div>
             <div className="space-y-1 md:col-span-2">
               <label className="text-sm font-medium" htmlFor="fantasia2">Nome fantasia</label>
-              <input id="fantasia2" placeholder="Nome fantasia da empresa" value={empFantasia} onChange={(e)=>setEmpFantasia(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
+              <input id="fantasia2" placeholder="Nome fantasia da empresa" value={empFantasia} onChange={(e)=>setEmpFantasia(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" required />
             </div>
             <div className="space-y-1">
                <label className="text-sm font-medium" htmlFor="emp_cep">CEP</label>
@@ -469,128 +471,7 @@ export default function CreateAccountPage() {
           </div>
         )}
 
-        {/* Compliance e KYC */}
-        <div className="space-y-4">
-          <h2 className="text-base font-semibold">Conformidade e KYC</h2>
-          <div className="space-y-2">
-            <label className="inline-flex items-center gap-2 text-sm"><input type="checkbox" checked={aceiteTermos} onChange={(e)=>setAceiteTermos(e.target.checked)} /> Aceito os Termos de Uso</label>
-            <label className="inline-flex items-center gap-2 text-sm"><input type="checkbox" checked={aceitePrivacidade} onChange={(e)=>setAceitePrivacidade(e.target.checked)} /> Aceito a Política de Privacidade</label>
-            {tab === "investidor" && (
-              <label className="inline-flex items-center gap-2 text-sm"><input type="checkbox" checked={aceiteRisco} onChange={(e)=>setAceiteRisco(e.target.checked)} /> Declaro estar ciente dos riscos de investimento</label>
-            )}
-            <label className="inline-flex items-center gap-2 text-sm"><input type="checkbox" checked={optinComunicacoes} onChange={(e)=>setOptinComunicacoes(e.target.checked)} /> Quero receber novidades por e-mail</label>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div>
-              <label className="text-sm font-medium" htmlFor="up_identidade">Documento de identidade (RG/CNH/RNE)</label>
-              <label htmlFor="up_identidade" className="mt-1 flex cursor-pointer items-center gap-3 rounded-md border border-dashed bg-background/50 p-4 hover:bg-muted/60">
-                <UploadCloud className="h-5 w-5 text-muted-foreground" />
-                <div className="text-sm">
-                  <p className="font-medium">Selecionar arquivo</p>
-                  <p className="text-xs text-muted-foreground">PDF, JPG ou PNG, até 10MB</p>
-                </div>
-              </label>
-              <input id="up_identidade" type="file" accept="image/*,application/pdf" onChange={(e)=>setDocIdentidade(e.target.files?.[0] ?? null)} className="sr-only" />
-              {docIdentidade && <p className="mt-1 text-xs text-muted-foreground truncate">Selecionado: {docIdentidade.name}</p>}
-            </div>
-            <div>
-              <label className="text-sm font-medium" htmlFor="up_residencia">Comprovante de residência</label>
-              <label htmlFor="up_residencia" className="mt-1 flex cursor-pointer items-center gap-3 rounded-md border border-dashed bg-background/50 p-4 hover:bg-muted/60">
-                <UploadCloud className="h-5 w-5 text-muted-foreground" />
-                <div className="text-sm">
-                  <p className="font-medium">Selecionar arquivo</p>
-                  <p className="text-xs text-muted-foreground">PDF, JPG ou PNG, até 10MB</p>
-                </div>
-              </label>
-              <input id="up_residencia" type="file" accept="image/*,application/pdf" onChange={(e)=>setDocResidencia(e.target.files?.[0] ?? null)} className="sr-only" />
-              {docResidencia && <p className="mt-1 text-xs text-muted-foreground truncate">Selecionado: {docResidencia.name}</p>}
-            </div>
-            <div>
-              <label className="text-sm font-medium" htmlFor="up_selfie">Selfie para validação facial</label>
-              <label htmlFor="up_selfie" className="mt-1 flex cursor-pointer items-center gap-3 rounded-md border border-dashed bg-background/50 p-4 hover:bg-muted/60">
-                <UploadCloud className="h-5 w-5 text-muted-foreground" />
-                <div className="text-sm">
-                  <p className="font-medium">Tirar/Selecionar foto</p>
-                  <p className="text-xs text-muted-foreground">JPG ou PNG, boa iluminação</p>
-                </div>
-              </label>
-              <input id="up_selfie" type="file" accept="image/*" capture="user" onChange={(e)=>setDocSelfie(e.target.files?.[0] ?? null)} className="sr-only" />
-              {docSelfie && <p className="mt-1 text-xs text-muted-foreground truncate">Selecionada: {docSelfie.name}</p>}
-            </div>
-          </div>
-
-          {tab === "investidor" && (
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium">Dados financeiros</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="space-y-1">
-                  <label className="text-sm font-medium">Renda mensal aproximada</label>
-                  <input placeholder="Ex.: R$ 10.000" value={rendaMensal} onChange={(e)=>setRendaMensal(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium">Patrimônio declarado</label>
-                  <input placeholder="Ex.: R$ 1.200.000" value={patrimonio} onChange={(e)=>setPatrimonio(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
-                </div>
-                <div className="space-y-1 md:col-span-2">
-                  <label className="inline-flex items-center gap-2 text-sm"><input type="checkbox" checked={investidorQualificado} onChange={(e)=>setInvestidorQualificado(e.target.checked)} /> Declaro ser investidor qualificado (R$ 1MM+)</label>
-                </div>
-                <div className="space-y-1 md:col-span-2">
-                  <label className="text-sm font-medium">Banco de preferência / Conta para resgates</label>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-                    <input placeholder="Banco" value={banco} onChange={(e)=>setBanco(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
-                    <input placeholder="Agência" value={agencia} onChange={(e)=>setAgencia(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
-                    <input placeholder="Conta" value={conta} onChange={(e)=>setConta(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
-                    <select value={tipoConta} onChange={(e)=>setTipoConta(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30">
-                      <option value="corrente">Corrente</option>
-                      <option value="poupanca">Poupança</option>
-                      <option value="pagamento">Pagamento</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="space-y-1 md:col-span-2">
-                  <label className="text-sm font-medium">Preferências de investimento (opcional)</label>
-                  <div className="flex flex-wrap gap-2 text-sm">
-                    {['Agro','Fintech','Health','Imobiliário','Tecnologia'].map((s)=>{
-                      const active = prefSetores.includes(s)
-                      return (
-                        <button key={s} type="button" onClick={()=>setPrefSetores(active?prefSetores.filter(x=>x!==s):[...prefSetores,s])} className={`px-3 py-1 rounded-md border ${active?'bg-primary text-primary-foreground':'bg-background'}`}>{s}</button>
-                      )
-                    })}
-                  </div>
-                </div>
-                <div className="space-y-1 md:col-span-2">
-                  <label className="text-sm font-medium">Código de convite (opcional)</label>
-                  <input placeholder="Se você recebeu, informe aqui" value={codigoConvite} onChange={(e)=>setCodigoConvite(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {tab === "empresa" && (
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium">Informações adicionais</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="space-y-1 md:col-span-2">
-                  <label className="text-sm font-medium">Setor de atuação</label>
-                  <input placeholder="Ex.: Fintech" value={empSetor} onChange={(e)=>setEmpSetor(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
-                </div>
-                <div className="space-y-1 md:col-span-2">
-                  <label className="text-sm font-medium">Descrição do projeto/captação</label>
-                  <textarea placeholder="Explique brevemente seu negócio e a tese da captação" value={empDescricao} onChange={(e)=>setEmpDescricao(e.target.value)} rows={4} className="w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30 py-2" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium">Valor pretendido para captação</label>
-                  <input placeholder="Ex.: R$ 500.000" value={empValorPretendido} onChange={(e)=>setEmpValorPretendido(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium">Site ou redes sociais (opcional)</label>
-                  <input placeholder="https://exemplo.com" value={empSite} onChange={(e)=>setEmpSite(e.target.value)} className="h-11 w-full rounded-md border bg-background px-3 text-sm outline-none focus:border-foreground/30" />
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
 
         <Button type="submit" className="w-full">Criar conta</Button>
 
