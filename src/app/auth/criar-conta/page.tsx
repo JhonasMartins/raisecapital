@@ -108,23 +108,6 @@ export default function CreateAccountPage() {
   const [invUf, setInvUf] = useState("")
   const [invRazao, setInvRazao] = useState("")
   const [invFantasia, setInvFantasia] = useState("")
-  // KYC uploads
-  const [docIdentidade, setDocIdentidade] = useState<File | null>(null)
-  const [docResidencia, setDocResidencia] = useState<File | null>(null)
-  const [docSelfie, setDocSelfie] = useState<File | null>(null)
-  // Financeiro (Investidor)
-  const [rendaMensal, setRendaMensal] = useState("")
-  const [patrimonio, setPatrimonio] = useState("")
-  const [investidorQualificado, setInvestidorQualificado] = useState(false)
-  const [banco, setBanco] = useState("")
-  const [agencia, setAgencia] = useState("")
-  const [conta, setConta] = useState("")
-  const [tipoConta, setTipoConta] = useState("corrente")
-  // Preferências e indicação
-  const [codigoConvite, setCodigoConvite] = useState("")
-  const [prefSetores, setPrefSetores] = useState<string[]>([])
-  // Removidos: docIdentidade, docResidencia, docSelfie, rendaMensal, patrimonio, investidorQualificado,
-  // banco, agencia, conta, tipoConta, codigoConvite, prefSetores
   // Erros de documento
   const [invCpfError, setInvCpfError] = useState<string | null>(null)
   const [invCnpjError, setInvCnpjError] = useState<string | null>(null)
@@ -149,12 +132,6 @@ export default function CreateAccountPage() {
   const [empBairro, setEmpBairro] = useState("")
   const [empCidade, setEmpCidade] = useState("")
   const [empUf, setEmpUf] = useState("")
-
-  // Compliance
-  const [aceiteTermos, setAceiteTermos] = useState(false)
-  const [aceitePrivacidade, setAceitePrivacidade] = useState(false)
-  const [aceiteRisco, setAceiteRisco] = useState(false)
-  const [optinComunicacoes, setOptinComunicacoes] = useState(true)
 
   async function lookupCep(cepRaw: string, set: {
     setEndereco: (v: string) => void
