@@ -9,7 +9,12 @@ export function getDb() {
     if (!connectionString) {
       throw new Error('DATABASE_URL is not set')
     }
-    _pool = new Pool({ connectionString, max: 5, ssl: { rejectUnauthorized: false } })
+    const useSSL = process.env.DATABASE_SSL !== 'false'
+    _pool = new Pool({
+      connectionString,
+      max: 5,
+      ssl: useSSL ? { rejectUnauthorized: false } : undefined,
+    })
   }
   return _pool
 }
