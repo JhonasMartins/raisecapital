@@ -24,3 +24,58 @@ TERMOS E CONDIÇÕES DE USO DA PLATAFORMA RAISE CAPITAL
 
     DAS DISPOSIÇÕES GERAIS. O presente instrumento tem como objeto estabelecer as normas de utilização da Plataforma com endereço eletrônico https://raisecapital.com.br pelo Usuário e delinear os limites de responsabilidade da RAISE CAPITAL e Usuários ao se cadastrarem e utilizarem o site, os Usuários estarão automática e expressamente vinculados aos termos aqui previstos. Este Termo não deverá ser interpretado de forma que permita o entendimento que a RAISE CAPITAL e o Usuário tenham uma parceria, uma sociedade, ou que as Partes participem em conjunto de um empreendimento. Nada neste Termo deverá ser interpretado de forma que permita o entendimento que a RAISE CAPITAL seja o seu agente, mandatário ou estruturador. O Termo deverá ser regularmente consultado pelos Usuários da Plataforma. As alterações aos Termos de Uso não serão aplicadas retroativamente e entrarão em vigor imediatamente a partir de sua disponibilização no website da RAISE CAPITAL na internet. A presente versão dos Termos de Uso substitui todas as versões anteriormente disponibilizadas pela RAISE CAPITAL sobre o mesmo objeto. Todas as comunicações entre a RAISE CAPITAL e seus Usuários serão consideradas válidas a partir de seu recebimento nos endereços cadastrados pelos Usuários na Plataforma ou de acordo com as informações de contato da RAISE CAPITAL conforme disponibilizadas na Plataforma. As comunicações serão consideradas entregues quando recebidas sob protocolo, com "aviso de recebimento" por e-mail. Os Usuários deverão manter seus dados cadastrais sempre atualizados na Plataforma. Se uma ou mais disposições aqui contidas forem consideradas inválidas, ilegais ou inexequíveis em qualquer aspecto das leis aplicáveis, a validade, legalidade e exequibilidade das demais disposições não serão afetadas ou prejudicadas a qualquer título. A tolerância ou liberalidade da RAISE CAPITAL ou dos Usuários com relação aos direitos, deveres e obrigações determinadas nestes Termos de Uso não importará novação, extinção ou modificação de qualquer dos direitos, deveres e obrigações aqui assumidos. Os presentes Termos de Uso são válidos entre a RAISE CAPITAL e seus Usuários, assim como seus respectivos sucessores a qualquer título. O conteúdo destes Termos de Uso poderá ser atualizado, e modicado, a qualquer tempo e conforme a melhor conveniência da RAISE CAPITAL, com o que o Usuário já manifesta sua plena concordância. Realizada qualquer alteração, ou atualização, em relação ao conteúdo destes Termos de Uso, a RAISE CAPITAL deverá comunicar tal fato ao Usuário, sendo que a não manifestação de contrariedade significará a aceitação quanto ao novo conteúdo dos Termos de Uso. É eleito o foro da Comarca de São Paulo/SP, como único competente para dirimir todo litígio ou controvérsia originária ou decorrente destes Termos de Uso ou da prestação dos serviços pela RAISE CAPITAL. Estes Termos de Uso são regidos, material e processualmente, pelas leis da República Federativa do Brasil. Declaro que estou de acordo com os Termos de Uso da RAISE CAPITAL
 
+
+# Política de Privacidade
+
+[Política de Privacidade](./politica.md) • [Termos de Uso](./termos.md) • [Código de Conduta](./conduta.md) • [Material Didático](./material-didatico.md)
+
+Atualizado em: 09/2025
+
+Esta Política descreve como coletamos, usamos, armazenamos e protegemos dados pessoais em nossa plataforma. Valorizamos sua privacidade e tratamos seus dados conforme os princípios da transparência, necessidade e segurança.
+
+## Sumário
+- [Coleta de dados](#coleta-de-dados)
+- [Bases legais](#bases-legais)
+- [Uso dos dados](#uso-dos-dados)
+- [Compartilhamento](#compartilhamento)
+- [Retenção e segurança](#retenção-e-segurança)
+- [Direitos do titular](#direitos-do-titular)
+- [Cookies](#cookies)
+- [Transferências internacionais](#transferências-internacionais)
+- [Menores de idade](#menores-de-idade)
+- [Alterações desta política](#alterações-desta-política)
+- [Contato](#contato)
+
+## Coleta de dados
+Coletamos: (i) dados de cadastro (nome, e-mail, telefone), (ii) dados de navegação e dispositivo (IP, tipo de navegador, páginas acessadas), (iii) dados decorrentes do uso da plataforma (interações, preferências) e (iv) dados fornecidos voluntariamente em formulários. Podemos usar cookies e tecnologias similares para melhorar a experiência.
+
+## Bases legais
+Tratamos dados com base em: execução de contrato, cumprimento de obrigação legal, exercício regular de direitos, legítimo interesse (sempre com equilíbrio e opção de oposição) e consentimento quando necessário.
+
+## Uso dos dados
+Utilizamos os dados para: operar e aprimorar a plataforma, prestar suporte, personalizar conteúdo, cumprir exigências legais e de segurança, realizar análises estatísticas e comunicar novidades relevantes (com opção de descadastro).
+
+## Compartilhamento
+Podemos compartilhar dados com provedores de tecnologia, parceiros de processamento e autoridades, quando exigido por lei. Exigimos desses terceiros padrões de segurança e confidencialidade compatíveis.
+
+## Retenção e segurança
+Mantemos os dados apenas pelo tempo necessário às finalidades declaradas e conforme exigências legais. Adotamos medidas técnicas e organizacionais de proteção (criptografia em trânsito, controles de acesso e monitoramento). Nenhuma medida é absoluta; em caso de incidente, atuaremos com transparência.
+
+## Direitos do titular
+Você pode solicitar: confirmação de tratamento, acesso, correção, exclusão, portabilidade, informação sobre compartilhamentos e revisão de decisões automatizadas, além de revogar consentimentos. Para exercer, use os canais oficiais indicados abaixo.
+
+## Cookies
+Utilizamos cookies necessários, de desempenho e de funcionalidade. Você pode gerenciar preferências no navegador. O bloqueio de certos cookies pode impactar funcionalidades.
+
+## Transferências internacionais
+Quando houver transferência para outros países, adotaremos salvaguardas adequadas e cláusulas contratuais para garantir nível de proteção compatível.
+
+## Menores de idade
+Nossos serviços não se destinam a menores de 18 anos. Se identificarmos coleta indevida, removeremos os dados de forma diligente.
+
+## Alterações desta política
+Podemos atualizar esta política para refletir melhorias ou requisitos legais. Notificaremos mudanças relevantes e indicaremos a data de atualização.
+
+## Contato
+Para dúvidas ou solicitações relativas à privacidade, utilize os canais oficiais disponibilizados no site. Para informações sobre regras de uso, consulte os [Termos de Uso](./termos.md) e nosso [Código de Conduta](./conduta.md).
+
