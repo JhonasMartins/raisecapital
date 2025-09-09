@@ -16,7 +16,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full max-w-[400px] mx-auto">
+    <div className="w-full max-w-[400px] mx-auto self-center">
       <h1 className="text-2xl font-semibold">Bem-vindo de volta</h1>
       <p className="mt-2 text-sm text-muted-foreground">Acesse sua conta para continuar.</p>
 

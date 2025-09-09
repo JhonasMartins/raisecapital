@@ -34,7 +34,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </aside>
 
       {/* Área do formulário à direita */}
-      <section className="h-full overflow-y-auto flex items-start justify-center px-6 py-10 md:px-12">
+      <section className="h-full overflow-y-auto flex items-center justify-center px-6 py-10 md:px-12">
         <div className="w-full max-w-2xl">
           {children}
         </div>
