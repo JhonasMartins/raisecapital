@@ -104,3 +104,6 @@ Para exercer direitos ou esclarecer dúvidas sobre privacidade e proteção de d
 - Voltar ao topo: [Quem somos](#quem-somos)
 - Visite também: [Termos de Uso](./termos.md) • [Código de Conduta](./conduta.md) • [Material Didático](./material-didatico.md)
 
+---
+Links úteis: [Política de Privacidade](./politica.md) • [Termos de Uso](./termos.md) • [Código de Conduta](./conduta.md) • [Material Didático](./material-didatico.md)
+

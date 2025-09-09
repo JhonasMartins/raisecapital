@@ -37,3 +37,6 @@ Podem incluir advertências, suspensão ou encerramento de contas e comunicaçã
 
 ## Escopo e vigência
 Aplica-se a todos que interajam com a plataforma. Este Código pode ser atualizado; consulte periodicamente. Em caso de conflito, prevalecem os [Termos de Uso](./termos.md).
+
+---
+Links úteis: [Política de Privacidade](./politica.md) • [Termos de Uso](./termos.md) • [Código de Conduta](./conduta.md) • [Material Didático](./material-didatico.md)

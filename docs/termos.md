@@ -56,3 +56,6 @@ Aplica-se a legislação brasileira. Fica eleito o foro de domicílio do usuári
 ## Contato
 Para suporte e comunicações formais, utilize os canais oficiais informados no site. Consulte também a [Política de Privacidade](./politica.md) e o [Código de Conduta](./conduta.md).
 
+---
+Links úteis: [Política de Privacidade](./politica.md) • [Termos de Uso](./termos.md) • [Código de Conduta](./conduta.md) • [Material Didático](./material-didatico.md)
+

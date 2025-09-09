@@ -123,3 +123,6 @@ Para dúvidas técnicas e operacionais, utilize os canais oficiais disponíveis 
 ## Navegação
 - Voltar ao topo: [Introdução](#introdução)
 - Visite também: [Política de Privacidade](./politica.md) • [Termos de Uso](./termos.md) • [Código de Conduta](./conduta.md)
+
+---
+Links úteis: [Política de Privacidade](./politica.md) • [Termos de Uso](./termos.md) • [Código de Conduta](./conduta.md) • [Material Didático](./material-didatico.md)
