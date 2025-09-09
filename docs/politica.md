@@ -31,51 +31,76 @@ TERMOS E CONDIÇÕES DE USO DA PLATAFORMA RAISE CAPITAL
 
 Atualizado em: 09/2025
 
-Esta Política descreve como coletamos, usamos, armazenamos e protegemos dados pessoais em nossa plataforma. Valorizamos sua privacidade e tratamos seus dados conforme os princípios da transparência, necessidade e segurança.
+Este documento explica como coletamos, usamos, compartilhamos e protegemos seus dados pessoais quando você utiliza nossa plataforma e serviços.
 
 ## Sumário
-- [Coleta de dados](#coleta-de-dados)
-- [Bases legais](#bases-legais)
-- [Uso dos dados](#uso-dos-dados)
-- [Compartilhamento](#compartilhamento)
+- [Quem somos](#quem-somos)
+- [Quais dados coletamos](#quais-dados-coletamos)
+- [Como coletamos os dados](#como-coletamos-os-dados)
+- [Base legal para o tratamento](#base-legal-para-o-tratamento)
+- [Como usamos seus dados](#como-usamos-seus-dados)
+- [Compartilhamento de dados](#compartilhamento-de-dados)
 - [Retenção e segurança](#retenção-e-segurança)
-- [Direitos do titular](#direitos-do-titular)
-- [Cookies](#cookies)
+- [Seus direitos como titular](#seus-direitos-como-titular)
+- [Cookies e tecnologias semelhantes](#cookies-e-tecnologias-semelhantes)
 - [Transferências internacionais](#transferências-internacionais)
-- [Menores de idade](#menores-de-idade)
-- [Alterações desta política](#alterações-desta-política)
+- [Tratamento de dados de menores](#tratamento-de-dados-de-menores)
+- [Alterações nesta política](#alterações-nesta-política)
 - [Contato](#contato)
+- [Navegação](#navegação)
 
-## Coleta de dados
-Coletamos: (i) dados de cadastro (nome, e-mail, telefone), (ii) dados de navegação e dispositivo (IP, tipo de navegador, páginas acessadas), (iii) dados decorrentes do uso da plataforma (interações, preferências) e (iv) dados fornecidos voluntariamente em formulários. Podemos usar cookies e tecnologias similares para melhorar a experiência.
+## Quem somos
+Somos a plataforma Raise Capital e fornecemos serviços digitais voltados à captação, análise e acompanhamento de projetos/ofertas, com foco em segurança, transparência e conformidade regulatória.
 
-## Bases legais
-Tratamos dados com base em: execução de contrato, cumprimento de obrigação legal, exercício regular de direitos, legítimo interesse (sempre com equilíbrio e opção de oposição) e consentimento quando necessário.
+## Quais dados coletamos
+- Dados de cadastro: nome, e-mail, telefone, CPF/CNPJ (quando aplicável), organização/empresa e cargo.
+- Dados de uso: logs de acesso, páginas visitadas, data/hora, endereço IP, identificadores de dispositivo e navegador.
+- Dados de projetos/ofertas: informações que você fornece ao cadastrar e gerenciar ofertas, documentos anexos e metadados.
+- Dados de suporte: mensagens e anexos enviados a canais de atendimento.
+- Preferências: notificações, idioma, categorias de interesse.
 
-## Uso dos dados
-Utilizamos os dados para: operar e aprimorar a plataforma, prestar suporte, personalizar conteúdo, cumprir exigências legais e de segurança, realizar análises estatísticas e comunicar novidades relevantes (com opção de descadastro).
+## Como coletamos os dados
+- Diretamente de você, ao preencher formulários e utilizar recursos da plataforma.
+- Automaticamente, por meio de cookies, pixels e registros do sistema para garantir segurança, desempenho e personalização.
+- De terceiros, quando necessário e permitido, como provedores de autenticação, pagamento e verificação de identidade.
 
-## Compartilhamento
-Podemos compartilhar dados com provedores de tecnologia, parceiros de processamento e autoridades, quando exigido por lei. Exigimos desses terceiros padrões de segurança e confidencialidade compatíveis.
+## Base legal para o tratamento
+Tratamos dados com base em: (i) execução de contrato ou procedimentos preliminares, (ii) cumprimento de obrigações legais/regulatórias, (iii) exercício regular de direitos, (iv) legítimo interesse, observado o equilíbrio com seus direitos e expectativas, e (v) consentimento, quando aplicável e solicitado.
+
+## Como usamos seus dados
+- Viabilizar cadastro, autenticação e personalização da experiência.
+- Operar funcionalidades de publicação e gestão de projetos/ofertas.
+- Comunicar atualizações, alertas e informações relevantes.
+- Prevenir fraudes, cumprir obrigações legais e garantir a segurança.
+- Melhorar produtos e serviços por meio de métricas e análises agregadas e anonimizadas, quando possível.
+
+## Compartilhamento de dados
+Podemos compartilhar dados com: (i) prestadores de serviços essenciais à operação (hospedagem, suporte, análise, antifraude), (ii) parceiros e entidades necessárias ao cumprimento de requisitos legais e regulatórios, (iii) autoridades públicas, mediante obrigação legal ou ordem válida, e (iv) terceiros por você autorizados. Exigimos destes destinatários padrões adequados de segurança e privacidade.
 
 ## Retenção e segurança
-Mantemos os dados apenas pelo tempo necessário às finalidades declaradas e conforme exigências legais. Adotamos medidas técnicas e organizacionais de proteção (criptografia em trânsito, controles de acesso e monitoramento). Nenhuma medida é absoluta; em caso de incidente, atuaremos com transparência.
+- Conservamos dados pelo tempo necessário para cumprir as finalidades indicadas e obrigações legais, regulatórias ou contratuais.
+- Adotamos medidas de segurança técnicas e organizacionais, como criptografia em trânsito, controle de acesso e registros de auditoria, buscando reduzir riscos de acesso, uso ou divulgação não autorizados.
+- Em caso de incidente relevante, seguiremos procedimentos de resposta e comunicação conforme a legislação aplicável.
 
-## Direitos do titular
-Você pode solicitar: confirmação de tratamento, acesso, correção, exclusão, portabilidade, informação sobre compartilhamentos e revisão de decisões automatizadas, além de revogar consentimentos. Para exercer, use os canais oficiais indicados abaixo.
+## Seus direitos como titular
+Você pode exercer, nos termos da legislação aplicável, os seguintes direitos: confirmação de tratamento, acesso, correção, anonimização, bloqueio, eliminação, portabilidade, informação sobre compartilhamentos e sobre a possibilidade e consequências da negativa de consentimento, além da revogação do consentimento quando aplicável.
 
-## Cookies
-Utilizamos cookies necessários, de desempenho e de funcionalidade. Você pode gerenciar preferências no navegador. O bloqueio de certos cookies pode impactar funcionalidades.
+## Cookies e tecnologias semelhantes
+Utilizamos cookies estritamente necessários ao funcionamento, bem como cookies de preferência e desempenho para melhorar sua experiência. Você pode gerenciar preferências no navegador e nas configurações da conta, ciente de que a desativação de certos cookies pode impactar funcionalidades.
 
 ## Transferências internacionais
-Quando houver transferência para outros países, adotaremos salvaguardas adequadas e cláusulas contratuais para garantir nível de proteção compatível.
+Quando houver transferência internacional de dados, adotaremos salvaguardas adequadas (ex.: cláusulas contratuais padrão, avaliações de impacto), observando a legislação aplicável e o princípio da necessidade.
 
-## Menores de idade
-Nossos serviços não se destinam a menores de 18 anos. Se identificarmos coleta indevida, removeremos os dados de forma diligente.
+## Tratamento de dados de menores
+Nossos serviços não são direcionados a menores de idade, salvo hipóteses específicas previstas em lei. Quando aplicável, solicitaremos o consentimento dos responsáveis legais e adotaremos controles adicionais.
 
-## Alterações desta política
-Podemos atualizar esta política para refletir melhorias ou requisitos legais. Notificaremos mudanças relevantes e indicaremos a data de atualização.
+## Alterações nesta política
+Esta Política pode ser atualizada a qualquer tempo para refletir mudanças regulatórias, tecnológicas ou de negócios. Indicaremos a data de atualização no topo do documento e, quando mudanças relevantes ocorrerem, poderemos notificar você por e-mail ou pela própria plataforma.
 
 ## Contato
-Para dúvidas ou solicitações relativas à privacidade, utilize os canais oficiais disponibilizados no site. Para informações sobre regras de uso, consulte os [Termos de Uso](./termos.md) e nosso [Código de Conduta](./conduta.md).
+Para exercer direitos ou esclarecer dúvidas sobre privacidade e proteção de dados, utilize os canais oficiais informados no site. Mensagens serão analisadas e respondidas com a maior brevidade possível.
+
+## Navegação
+- Voltar ao topo: [Quem somos](#quem-somos)
+- Visite também: [Termos de Uso](./termos.md) • [Código de Conduta](./conduta.md) • [Material Didático](./material-didatico.md)
 
