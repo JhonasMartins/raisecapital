@@ -109,9 +109,9 @@ export default async function BlogArticlePage({ params }: { params: { slug: stri
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 md:grid-cols-3">
           <article className="prose prose-neutral dark:prose-invert md:col-span-2">
             {article.bodyHtml ? (
-              <div dangerouslySetInnerHTML={{ __html: article.bodyHtml }} />
+              <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: article.bodyHtml }} />
             ) : (
-              article.body.map((p, i) => <p key={i}>{p}</p>)
+              article.body.map((p, i) => <p key={i} className="mb-4 leading-7">{p}</p>)
             )}
             <div className="mt-8">
               <ShareBar title={article.title} />
