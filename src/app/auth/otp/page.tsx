@@ -74,7 +74,7 @@ export default function OtpPage() {
   }
 
   return (
-    <div className="w-full max-w-[400px] mx-auto">
+    <div className="w-full max-w-[400px] mx-auto self-center">
       <h1 className="text-2xl font-semibold">Verificação de código</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Enviamos um código de {OTP_LENGTH} dígitos para seu e-mail. Insira-o abaixo para continuar.

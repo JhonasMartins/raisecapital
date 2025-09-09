@@ -13,7 +13,7 @@ export default function RecoverPasswordPage() {
   }
 
   return (
-    <div className="w-full max-w-[400px] mx-auto">
+    <div className="w-full max-w-[400px] mx-auto self-center">
       <h1 className="text-2xl font-semibold">Recuperar senha</h1>
       <p className="mt-2 text-sm text-muted-foreground">Informe seu e-mail para receber o link de redefinição.</p>
 

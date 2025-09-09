@@ -1,7 +1,14 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const centerPaths = new Set(["/auth/login", "/auth/recuperar-senha", "/auth/otp"]) // telas que devem ficar centralizadas
+  const isCentered = centerPaths.has(pathname)
+
   return (
     <div className="fixed inset-0 grid md:grid-cols-2 overflow-hidden">
       {/* Aside azul à esquerda */}
@@ -34,7 +41,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </aside>
 
       {/* Área do formulário à direita */}
-      <section className="h-full overflow-y-auto flex items-start justify-center px-6 py-10 md:px-12">
+      <section className={`h-full overflow-y-auto flex ${isCentered ? "items-center" : "items-start"} justify-center px-6 py-10 md:px-12`}>
         <div className="w-full max-w-2xl">
           {children}
         </div>
