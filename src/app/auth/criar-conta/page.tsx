@@ -22,7 +22,11 @@ export default function CreateAccountPage() {
   }
   const formatCNPJ = (v: string) => {
     const d = onlyDigits(v).slice(0,14)
-    return d.replace(/(\d{2})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1/$2").replace(/(\d{4})(\d{1,2})$/, "$1-$2")
+    if (d.length <= 2) return d
+    if (d.length <= 5) return d.replace(/^(\d{2})(\d{1,3})$/, "$1.$2")
+    if (d.length <= 8) return d.replace(/^(\d{2})(\d{3})(\d{1,3})$/, "$1.$2.$3")
+    if (d.length <= 12) return d.replace(/^(\d{2})(\d{3})(\d{3})(\d{1,4})$/, "$1.$2.$3/$4")
+    return d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})$/, "$1.$2.$3/$4-$5")
   }
   const formatCEP = (v: string) => {
     const d = onlyDigits(v).slice(0,8)
