@@ -7,6 +7,67 @@ import { UserPlus, FileText, Brain, Layers, CheckCircle2, Shield, Building2 } fr
 
 export const dynamic = 'force-static'
 
+// Ilustrações SVG inline para os segmentos
+// Mantemos stroke como currentColor para herdar a cor via classe
+// e evitar dependências externas de imagem.
+type SegmentKind = 'judicial' | 'energia' | 'agro' | 'realestate' | 'private' | 'credito'
+const SegmentIllustration = ({ kind }: { kind: SegmentKind }) => {
+  const common = { stroke: 'currentColor', strokeWidth: 2, fill: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' } as const
+  switch (kind) {
+    case 'judicial':
+      return (
+        <svg viewBox="0 0 100 100" className="h-12 w-12 text-slate-700/80">
+          <line x1="20" y1="35" x2="80" y2="35" {...common} />
+          <line x1="50" y1="35" x2="50" y2="70" {...common} />
+          <line x1="35" y1="70" x2="65" y2="70" {...common} />
+          <path d="M30 35 L20 55 L40 55 Z" {...common} />
+          <path d="M70 35 L60 55 L80 55 Z" {...common} />
+        </svg>
+      )
+    case 'energia':
+      return (
+        <svg viewBox="0 0 100 100" className="h-12 w-12 text-amber-700/80">
+          <path d="M45 18 L68 18 L55 40 L78 40 L34 84 L45 52 L22 52 Z" {...common} />
+        </svg>
+      )
+    case 'agro':
+      return (
+        <svg viewBox="0 0 100 100" className="h-12 w-12 text-green-700/80">
+          <path d="M50 20 C70 30 82 50 50 80 C18 50 30 30 50 20 Z" {...common} />
+          <path d="M50 30 L50 72" {...common} />
+          <path d="M50 50 C60 48 68 44 74 38" {...common} />
+        </svg>
+      )
+    case 'realestate':
+      return (
+        <svg viewBox="0 0 100 100" className="h-12 w-12 text-sky-700/80">
+          <rect x="20" y="40" width="22" height="30" {...common} />
+          <rect x="46" y="30" width="22" height="40" {...common} />
+          <rect x="72" y="48" width="8" height="22" {...common} />
+          <line x1="20" y1="70" x2="80" y2="70" {...common} />
+        </svg>
+      )
+    case 'private':
+      return (
+        <svg viewBox="0 0 100 100" className="h-12 w-12 text-violet-700/80">
+          <rect x="22" y="56" width="10" height="18" {...common} />
+          <rect x="38" y="48" width="10" height="26" {...common} />
+          <rect x="54" y="36" width="10" height="38" {...common} />
+          <rect x="70" y="28" width="10" height="46" {...common} />
+          <path d="M22 74 L70 30 L82 28" {...common} />
+        </svg>
+      )
+    case 'credito':
+      return (
+        <svg viewBox="0 0 100 100" className="h-12 w-12 text-blue-700/80">
+          <rect x="16" y="30" width="68" height="40" rx="6" {...common} />
+          <line x1="16" y1="42" x2="84" y2="42" {...common} />
+          <rect x="24" y="50" width="16" height="8" {...common} />
+        </svg>
+      )
+  }
+}
+
 export default function CapteRecursosPage() {
   return (
     <div className="min-h-dvh font-sans pt-28">
@@ -151,26 +212,44 @@ export default function CapteRecursosPage() {
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[{
                 title: 'Ativos Judiciais',
-                desc: 'Aquisição e estruturação de recebíveis judiciais em diferentes esferas e perfis de risco.'
+                desc: 'Aquisição e estruturação de recebíveis judiciais em diferentes esferas e perfis de risco.',
+                kind: 'judicial',
+                grad: 'from-indigo-100 to-indigo-200'
               }, {
                 title: 'Energia',
-                desc: 'Geração e ativos com fluxo previsível, proteção contra inflação e potencial de valorização.'
+                desc: 'Geração e ativos com fluxo previsível, proteção contra inflação e potencial de valorização.',
+                kind: 'energia',
+                grad: 'from-amber-100 to-yellow-200'
               }, {
                 title: 'Agronegócio',
-                desc: 'Cadeia com demanda constante e várias modalidades de financiamento e securitização.'
+                desc: 'Cadeia com demanda constante e várias modalidades de financiamento e securitização.',
+                kind: 'agro',
+                grad: 'from-green-100 to-lime-200'
               }, {
                 title: 'Real Estate',
-                desc: 'Operações com lastro imobiliário em diferentes estratégias e estruturas.'
+                desc: 'Operações com lastro imobiliário em diferentes estratégias e estruturas.',
+                kind: 'realestate',
+                grad: 'from-sky-100 to-cyan-200'
               }, {
                 title: 'Private Equity',
-                desc: 'Capital para consolidação, crescimento e aquisições em empresas operacionais.'
+                desc: 'Capital para consolidação, crescimento e aquisições em empresas operacionais.',
+                kind: 'private',
+                grad: 'from-fuchsia-100 to-purple-200'
               }, {
                 title: 'Crédito Empresarial',
-                desc: 'Estruturas de dívida sob medida para expansão de empresas e projetos.'
-              }].map(({ title, desc }) => (
-                <Card key={title} className="h-full">
-                  <CardHeader className="pb-2"><CardTitle className="text-base">{title}</CardTitle></CardHeader>
-                  <CardContent className="text-sm text-muted-foreground pt-0">{desc}</CardContent>
+                desc: 'Estruturas de dívida sob medida para expansão de empresas e projetos.',
+                kind: 'credito',
+                grad: 'from-blue-100 to-sky-200'
+              }].map(({ title, desc, kind, grad }) => (
+                <Card key={title} className="h-full overflow-hidden p-0">
+                  <div className={`relative w-full aspect-[16/9] bg-gradient-to-br ${grad} flex items-center justify-center`}>
+                    <SegmentIllustration kind={kind as SegmentKind} />
+                    <div className="pointer-events-none absolute inset-0 opacity-30 [background:radial-gradient(400px_240px_at_80%_0%,white,transparent_60%)]" />
+                  </div>
+                  <CardHeader className="pb-2 px-6 pt-4">
+                    <CardTitle className="text-base">{title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground pt-0 px-6 pb-6">{desc}</CardContent>
                 </Card>
               ))}
             </div>
