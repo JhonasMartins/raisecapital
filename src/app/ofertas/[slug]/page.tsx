@@ -11,25 +11,86 @@ import { slugify } from '@/lib/utils'
 const offers = [
   {
     name: 'Fintech XYZ',
+    subtitle: 'Plataforma de pagamentos B2B com foco em PMEs',
     category: 'Fintech',
     modality: 'Equity',
+    product: 'Ações Preferenciais',
     min: 1000,
     raised: 350000,
     goal: 500000,
     deadline: '25 dias',
+    payment: 'Lucros/Exit (Equity)',
+    tir: 28, // rentabilidade alvo em % a.a. (exemplo)
     cover: '/offers/fintech.svg',
     status: 'Em captação',
+    summaryPdf: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    aboutOperation:
+      'Rodada para expansão comercial e melhorias no core bancário. Alocação de recursos em marketing, time e tecnologia.',
+    aboutCompany:
+      'A Fintech XYZ é uma empresa focada em soluções de pagamentos para PMEs, com operação desde 2020 e crescimento de 120% a/a.',
+    entrepreneurs: [
+      { name: 'Ana Souza', role: 'CEO' },
+      { name: 'Carlos Lima', role: 'CTO' },
+    ],
+    financials: [
+      { label: 'Receita (12m)', value: 'R$ 2,4 mi' },
+      { label: 'EBITDA (12m)', value: 'R$ 350 mil' },
+      { label: 'Crescimento (a/a)', value: '120%' },
+    ],
+    documents: [
+      { label: 'Pitch Deck (PDF)', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+      { label: 'Contrato da Oferta (PDF)', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+    ],
+    essentialInfo: [
+      { label: 'Setor', value: 'Serviços Financeiros' },
+      { label: 'Sede', value: 'São Paulo - SP' },
+      { label: 'Estágio', value: 'Série A' },
+    ],
+    investors: [
+      { name: 'João P.' },
+      { name: 'Marina S.' },
+      { name: 'R. Andrade' },
+    ],
   },
   {
     name: 'Agrotech Verde',
+    subtitle: 'Tecnologia para aumento de produtividade sustentável',
     category: 'Agrotech',
     modality: 'Dívida',
+    product: 'Cédula de Crédito',
     min: 500,
     raised: 120000,
     goal: 300000,
     deadline: '18 dias',
+    payment: 'Juros mensais + amortização',
+    tir: 20,
     cover: '/offers/agrotech.svg',
     status: 'Em captação',
+    summaryPdf: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    aboutOperation:
+      'Captação para financiar linhas de crédito a produtores parceiros com lastro em recebíveis sazonais.',
+    aboutCompany:
+      'A Agrotech Verde fornece soluções de IoT e crédito para o agronegócio, com presença em 7 estados.',
+    entrepreneurs: [
+      { name: 'Paula M.', role: 'Founder & COO' },
+      { name: 'Eduardo N.', role: 'CFO' },
+    ],
+    financials: [
+      { label: 'Carteira de crédito', value: 'R$ 5,1 mi' },
+      { label: 'NPL 90+', value: '1,2%' },
+      { label: 'Yield bruto', value: '26% a.a.' },
+    ],
+    documents: [
+      { label: 'Termo de Emissão', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+    ],
+    essentialInfo: [
+      { label: 'Rating interno', value: 'BBB-' },
+      { label: 'Garantias', value: 'Cessão de recebíveis' },
+    ],
+    investors: [
+      { name: 'Investidor A' },
+      { name: 'Investidor B' },
+    ],
   },
   {
     name: 'HealthTech Vida',
@@ -120,6 +181,9 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
             <span>{offer.name}</span>
           </nav>
           <h1 className="mt-2 text-3xl font-semibold">{offer.name}</h1>
+          {offer.subtitle && (
+            <p className="mt-1 text-muted-foreground">{offer.subtitle}</p>
+          )}
           <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
             <Badge variant="secondary">{offer.category}</Badge>
             <span>•</span>
@@ -146,19 +210,99 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
               </div>
             </Card>
 
+            {/* Sobre a operação */}
             <Card>
               <CardHeader>
-                <CardTitle>Sobre a oferta</CardTitle>
+                <CardTitle>Sobre a operação</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 text-sm text-muted-foreground">
-                <p>
-                  {offer.name} é uma oportunidade no segmento {offer.category} na modalidade {offer.modality}. Esta é uma
-                  página de demonstração de detalhes; personalize com informações do pitch, mercado, time e documentação.
-                </p>
-                <p>
-                  Você pode incluir seções como: tese de investimento, métricas, documentos (PDF), perguntas e respostas,
-                  time da empresa, e cronograma de captação.
-                </p>
+              <CardContent className="space-y-3 text-sm text-muted-foreground">
+                <p>{offer.aboutOperation}</p>
+              </CardContent>
+            </Card>
+
+            {/* Sobre a empresa */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Sobre a empresa</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm text-muted-foreground">
+                <p>{offer.aboutCompany}</p>
+              </CardContent>
+            </Card>
+
+            {/* Empreendedor / Time */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Empreendedor(es)</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-3 sm:grid-cols-2">
+                {offer.entrepreneurs?.map((p) => (
+                  <div key={p.name} className="rounded-md border p-3">
+                    <div className="font-medium">{p.name}</div>
+                    {p.role && (
+                      <div className="text-xs text-muted-foreground mt-0.5">{p.role}</div>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Financials */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Financials</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-3 sm:grid-cols-3">
+                {offer.financials?.map((f) => (
+                  <div key={f.label} className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">{f.label}</div>
+                    <div className="mt-1 font-medium">{f.value}</div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Documentos */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Documentos</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-3">
+                {offer.documents?.map((d) => (
+                  <a key={d.label} href={d.url} target="_blank" rel="noreferrer" className="group flex items-center justify-between rounded-md border p-3 hover:bg-accent transition">
+                    <span className="text-sm">{d.label}</span>
+                    <span className="text-xs text-primary group-hover:underline">Baixar</span>
+                  </a>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Informações essenciais */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Informações essenciais</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-3 sm:grid-cols-2">
+                {offer.essentialInfo?.map((i) => (
+                  <div key={i.label} className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">{i.label}</div>
+                    <div className="mt-1 font-medium">{i.value}</div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Investidores */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Investidores</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-2">
+                {offer.investors?.map((inv) => (
+                  <div key={inv.name} className="flex items-center justify-between rounded-md border p-3 text-sm">
+                    <span>{inv.name}</span>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           </div>
@@ -184,16 +328,47 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="grid gap-3 text-sm">
                   <div className="rounded-md border p-3">
-                    <div className="text-xs text-muted-foreground">Ticket mínimo</div>
+                    <div className="text-xs text-muted-foreground">Rentabilidade alvo (TIR)</div>
+                    <div className="mt-1 font-medium">{offer.tir}% a.a.</div>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Valor captado</div>
+                    <div className="mt-1 font-medium">R$ {offer.raised.toLocaleString('pt-BR')}</div>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Investimento mínimo</div>
                     <div className="mt-1 font-medium">R$ {offer.min.toLocaleString('pt-BR')}</div>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Pagamento</div>
+                    <div className="mt-1 font-medium">{offer.payment}</div>
                   </div>
                   <div className="rounded-md border p-3">
                     <div className="text-xs text-muted-foreground">Prazo</div>
                     <div className="mt-1 font-medium">{offer.deadline}</div>
                   </div>
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Modalidade</div>
+                    <div className="mt-1 font-medium">{offer.modality}</div>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Produto</div>
+                    <div className="mt-1 font-medium">{offer.product}</div>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Status</div>
+                    <div className="mt-1 font-medium">{offer.status}</div>
+                  </div>
                 </div>
+
+                {/* Apresentação resumo (PDF) */}
+                {offer.summaryPdf && (
+                  <Button size="lg" asChild className="w-full">
+                    <a href={offer.summaryPdf} target="_blank" rel="noreferrer">Baixar apresentação (PDF)</a>
+                  </Button>
+                )}
 
                 <Button size="lg" className="w-full">Investir agora</Button>
                 <Button asChild variant="ghost" className="w-full">
