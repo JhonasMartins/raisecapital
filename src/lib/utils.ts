@@ -13,3 +13,8 @@ export function slugify(input: string) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
 }
+
+// Extrai apenas os dígitos de uma string
+export function onlyDigits(input: string) {
+  return (input || '').replace(/\D/g, '')
+}
