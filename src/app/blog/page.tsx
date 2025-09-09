@@ -33,7 +33,7 @@ export default function BlogPage() {
         </div>
       </header>
 
-      <main className="py-10">
+      <main className="py-10 bg-[#fcfcfc]">
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((a) => (

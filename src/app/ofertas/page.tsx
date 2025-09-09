@@ -132,7 +132,7 @@ export default function OfertasPage() {
         </div>
       </header>
 
-      <main className="py-10">
+      <main className="py-10 bg-[#fcfcfc]">
         <div className="mx-auto max-w-6xl px-6">
           {/* Filtros */}
           <Card className="border bg-background/60 backdrop-blur">
