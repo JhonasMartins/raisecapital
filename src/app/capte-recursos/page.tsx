@@ -11,6 +11,14 @@ export const dynamic = 'force-static'
 // Mantemos stroke como currentColor para herdar a cor via classe
 // e evitar dependências externas de imagem.
 type SegmentKind = 'judicial' | 'energia' | 'agro' | 'realestate' | 'private' | 'credito'
+const SEGMENT_IMAGE_BY_KIND: Record<SegmentKind, string> = {
+  judicial: 'judicial.jpg',
+  energia: 'energia.jpg',
+  agro: 'agro.jpg',
+  realestate: 'realstate.jpg',
+  private: 'private.jpg',
+  credito: 'credito.jpg',
+}
 const SegmentIllustration = ({ kind }: { kind: SegmentKind }) => {
   const common = { stroke: 'currentColor', strokeWidth: 2, fill: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' } as const
   switch (kind) {
@@ -243,15 +251,21 @@ export default function CapteRecursosPage() {
               }].map(({ title, desc, kind, grad }) => (
                 <Card key={title} className="h-full overflow-hidden p-0">
                   <div className={`relative w-full aspect-[16/9] bg-gradient-to-br ${grad} flex items-center justify-center`}>
-                    <SegmentIllustration kind={kind as SegmentKind} />
-                    <div className="pointer-events-none absolute inset-0 opacity-30 [background:radial-gradient(400px_240px_at_80%_0%,white,transparent_60%)]" />
-                  </div>
-                  <CardHeader className="pb-2 px-6 pt-4">
-                    <CardTitle className="text-base">{title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-sm text-muted-foreground pt-0 px-6 pb-6">{desc}</CardContent>
-                </Card>
-              ))}
+                    <div
+                      className="absolute inset-0 bg-center bg-cover"
+                      style={{
+                        backgroundImage: `url(/segmentos/${SEGMENT_IMAGE_BY_KIND[kind as SegmentKind]}), url(/segmentos/${kind}.webp), url(/segmentos/${kind}.svg), url(/segmentos/${kind}.png)`,
+                      }}
+                    />
+                     <SegmentIllustration kind={kind as SegmentKind} />
+                     <div className="pointer-events-none absolute inset-0 opacity-30 [background:radial-gradient(400px_240px_at_80%_0%,white,transparent_60%)]" />
+                   </div>
+                   <CardHeader className="pb-2 px-6 pt-4">
+                     <CardTitle className="text-base">{title}</CardTitle>
+                   </CardHeader>
+                   <CardContent className="text-sm text-muted-foreground pt-0 px-6 pb-6">{desc}</CardContent>
+                 </Card>
+               ))}
             </div>
 
             <div className="mt-10 flex justify-center">
