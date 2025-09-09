@@ -43,9 +43,11 @@ export default function RootLayout({
 
               {/* Menu central */}
               <nav className="hidden sm:flex items-center justify-center gap-6 text-sm text-muted-foreground">
-                <Link href="/#como-funciona" className="hover:text-foreground transition-colors">Como funciona</Link>
-                <Link href="/#projetos" className="hover:text-foreground transition-colors">Projetos</Link>
-                <Link href="/#sobre" className="hover:text-foreground transition-colors">Sobre</Link>
+                <Link href="/" className="hover:text-foreground transition-colors">Início</Link>
+                <Link href="/ofertas" className="hover:text-foreground transition-colors">Investimentos</Link>
+                <Link href="/capte-recursos" className="hover:text-foreground transition-colors">Captar</Link>
+                <Link href="/#investidores" className="hover:text-foreground transition-colors">Como funcionar</Link>
+                <Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link>
               </nav>
 
               {/* Ações à direita */}

@@ -10,7 +10,7 @@ export default function BlogPage() {
   const items = listArticles()
   return (
     <div className="min-h-dvh font-sans pt-28">
-      {/* Navbar local (mesmo padrão de ofertas) */}
+      {/* navbar local removido — usamos o global do layout */}
       <header className="fixed top-0 inset-x-0 z-50 border-b bg-background/80 backdrop-blur-md">
         <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
