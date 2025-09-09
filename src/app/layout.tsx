@@ -33,15 +33,15 @@ export default function RootLayout({
         {/* Navbar (oculta em /auth via FooterGate) */}
         <FooterGate>
           <header className="sticky top-0 inset-x-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="mx-auto max-w-6xl px-6 h-16 grid grid-cols-[1fr_auto_1fr] items-center">
+            <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between sm:grid sm:grid-cols-[1fr_auto_1fr] sm:justify-normal">
               {/* Logo à esquerda */}
-              <div className="flex items-center justify-start">
+              <div className="flex items-center justify-start shrink-0">
                 <Link href="/" className="flex items-center" aria-label="Ir para a página inicial">
-                  <Image src="/logo.avif" alt="Raise Capital" width={180} height={44} sizes="180px" quality={100} className="block" priority />
+                  <Image src="/logo.avif" alt="Raise Capital" width={180} height={44} sizes="(max-width: 640px) 112px, 180px" className="block h-8 w-auto sm:h-10" priority />
                 </Link>
               </div>
 
-              {/* Menu central */}
+              {/* Menu central - desktop */}
               <nav className="hidden sm:flex items-center justify-center gap-6 text-sm text-muted-foreground">
                 <Link href="/" className="hover:text-foreground transition-colors">Início</Link>
                 <Link href="/ofertas" className="hover:text-foreground transition-colors">Investimentos</Link>
@@ -52,11 +52,42 @@ export default function RootLayout({
 
               {/* Ações à direita */}
               <div className="flex items-center justify-end gap-3">
-                <Link href="/auth/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Entrar</Link>
-                <Button asChild>
-                  <Link href="/auth/criar-conta">Criar Conta</Link>
-                </Button>
+                {/* Menu mobile (apenas no mobile) */}
+                <div className="sm:hidden">
+                  <details className="group relative z-[60]">
+                    <summary className="list-none inline-flex items-center justify-center rounded-md p-2 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50" aria-label="Abrir menu">
+                      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                      </svg>
+                    </summary>
+                    <div className="absolute right-0 top-full mt-2 w-[78vw] max-w-xs rounded-md border bg-popover text-popover-foreground shadow-md outline-none">
+                      <nav className="flex flex-col p-2 text-sm">
+                        <Link href="/" className="rounded px-3 py-2 hover:bg-accent hover:text-accent-foreground">Início</Link>
+                        <Link href="/ofertas" className="rounded px-3 py-2 hover:bg-accent hover:text-accent-foreground">Investimentos</Link>
+                        <Link href="/capte-recursos" className="rounded px-3 py-2 hover:bg-accent hover:text-accent-foreground">Captar</Link>
+                        <Link href="/#investidores" className="rounded px-3 py-2 hover:bg-accent hover:text-accent-foreground">Como funcionar</Link>
+                        <Link href="/blog" className="rounded px-3 py-2 hover:bg-accent hover:text-accent-foreground">Blog</Link>
+                        <div className="my-2 h-px bg-border" />
+                        <Link href="/auth/login" className="rounded px-3 py-2 hover:bg-accent hover:text-accent-foreground">Entrar</Link>
+                        <Button asChild className="mt-1">
+                          <Link href="/auth/criar-conta">Criar Conta</Link>
+                        </Button>
+                      </nav>
+                    </div>
+                  </details>
+                </div>
+
+                {/* Ações desktop (somente em sm+) */}
+                <div className="hidden sm:flex items-center gap-3">
+                  <Link href="/auth/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Entrar</Link>
+                  <Button asChild>
+                    <Link href="/auth/criar-conta">Criar Conta</Link>
+                  </Button>
+                </div>
               </div>
+
             </div>
           </header>
         </FooterGate>

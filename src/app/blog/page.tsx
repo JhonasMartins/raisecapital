@@ -11,20 +11,6 @@ export default function BlogPage() {
   return (
     <div className="min-h-dvh font-sans pt-28">
       {/* navbar local removido — usamos o global do layout */}
-      <header className="fixed top-0 inset-x-0 z-50 border-b bg-background/80 backdrop-blur-md">
-        <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center">
-              <Image src="/logo.avif" alt="Raise Capital" width={180} height={44} sizes="180px" quality={100} className="block" priority />
-            </Link>
-          </div>
-          <nav className="hidden sm:flex items-center gap-6 text-sm text-muted-foreground">
-            <Link href="/#como-funciona" className="hover:text-foreground transition-colors">Como funciona</Link>
-            <Link href="/#projetos" className="hover:text-foreground transition-colors">Projetos</Link>
-            <Link href="/#sobre" className="hover:text-foreground transition-colors">Sobre</Link>
-          </nav>
-        </div>
-      </header>
 
       <header className="border-b">
         <div className="mx-auto max-w-6xl px-6 py-10">
