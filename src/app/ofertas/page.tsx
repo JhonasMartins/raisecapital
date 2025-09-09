@@ -107,21 +107,7 @@ export default function OfertasPage() {
 
   return (
     <div className="min-h-dvh font-sans pt-28">
-      {/* Navbar */}
-      <header className="fixed top-0 inset-x-0 z-50 border-b bg-background/80 backdrop-blur-md">
-        <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center">
-              <Image src="/logo.avif" alt="Raise Capital" width={180} height={44} sizes="180px" quality={100} className="block" priority />
-            </Link>
-          </div>
-          <nav className="hidden sm:flex items-center gap-6 text-sm text-muted-foreground">
-            <Link href="/#como-funciona" className="hover:text-foreground transition-colors">Como funciona</Link>
-            <Link href="/#projetos" className="hover:text-foreground transition-colors">Projetos</Link>
-            <Link href="/#sobre" className="hover:text-foreground transition-colors">Sobre</Link>
-          </nav>
-        </div>
-      </header>
+      {/* navbar local removido — usamos o global no layout */}
 
       <header className="border-b">
         <div className="mx-auto max-w-6xl px-6 py-10">
@@ -158,9 +144,8 @@ export default function OfertasPage() {
                   <div className="relative">
                     <select
                       value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value as typeof categories[number])}
+                      onChange={(e) => setSelectedCategory(e.target.value as (typeof categories)[number])}
                       className="h-9 w-full rounded-md border bg-background pl-3 pr-8 text-sm"
-                      aria-label="Filtrar por categoria"
                     >
                       {categories.map((c) => (
                         <option key={c} value={c}>{c}</option>
@@ -176,9 +161,8 @@ export default function OfertasPage() {
                   <div className="relative">
                     <select
                       value={selectedModality}
-                      onChange={(e) => setSelectedModality(e.target.value as typeof modalities[number])}
+                      onChange={(e) => setSelectedModality(e.target.value as (typeof modalities)[number])}
                       className="h-9 w-full rounded-md border bg-background pl-3 pr-8 text-sm"
-                      aria-label="Filtrar por modalidade"
                     >
                       {modalities.map((m) => (
                         <option key={m} value={m}>{m}</option>
@@ -188,22 +172,18 @@ export default function OfertasPage() {
                   </div>
                 </div>
 
-                {(!isDefaultFilters || query.trim() !== '') && (
-                  <div className="pt-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => { setSelectedCategory('Todos'); setSelectedModality('Todas'); setQuery('') }}
-                      className="w-full justify-center gap-1 text-muted-foreground hover:text-foreground"
-                    >
-                      <XCircle className="size-4" /> Limpar filtros
-                    </Button>
-                  </div>
+                {/* Limpar filtros */}
+                {!isDefaultFilters && (
+                  <button
+                    onClick={() => { setSelectedCategory('Todos'); setSelectedModality('Todas'); setQuery('') }}
+                    className="inline-flex items-center gap-2 self-start rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
+                  >
+                    <XCircle className="size-4" /> Limpar filtros
+                  </button>
                 )}
               </div>
 
-              {/* Desktop: barra profissional com busca + dropdowns */}
+              {/* Desktop: busca + selects alinhados */}
               <div className="hidden sm:grid sm:grid-cols-[1fr_auto_auto_auto] sm:items-center gap-4">
                 {/* Busca */}
                 <div className="relative">
@@ -213,20 +193,19 @@ export default function OfertasPage() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Buscar por nome da oferta"
-                    className="h-9 w-full min-w-[320px] rounded-md border bg-background pl-9 pr-3 text-sm"
+                    className="h-9 w-full rounded-md border bg-background pl-9 pr-3 text-sm"
                     aria-label="Buscar ofertas"
                   />
                 </div>
 
                 {/* Categoria */}
                 <div className="grid gap-1">
-                  <span className="text-xs text-muted-foreground">Categoria</span>
+                  <label className="text-xs text-muted-foreground">Categoria</label>
                   <div className="relative">
                     <select
                       value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value as typeof categories[number])}
-                      className="h-9 w-[200px] rounded-md border bg-background pl-3 pr-8 text-sm"
-                      aria-label="Filtrar por categoria"
+                      onChange={(e) => setSelectedCategory(e.target.value as (typeof categories)[number])}
+                      className="h-9 w-44 rounded-md border bg-background pl-3 pr-8 text-sm"
                     >
                       {categories.map((c) => (
                         <option key={c} value={c}>{c}</option>
@@ -238,13 +217,12 @@ export default function OfertasPage() {
 
                 {/* Modalidade */}
                 <div className="grid gap-1">
-                  <span className="text-xs text-muted-foreground">Modalidade</span>
+                  <label className="text-xs text-muted-foreground">Modalidade</label>
                   <div className="relative">
                     <select
                       value={selectedModality}
-                      onChange={(e) => setSelectedModality(e.target.value as typeof modalities[number])}
-                      className="h-9 w-[200px] rounded-md border bg-background pl-3 pr-8 text-sm"
-                      aria-label="Filtrar por modalidade"
+                      onChange={(e) => setSelectedModality(e.target.value as (typeof modalities)[number])}
+                      className="h-9 w-44 rounded-md border bg-background pl-3 pr-8 text-sm"
                     >
                       {modalities.map((m) => (
                         <option key={m} value={m}>{m}</option>
@@ -254,86 +232,53 @@ export default function OfertasPage() {
                   </div>
                 </div>
 
-                {(!isDefaultFilters || query.trim() !== '') && (
-                  <div className="sm:ml-auto">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => { setSelectedCategory('Todos'); setSelectedModality('Todas'); setQuery('') }}
-                      className="gap-1 text-muted-foreground hover:text-foreground"
-                    >
-                      <XCircle className="size-4" /> Limpar
-                    </Button>
-                  </div>
+                {/* Reset */}
+                {!isDefaultFilters && (
+                  <button
+                    onClick={() => { setSelectedCategory('Todos'); setSelectedModality('Todas'); setQuery('') }}
+                    className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
+                  >
+                    <XCircle className="size-4" /> Limpar filtros
+                  </button>
                 )}
               </div>
             </CardContent>
           </Card>
 
-          {/* Grid de ofertas */}
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredOffers.map((o) => {
-              const pct = Math.min(100, Math.round((o.raised / o.goal) * 100))
-              return (
-                <Card key={o.name} className="flex flex-col overflow-hidden p-0 gap-0">
-                  <div className="relative h-40 w-full">
-                    <Image
-                      src={o.cover}
-                      alt={`Capa da oferta ${o.name}`}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover"
-                      priority={false}
-                    />
+          {/* Cards */}
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredOffers.map((o) => (
+              <Card key={o.name} className="overflow-hidden">
+                <div className="relative h-36 w-full">
+                  <Image src={o.cover} alt="" fill className="object-cover" />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base font-semibold">{o.name}</CardTitle>
+                    <Badge variant="secondary">{o.modality}</Badge>
                   </div>
-
-                  <CardHeader className="space-y-2 px-6 pt-4 pb-2">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-base font-semibold">{o.name}</CardTitle>
-                      <Badge variant="secondary">{o.category}</Badge>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <span>{o.modality}</span>
-                      <span>•</span>
-                      <span>Ticket mín. R$ {o.min.toLocaleString('pt-BR')}</span>
-                      <span className="ml-auto font-medium text-foreground/80">{o.status}</span>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="space-y-4 px-6 pt-2 pb-6">
-                    <div>
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>Progresso</span>
-                        <span>{pct}%</span>
-                      </div>
-                      <div className="mt-2 h-2 w-full rounded-full bg-secondary">
-                        <div className="h-2 rounded-full bg-primary" style={{ width: `${pct}%` }} />
-                      </div>
-                      <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-                        <span>R$ {o.raised.toLocaleString('pt-BR')}</span>
-                        <span>Meta R$ {o.goal.toLocaleString('pt-BR')}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>Prazo: {o.deadline}</span>
-                      <Button asChild size="sm">
-                        <Link href={`/ofertas/${slugify(o.name)}`}>Ver oferta</Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              )
-            })}
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm text-muted-foreground">
+                  <div className="flex items-center justify-between">
+                    <span>Meta</span>
+                    <span className="text-foreground font-medium">R$ {o.goal.toLocaleString('pt-BR')}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Arrecadado</span>
+                    <span className="text-foreground font-medium">R$ {o.raised.toLocaleString('pt-BR')}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Investimento mínimo</span>
+                    <span className="text-foreground font-medium">R$ {o.min.toLocaleString('pt-BR')}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Status</span>
+                    <span className="text-foreground font-medium">{o.status}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-
-          {/* Estado vazio */}
-          {filteredOffers.length === 0 && (
-            <div className="mt-16 text-center text-sm text-muted-foreground">
-              Nenhuma oferta encontrada com os filtros selecionados.
-            </div>
-          )}
         </div>
       </main>
     </div>
