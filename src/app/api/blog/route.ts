@@ -2,6 +2,41 @@ import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/db'
 import { slugify } from '@/lib/utils'
 
+export const dynamic = 'force-dynamic'
+
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const limitParam = searchParams.get('limit')
+    const parsed = Number.parseInt(limitParam || '10', 10)
+    const limit = Number.isFinite(parsed) ? Math.min(Math.max(parsed, 1), 50) : 10
+
+    const db = getDb()
+    const { rows } = await db.query(
+      `SELECT titulo, slug, resumo, capa, data_publicacao FROM blog
+       ORDER BY data_publicacao DESC, created_at DESC
+       LIMIT $1`,
+      [limit]
+    )
+
+    const items = rows.map((r: any) => ({
+      title: r.titulo as string,
+      slug: r.slug as string,
+      excerpt: r.resumo as string,
+      cover: (r.capa ?? '/file.svg') as string,
+      date:
+        typeof r.data_publicacao === 'string'
+          ? r.data_publicacao
+          : r.data_publicacao?.toISOString?.().slice(0, 10) ?? '',
+    }))
+
+    return NextResponse.json({ items })
+  } catch (e: any) {
+    console.error('GET /api/blog error', e)
+    return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json()
