@@ -30,6 +30,7 @@ export default function BlogNewArticlePage() {
     immediatelyRender: false,
   })
 
+  // Depend only on editor.state to avoid missing dependency warning
   const paragraphs = useMemo(() => {
     const text = editor?.getText() ?? ''
     return text
@@ -37,6 +38,8 @@ export default function BlogNewArticlePage() {
       .map((p) => p.trim())
       .filter((p) => p.length > 0)
   }, [editor?.state])
+
+  type UploadResponse = { url: string }
 
   async function handleCoverChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -48,13 +51,14 @@ export default function BlogNewArticlePage() {
       fd.append('file', file)
       const res = await fetch('/api/upload', { method: 'POST', body: fd })
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
+        const err = (await res.json().catch(() => ({}))) as { error?: string }
         throw new Error(err?.error || 'Falha no upload da imagem')
       }
-      const data = await res.json()
+      const data = (await res.json()) as UploadResponse
       setCover(data.url)
-    } catch (err: any) {
-      setCoverError(err?.message || 'Falha no upload da imagem')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Falha no upload da imagem'
+      setCoverError(message)
     } finally {
       setUploadingCover(false)
     }
@@ -95,10 +99,10 @@ export default function BlogNewArticlePage() {
       })
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
+        const err = (await res.json().catch(() => ({}))) as { error?: string }
         throw new Error(err?.error || 'Falha ao criar artigo')
       }
-      const data = await res.json()
+      const data = (await res.json()) as { slug: string }
       setResultMsg(`Artigo criado com sucesso! Slug: ${data.slug}`)
       // limpeza básica, mantendo data/autor se desejar
       setTitle('')
@@ -106,8 +110,9 @@ export default function BlogNewArticlePage() {
       setCover('')
       setCategories('')
       editor?.commands.clearContent(true)
-    } catch (err: any) {
-      setResultMsg(err?.message || 'Erro inesperado')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erro inesperado'
+      setResultMsg(message)
     } finally {
       setSubmitting(false)
     }

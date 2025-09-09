@@ -3,17 +3,25 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
+type BlogRow = {
+  titulo: string
+  slug: string
+  resumo: string
+  capa: string | null
+  data_publicacao: string | Date | null
+}
+
 export default async function BlogPage() {
   const db = getDb()
-  const { rows } = await db.query(
+  const { rows } = await db.query<BlogRow>(
     `SELECT titulo, slug, resumo, capa, data_publicacao FROM blog ORDER BY data_publicacao DESC, created_at DESC`
   )
 
-  const items = rows.map((r: any) => ({
-    title: r.titulo as string,
-    slug: r.slug as string,
-    excerpt: r.resumo as string,
-    cover: (r.capa ?? '/file.svg') as string,
+  const items = rows.map((r) => ({
+    title: r.titulo,
+    slug: r.slug,
+    excerpt: r.resumo,
+    cover: r.capa ?? '/file.svg',
     date: typeof r.data_publicacao === 'string' ? r.data_publicacao : (r.data_publicacao?.toISOString?.().slice(0, 10) ?? ''),
   }))
 

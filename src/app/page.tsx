@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Layers, BarChart3, ArrowRight, DollarSign, TrendingUp, Users } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   // Helper para montar URL de embed do TradingView com opções JSON
@@ -13,6 +14,19 @@ export default function Home() {
     `https://s.tradingview.com/embed-widget/${name}/?locale=br#${encodeURIComponent(
       JSON.stringify(options)
     )}`;
+
+  // Estado para os posts mais recentes do blog
+  type BlogItem = { title: string; slug: string; excerpt: string; cover: string; date: string }
+  const [latestPosts, setLatestPosts] = useState<BlogItem[]>([])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/blog?limit=3', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : Promise.reject(new Error('failed')))
+      .then((d) => { if (!cancelled) setLatestPosts(Array.isArray(d?.items) ? d.items : []) })
+      .catch(() => { /* noop */ })
+    return () => { cancelled = true }
+  }, [])
 
   return (
     <div className="min-h-screen font-sans">
@@ -532,127 +546,107 @@ export default function Home() {
                 <p className="mt-2 text-muted-foreground">Conteúdos e insights para investir melhor</p>
               </div>
               <Button variant="outline" asChild>
-                <a href="#">Ver todos os artigos</a>
+                <Link href="/blog">Ver todos os artigos</Link>
               </Button>
             </div>
 
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {[
-                {
-                  title: "O que é equity crowdfunding?",
-                  excerpt: "Como funciona o modelo e para quem ele é indicado.",
-                  cover: "/offers/fintech.svg",
-                  date: "05 Set 2025",
-                  read: "5 min"
-                },
-                {
-                  title: "Como avaliar um projeto para investir",
-                  excerpt: "Principais métricas e sinais para sua análise.",
-                  cover: "/offers/agrotech.svg",
-                  date: "28 Ago 2025",
-                  read: "7 min"
-                },
-                {
-                  title: "Diversificação: por que importa",
-                  excerpt: "Estratégias para reduzir risco e melhorar retorno.",
-                  cover: "/offers/health.svg",
-                  date: "14 Ago 2025",
-                  read: "4 min"
-                }
-              ].map((p, i) => (
-                <Card key={p.title} className="flex flex-col overflow-hidden p-0 gap-0">
-                  <div className="relative h-40 w-full">
-                    <Image
-                      src={p.cover}
-                      alt={`Capa do artigo ${p.title}`}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover"
+              {latestPosts.map((a) => (
+                <Card key={a.slug} className="flex flex-col overflow-hidden p-0 gap-0">
+                  <div className="relative h-40 w-full overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={a.cover}
+                      alt={`Capa do artigo ${a.title}`}
+                      className="h-full w-full object-cover border"
                     />
                   </div>
                   <CardHeader className="space-y-2 px-6 pt-4 pb-2">
-                    <CardTitle className="text-base font-semibold">{p.title}</CardTitle>
-                    <div className="text-xs text-muted-foreground">{p.date} • {p.read} de leitura</div>
+                    <CardTitle className="text-base font-semibold">{a.title}</CardTitle>
+                    <div className="text-xs text-muted-foreground">{new Date(a.date).toLocaleDateString('pt-BR')}</div>
                   </CardHeader>
                   <CardContent className="text-sm text-muted-foreground px-6 pt-2 pb-6">
-                    {p.excerpt}
+                    {a.excerpt}
                   </CardContent>
                 </Card>
               ))}
+              {latestPosts.length === 0 && (
+                <div className="col-span-full text-sm text-muted-foreground">Nenhum artigo publicado ainda.</div>
+              )}
             </div>
           </div>
         </section>
-
-        {/* Nossa Equipe */}
-        <section id="equipe" className="py-16 border-t">
-          <div className="mx-auto max-w-6xl px-6">
-            <div className="max-w-3xl">
-              <h2 className="text-2xl font-semibold">Nossa Equipe</h2>
-              <p className="mt-2 text-muted-foreground">Conheça os Profissionais</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Uma equipe experiente e multidisciplinar pronta para te ajudar
-              </p>
+        
+          {/* Nossa Equipe */}
+          <section id="equipe" className="py-16 border-t">
+            <div className="mx-auto max-w-6xl px-6">
+              <div className="max-w-3xl">
+                <h2 className="text-2xl font-semibold">Nossa Equipe</h2>
+                <p className="mt-2 text-muted-foreground">Conheça os Profissionais</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Uma equipe experiente e multidisciplinar pronta para te ajudar
+                </p>
+              </div>
+        
+              <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 items-start">
+                {[
+                  {
+                    name: "Ricardo C. Leite",
+                    role: "CEO",
+                    img: "/nossaequipe/RicardoC.webp",
+                    bio:
+                      "Sócio-fundador da Cerqueira Leite Advogados Associados; Mestre em Direito Comercial Internacional (LL.M.) pela UC-Davis (Califórnia); Especialista em Direito Tributário e Empresarial.",
+                  },
+                  {
+                    name: "Paulo C. Souza",
+                    role: "CFO",
+                    img: "/nossaequipe/PauloC.webp",
+                    bio:
+                      "Especialista em finanças corporativas com mais de 15 anos de experiência em gestão de investimentos e planejamento financeiro estratégico.",
+                  },
+                  {
+                    name: "Nathalia Carlet",
+                    role: "Diretora Jurídica",
+                    img: "/nossaequipe/NathaliaCarlet.webp",
+                    bio:
+                      "Advogada especializada em direito empresarial e regulatório, com expertise em estruturação de operações de investimento.",
+                  },
+                ].map((m, i) => (
+                  <Card
+                    key={m.name}
+                    className="overflow-hidden border-none shadow-none bg-transparent"
+                  >
+                    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg">
+                      <Image
+                        src={m.img}
+                        alt={`Foto de ${m.name}`}
+                        fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                        className="object-cover"
+                        priority={i === 0}
+                      />
+                    </div>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">{m.name}</CardTitle>
+                      <p className="text-xs text-muted-foreground">{m.role}</p>
+                    </CardHeader>
+                    <CardContent className="text-sm text-muted-foreground">
+                      {m.bio}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
-
-            <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 items-start">
-              {[
-                {
-                  name: "Ricardo C. Leite",
-                  role: "CEO",
-                  img: "/nossaequipe/RicardoC.webp",
-                  bio:
-                    "Sócio-fundador da Cerqueira Leite Advogados Associados; Mestre em Direito Comercial Internacional (LL.M.) pela UC-Davis (Califórnia); Especialista em Direito Tributário e Empresarial.",
-                },
-                {
-                  name: "Paulo C. Souza",
-                  role: "CFO",
-                  img: "/nossaequipe/PauloC.webp",
-                  bio:
-                    "Especialista em finanças corporativas com mais de 15 anos de experiência em gestão de investimentos e planejamento financeiro estratégico.",
-                },
-                {
-                  name: "Nathalia Carlet",
-                  role: "Diretora Jurídica",
-                  img: "/nossaequipe/NathaliaCarlet.webp",
-                  bio:
-                    "Advogada especializada em direito empresarial e regulatório, com expertise em estruturação de operações de investimento.",
-                },
-              ].map((m, i) => (
-                <Card
-                  key={m.name}
-                  className="overflow-hidden border-none shadow-none bg-transparent"
-                >
-                  <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg">
-                    <Image
-                      src={m.img}
-                      alt={`Foto de ${m.name}`}
-                      fill
-                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                      className="object-cover"
-                      priority={i === 0}
-                    />
-                  </div>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">{m.name}</CardTitle>
-                    <p className="text-xs text-muted-foreground">{m.role}</p>
-                  </CardHeader>
-                  <CardContent className="text-sm text-muted-foreground">
-                    {m.bio}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Conselho Consultivo */}
-         <section id="conselho" className="py-16 border-t bg-[#0f172a] text-white">
-           <div className="mx-auto max-w-6xl px-6">
-             <div className="max-w-3xl">
-               <h2 className="text-2xl font-semibold">Conselho Consultivo</h2>
-               <p className="mt-2 text-white/70">Experiência executiva e estratégica para orientar nosso crescimento</p>
-             </div>
- 
+          </section>
+        
+          {/* Conselho Consultivo */}
+           <section id="conselho" className="py-16 border-t bg-[#0f172a] text-white">
+             <div className="mx-auto max-w-6xl px-6">
+               <div className="max-w-3xl">
+                 <h2 className="text-2xl font-semibold">Conselho Consultivo</h2>
+                 <p className="mt-2 text-white/70">Experiência executiva e estratégica para orientar nosso crescimento</p>
+               </div>
+         
              <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 items-start">
                {[
                  {
@@ -717,106 +711,106 @@ export default function Home() {
              </div>
            </div>
          </section>
-
-        {/* FAQ */}
-        <section id="faq" className="py-16 border-t">
-          <div className="mx-auto max-w-6xl px-6">
-            <div className="max-w-3xl">
-              <h2 className="text-2xl font-semibold">Perguntas frequentes</h2>
-              <p className="mt-2 text-muted-foreground">Tire suas dúvidas sobre como investir na Raise Capital</p>
+        
+          {/* FAQ */}
+          <section id="faq" className="py-16 border-t">
+            <div className="mx-auto max-w-6xl px-6">
+              <div className="max-w-3xl">
+                <h2 className="text-2xl font-semibold">Perguntas frequentes</h2>
+                <p className="mt-2 text-muted-foreground">Tire suas dúvidas sobre como investir na Raise Capital</p>
+              </div>
+        
+              <div className="mt-8 grid gap-4">
+                {[
+                  {
+                    q: "O que é a Raise Capital?",
+                    a: "É uma plataforma digital que conecta negócios com alto potencial de retorno, como startups, empreendimentos imobiliários e projetos estruturados, a diversos tipos de investidores. Atuamos por meio de rodadas de investimento com segurança jurídica, 100% online, oferecendo acesso a ativos inovadores e com potencial de valorização.",
+                  },
+                  {
+                    q: "O investimento é legal e regulado no Brasil?",
+                    a: "Sim. O crowdfunding de investimento é regulamentado pela Comissão de Valores Mobiliários (CVM) através da Resolução CVM nº 88, que modernizou o processo no Brasil, ampliando limites de captação para R$ 15 milhões e flexibilizando a divulgação de ofertas. Todas as nossas operações são realizadas em conformidade com as regulamentações vigentes.",
+                  },
+                  {
+                    q: "Como funciona o investimento?",
+                    a: "O investidor se cadastra na plataforma Raise Capital, explora os projetos disponíveis, analisa as informações detalhadas e a documentação de cada oportunidade, e decide quanto deseja investir. Todo o processo é realizado digitalmente, de forma segura e transparente. Após o investimento, o investidor recebe atualizações regulares sobre o desempenho do projeto e os resultados.",
+                  },
+                  {
+                    q: "Quais os modelos jurídicos usados nas rodadas?",
+                    a: "Utilizamos estruturas jurídicas sólidas e reconhecidas pelo mercado, como Sociedades Anônimas (S.A.), Sociedades de Propósito Específico (SPE), e contratos de investimento coletivo. Cada projeto é estruturado com o modelo mais adequado às suas características e objetivos, sempre priorizando a segurança jurídica tanto para investidores quanto para empreendedores.",
+                  },
+                  {
+                    q: "Quais os riscos de investir?",
+                    a: "Como em qualquer investimento, existem riscos associados ao crowdfunding. Entre os principais estão: risco de mercado (flutuações nas condições econômicas), risco operacional (relacionado à gestão e execução do projeto), risco de liquidez (dificuldade em vender a participação antes do prazo previsto) e risco de perda do capital investido. Recomendamos que os investidores diversifiquem seus portfólios e invistam apenas valores que estão dispostos a comprometer por médio e longo prazo.",
+                  },
+                  {
+                    q: "Como é feita a seleção dos projetos?",
+                    a: "Aplicamos um rigoroso processo de seleção de projetos, que inclui análise de viabilidade econômica, due diligence jurídica e financeira, avaliação do modelo de negócios, análise do mercado e do potencial de crescimento, verificação da equipe de gestão e sua experiência prévia. Apenas projetos que passam por todos esses filtros são disponibilizados na plataforma.",
+                  },
+                  {
+                    q: "Qual o valor mínimo para investir?",
+                    a: "O valor mínimo de investimento varia de acordo com cada projeto, mas trabalhamos para tornar as oportunidades acessíveis a diferentes perfis de investidores. Na maioria dos projetos, o ticket mínimo é significativamente menor do que seria exigido em investimentos tradicionais similares.",
+                  },
+                  {
+                    q: "Como acompanho meus investimentos?",
+                    a: "Todos os investidores têm acesso a um dashboard personalizado onde podem acompanhar o desempenho de seus investimentos. Além disso, enviamos relatórios periódicos com atualizações sobre os projetos, e organizamos reuniões virtuais com os gestores para esclarecimento de dúvidas e apresentação de resultados.",
+                  },
+                  {
+                    q: "Posso vender minha participação antes do prazo final do projeto?",
+                    a: "A liquidez no mercado de crowdfunding ainda é limitada, e os investimentos são geralmente de médio a longo prazo. No entanto, trabalhamos para criar mecanismos que possibilitem a negociação de participações entre investidores, embora isso dependa de encontrar interessados na compra e de condições específicas previstas em cada contrato de investimento.",
+                  },
+                  {
+                    q: "Quais são as taxas cobradas pela Raise Capital?",
+                    a: "Nossa estrutura de taxas é transparente e inclui: taxa de sucesso sobre o valor captado (cobrada apenas se o projeto atingir sua meta), taxa de administração anual (para cobrir os custos de gestão e acompanhamento do investimento) e eventuais taxas de performance (caso o projeto supere determinados indicadores de desempenho pré-estabelecidos). Os valores específicos são detalhados em cada oportunidade de investimento.",
+                  },
+                ].map((item) => (
+                  <details key={item.q} className="rounded-lg border bg-card p-4">
+                    <summary className="cursor-pointer font-medium">{item.q}</summary>
+                    <div className="pt-2 text-muted-foreground text-sm whitespace-pre-line">{item.a}</div>
+                  </details>
+                ))}
+              </div>
             </div>
-
-            <div className="mt-8 grid gap-4">
-              {[
-                {
-                  q: "O que é a Raise Capital?",
-                  a: "É uma plataforma digital que conecta negócios com alto potencial de retorno, como startups, empreendimentos imobiliários e projetos estruturados, a diversos tipos de investidores. Atuamos por meio de rodadas de investimento com segurança jurídica, 100% online, oferecendo acesso a ativos inovadores e com potencial de valorização.",
-                },
-                {
-                  q: "O investimento é legal e regulado no Brasil?",
-                  a: "Sim. O crowdfunding de investimento é regulamentado pela Comissão de Valores Mobiliários (CVM) através da Resolução CVM nº 88, que modernizou o processo no Brasil, ampliando limites de captação para R$ 15 milhões e flexibilizando a divulgação de ofertas. Todas as nossas operações são realizadas em conformidade com as regulamentações vigentes.",
-                },
-                {
-                  q: "Como funciona o investimento?",
-                  a: "O investidor se cadastra na plataforma Raise Capital, explora os projetos disponíveis, analisa as informações detalhadas e a documentação de cada oportunidade, e decide quanto deseja investir. Todo o processo é realizado digitalmente, de forma segura e transparente. Após o investimento, o investidor recebe atualizações regulares sobre o desempenho do projeto e os resultados.",
-                },
-                {
-                  q: "Quais os modelos jurídicos usados nas rodadas?",
-                  a: "Utilizamos estruturas jurídicas sólidas e reconhecidas pelo mercado, como Sociedades Anônimas (S.A.), Sociedades de Propósito Específico (SPE), e contratos de investimento coletivo. Cada projeto é estruturado com o modelo mais adequado às suas características e objetivos, sempre priorizando a segurança jurídica tanto para investidores quanto para empreendedores.",
-                },
-                {
-                  q: "Quais os riscos de investir?",
-                  a: "Como em qualquer investimento, existem riscos associados ao crowdfunding. Entre os principais estão: risco de mercado (flutuações nas condições econômicas), risco operacional (relacionado à gestão e execução do projeto), risco de liquidez (dificuldade em vender a participação antes do prazo previsto) e risco de perda do capital investido. Recomendamos que os investidores diversifiquem seus portfólios e invistam apenas valores que estão dispostos a comprometer por médio e longo prazo.",
-                },
-                {
-                  q: "Como é feita a seleção dos projetos?",
-                  a: "Aplicamos um rigoroso processo de seleção de projetos, que inclui análise de viabilidade econômica, due diligence jurídica e financeira, avaliação do modelo de negócios, análise do mercado e do potencial de crescimento, verificação da equipe de gestão e sua experiência prévia. Apenas projetos que passam por todos esses filtros são disponibilizados na plataforma.",
-                },
-                {
-                  q: "Qual o valor mínimo para investir?",
-                  a: "O valor mínimo de investimento varia de acordo com cada projeto, mas trabalhamos para tornar as oportunidades acessíveis a diferentes perfis de investidores. Na maioria dos projetos, o ticket mínimo é significativamente menor do que seria exigido em investimentos tradicionais similares.",
-                },
-                {
-                  q: "Como acompanho meus investimentos?",
-                  a: "Todos os investidores têm acesso a um dashboard personalizado onde podem acompanhar o desempenho de seus investimentos. Além disso, enviamos relatórios periódicos com atualizações sobre os projetos, e organizamos reuniões virtuais com os gestores para esclarecimento de dúvidas e apresentação de resultados.",
-                },
-                {
-                  q: "Posso vender minha participação antes do prazo final do projeto?",
-                  a: "A liquidez no mercado de crowdfunding ainda é limitada, e os investimentos são geralmente de médio a longo prazo. No entanto, trabalhamos para criar mecanismos que possibilitem a negociação de participações entre investidores, embora isso dependa de encontrar interessados na compra e de condições específicas previstas em cada contrato de investimento.",
-                },
-                {
-                  q: "Quais são as taxas cobradas pela Raise Capital?",
-                  a: "Nossa estrutura de taxas é transparente e inclui: taxa de sucesso sobre o valor captado (cobrada apenas se o projeto atingir sua meta), taxa de administração anual (para cobrir os custos de gestão e acompanhamento do investimento) e eventuais taxas de performance (caso o projeto supere determinados indicadores de desempenho pré-estabelecidos). Os valores específicos são detalhados em cada oportunidade de investimento.",
-                },
-              ].map((item) => (
-                <details key={item.q} className="rounded-lg border bg-card p-4">
-                  <summary className="cursor-pointer font-medium">{item.q}</summary>
-                  <div className="pt-2 text-muted-foreground text-sm whitespace-pre-line">{item.a}</div>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="relative py-20 border-t overflow-hidden">
-          <Image src="/backcta.webp" alt="" fill sizes="100vw" className="object-cover" priority />
-          <div className="relative mx-auto max-w-6xl px-6 text-center">
-            <h2 className="text-2xl font-semibold text-white">Pronto para investir com a Raise Capital?</h2>
-            <p className="mt-2 text-white/80">
-              Cadastre-se para receber acesso antecipado às primeiras oportunidades.
-            </p>
-            <div className="mt-6 inline-flex">
-              <Button asChild variant="secondary">
-                <a href="#">Criar conta</a>
-              </Button>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      {/* Newsletter */}
-      <section className="border-t py-12">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="grid gap-6 md:grid-cols-2 md:items-center">
-            <div>
-              <h3 className="text-xl font-semibold">Inscreva-se na newsletter</h3>
-              <p className="mt-1 text-muted-foreground text-sm">
-                Receba novidades sobre ofertas, atualizações e conteúdos da Raise Capital.
+          </section>
+        
+          {/* CTA */}
+          <section className="relative py-20 border-t overflow-hidden">
+            <Image src="/backcta.webp" alt="" fill sizes="100vw" className="object-cover" priority />
+            <div className="relative mx-auto max-w-6xl px-6 text-center">
+              <h2 className="text-2xl font-semibold text-white">Pronto para investir com a Raise Capital?</h2>
+              <p className="mt-2 text-white/80">
+                Cadastre-se para receber acesso antecipado às primeiras oportunidades.
               </p>
+              <div className="mt-6 inline-flex">
+                <Button asChild variant="secondary">
+                  <a href="#">Criar conta</a>
+                </Button>
+              </div>
             </div>
-            <form className="flex w-full items-center gap-3" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="email"
-                required
-                placeholder="Seu e-mail"
-                className="h-11 w-full max-w-md rounded-md border bg-background px-3 text-sm outline-none ring-0 focus:border-foreground/30"
-              />
-              <Button type="submit">Inscrever</Button>
-            </form>
+          </section>
+        </main>
+        
+        {/* Newsletter */}
+        <section className="border-t py-12">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="grid gap-6 md:grid-cols-2 md:items-center">
+              <div>
+                <h3 className="text-xl font-semibold">Inscreva-se na newsletter</h3>
+                <p className="mt-1 text-muted-foreground text-sm">
+                  Receba novidades sobre ofertas, atualizações e conteúdos da Raise Capital.
+                </p>
+              </div>
+              <form className="flex w-full items-center gap-3" onSubmit={(e) => e.preventDefault()}>
+                <input
+                  type="email"
+                  required
+                  placeholder="Seu e-mail"
+                  className="h-11 w-full max-w-md rounded-md border bg-background px-3 text-sm outline-none ring-0 focus:border-foreground/30"
+                />
+                <Button type="submit">Inscrever</Button>
+              </form>
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
-  );
+        </section>
+      </div>
+    );
 }
