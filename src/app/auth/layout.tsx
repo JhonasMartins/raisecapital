@@ -3,9 +3,9 @@ import Link from "next/link"
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-dvh grid md:grid-cols-2">
+    <div className="h-dvh grid md:grid-cols-2 overflow-hidden">
       {/* Aside azul à esquerda */}
-      <aside className="relative hidden md:flex flex-col justify-between bg-[linear-gradient(180deg,#0B5ED7_0%,#0A58CA_100%)] p-10 text-white">
+      <aside className="relative hidden md:flex h-dvh overflow-hidden flex-col justify-between bg-[linear-gradient(180deg,#0B5ED7_0%,#0A58CA_100%)] p-10 text-white">
         <div>
           <Link href="/" className="inline-flex items-center" aria-label="Voltar ao início">
             <Image src="/logo.avif" alt="Raise Capital" width={180} height={44} sizes="180px" priority className="brightness-0 invert" />
@@ -34,7 +34,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </aside>
 
       {/* Área do formulário à direita */}
-      <section className="flex items-center justify-center px-6 py-14 md:px-12">
+      <section className="h-dvh overflow-y-auto flex items-start justify-center px-6 py-10 md:px-12">
         <div className="w-full max-w-2xl">
           {children}
         </div>

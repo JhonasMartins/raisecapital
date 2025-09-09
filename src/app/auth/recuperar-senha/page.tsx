@@ -13,7 +13,7 @@ export default function RecoverPasswordPage() {
   }
 
   return (
-    <div>
+    <div className="w-full max-w-[400px] mx-auto">
       <h1 className="text-2xl font-semibold">Recuperar senha</h1>
       <p className="mt-2 text-sm text-muted-foreground">Informe seu e-mail para receber o link de redefinição.</p>
 
@@ -32,6 +32,10 @@ export default function RecoverPasswordPage() {
         </div>
 
         <Button type="submit" className="w-full">Enviar</Button>
+
+        <p className="text-center text-sm text-muted-foreground">
+          Já tem o código? <Link href="/auth/otp" className="hover:underline">Inserir código</Link>
+        </p>
 
         <p className="text-center text-sm text-muted-foreground">
           Lembrou a senha? <Link href="/auth/login" className="hover:underline">Fazer login</Link>
