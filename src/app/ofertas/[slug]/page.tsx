@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { slugify } from '@/lib/utils'
+import { TrendingUp, DollarSign, Wallet, Clock, Layers, Package, CheckCircle2, FileDown, HandCoins } from 'lucide-react'
 
 type Entrepreneur = { name: string; role?: string }
 type KeyVal = { label: string; value: string }
@@ -182,6 +183,12 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
   if (!offer) return notFound()
 
   const pct = Math.min(100, Math.round((offer.raised / offer.goal) * 100))
+  const statusClass =
+    offer.status === 'Em captação'
+      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+      : offer.status === 'Encerrada'
+      ? 'bg-gray-100 text-gray-700 border border-gray-200'
+      : 'bg-amber-50 text-amber-700 border border-amber-200'
 
   return (
     <div className="min-h-dvh font-sans pt-28">
@@ -338,18 +345,22 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <Card>
+            <Card className="lg:sticky lg:top-28">
               <CardHeader>
                 <CardTitle>Condições da oferta</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-5">
+                {/* CTA principal */}
+                <Button size="lg" className="w-full">Investir agora</Button>
+
+                {/* Progresso */}
                 <div>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>Progresso</span>
                     <span>{pct}%</span>
                   </div>
-                  <div className="mt-2 h-2 w-full rounded-full bg-secondary">
-                    <div className="h-2 rounded-full bg-primary" style={{ width: `${pct}%` }} />
+                  <div className="mt-2 h-2.5 w-full rounded-full bg-secondary">
+                    <div className="h-2.5 rounded-full bg-gradient-to-r from-primary to-blue-500" style={{ width: `${pct}%` }} />
                   </div>
                   <div className="mt-2 flex justify-between text-xs text-muted-foreground">
                     <span>R$ {offer.raised.toLocaleString('pt-BR')}</span>
@@ -357,49 +368,78 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
                   </div>
                 </div>
 
-                <div className="grid gap-3 text-sm">
-                  <div className="rounded-md border p-3">
-                    <div className="text-xs text-muted-foreground">Rentabilidade alvo (TIR)</div>
-                    <div className="mt-1 font-medium">{offer.tir != null ? `${offer.tir}% a.a.` : '—'}</div>
+                {/* Estatísticas com ícones */}
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="flex items-center gap-3 rounded-xl border p-3 bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div className="h-8 w-8 rounded-md bg-primary/10 text-primary ring-1 ring-primary/20 flex items-center justify-center"><TrendingUp className="size-4" /></div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">TIR (alvo)</div>
+                      <div className="mt-0.5 text-sm font-semibold">{offer.tir != null ? `${offer.tir}% a.a.` : '—'}</div>
+                    </div>
                   </div>
-                  <div className="rounded-md border p-3">
-                    <div className="text-xs text-muted-foreground">Valor captado</div>
-                    <div className="mt-1 font-medium">R$ {offer.raised.toLocaleString('pt-BR')}</div>
+                  <div className="flex items-center gap-3 rounded-xl border p-3 bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div className="h-8 w-8 rounded-md bg-primary/10 text-primary ring-1 ring-primary/20 flex items-center justify-center"><DollarSign className="size-4" /></div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Valor captado</div>
+                      <div className="mt-0.5 text-sm font-semibold">R$ {offer.raised.toLocaleString('pt-BR')}</div>
+                    </div>
                   </div>
-                  <div className="rounded-md border p-3">
-                    <div className="text-xs text-muted-foreground">Investimento mínimo</div>
-                    <div className="mt-1 font-medium">R$ {offer.min.toLocaleString('pt-BR')}</div>
+                  <div className="flex items-center gap-3 rounded-xl border p-3 bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div className="h-8 w-8 rounded-md bg-primary/10 text-primary ring-1 ring-primary/20 flex items-center justify-center"><Wallet className="size-4" /></div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Investimento mínimo</div>
+                      <div className="mt-0.5 text-sm font-semibold">R$ {offer.min.toLocaleString('pt-BR')}</div>
+                    </div>
                   </div>
-                  <div className="rounded-md border p-3">
-                    <div className="text-xs text-muted-foreground">Pagamento</div>
-                    <div className="mt-1 font-medium">{offer.payment ?? '—'}</div>
+                  <div className="flex items-center gap-3 rounded-xl border p-3 bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div className="h-8 w-8 rounded-md bg-primary/10 text-primary ring-1 ring-primary/20 flex items-center justify-center"><HandCoins className="size-4" /></div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Pagamento</div>
+                      <div className="mt-0.5 text-sm font-semibold">{offer.payment ?? '—'}</div>
+                    </div>
                   </div>
-                  <div className="rounded-md border p-3">
-                    <div className="text-xs text-muted-foreground">Prazo</div>
-                    <div className="mt-1 font-medium">{offer.deadline}</div>
+                  <div className="flex items-center gap-3 rounded-xl border p-3 bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div className="h-8 w-8 rounded-md bg-primary/10 text-primary ring-1 ring-primary/20 flex items-center justify-center"><Clock className="size-4" /></div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Prazo</div>
+                      <div className="mt-0.5 text-sm font-semibold">{offer.deadline}</div>
+                    </div>
                   </div>
-                  <div className="rounded-md border p-3">
-                    <div className="text-xs text-muted-foreground">Modalidade</div>
-                    <div className="mt-1 font-medium">{offer.modality}</div>
+                  <div className="flex items-center gap-3 rounded-xl border p-3 bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div className="h-8 w-8 rounded-md bg-primary/10 text-primary ring-1 ring-primary/20 flex items-center justify-center"><Layers className="size-4" /></div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Modalidade</div>
+                      <div className="mt-0.5 text-sm font-semibold">{offer.modality}</div>
+                    </div>
                   </div>
-                  <div className="rounded-md border p-3">
-                    <div className="text-xs text-muted-foreground">Produto</div>
-                    <div className="mt-1 font-medium">{offer.product ?? '—'}</div>
+                  <div className="flex items-center gap-3 rounded-xl border p-3 bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div className="h-8 w-8 rounded-md bg-primary/10 text-primary ring-1 ring-primary/20 flex items-center justify-center"><Package className="size-4" /></div>
+                    <div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Produto</div>
+                      <div className="mt-0.5 text-sm font-semibold">{offer.product ?? '—'}</div>
+                    </div>
                   </div>
-                  <div className="rounded-md border p-3">
-                    <div className="text-xs text-muted-foreground">Status</div>
-                    <div className="mt-1 font-medium">{offer.status}</div>
+                  <div className="flex items-center gap-3 rounded-xl border p-3 sm:col-span-2 bg-muted/30 hover:bg-muted/50 transition-colors">
+                    <div className="h-8 w-8 rounded-md bg-primary/10 text-primary ring-1 ring-primary/20 flex items-center justify-center"><CheckCircle2 className="size-4" /></div>
+                    <div className="flex-1">
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Status</div>
+                      <div className="mt-1">
+                        <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${statusClass}`}>{offer.status}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Apresentação resumo (PDF) */}
                 {offer.summaryPdf && (
-                  <Button size="lg" asChild className="w-full">
-                    <a href={offer.summaryPdf} target="_blank" rel="noreferrer">Baixar apresentação (PDF)</a>
+                  <Button size="lg" variant="outline" asChild className="w-full">
+                    <a href={offer.summaryPdf} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2">
+                      <FileDown className="size-4" />
+                      Baixar apresentação (PDF)
+                    </a>
                   </Button>
                 )}
 
-                <Button size="lg" className="w-full">Investir agora</Button>
                 <Button asChild variant="ghost" className="w-full">
                   <Link href="/ofertas">Voltar para ofertas</Link>
                 </Button>
