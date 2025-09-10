@@ -10,7 +10,7 @@ import { slugify } from '@/lib/utils'
 
 
  export default function OfertasPage() {
-   const categories = ['Todos', 'Fintech', 'Agrotech', 'HealthTech'] as const
+   const categories = ['Todos', 'Fintech', 'Agronegócio', 'Agrotech', 'HealthTech', 'Ativos Judiciais', 'Comercial', 'Energia', 'Imobiliário', 'Startups'] as const
    const modalities = ['Todas', 'Equity', 'Dívida', 'Revenue Share'] as const
  
    const [selectedCategory, setSelectedCategory] = useState<(typeof categories)[number]>('Todos')
@@ -309,17 +309,15 @@ import { slugify } from '@/lib/utils'
                    aria-label={`Ver detalhes da oferta ${o.name}`}
                  />
                  <CardHeader className="pb-2">
-                   <div className="flex items-center justify-between">
-                     <CardTitle className="text-base font-semibold">{o.name}</CardTitle>
-                     <div className="flex items-center gap-2">
-                       <Badge variant="secondary">{o.modality}</Badge>
-                       <Badge className={`${o.status === 'Em captação'
-                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                         : o.status === 'Encerrada'
-                         ? 'bg-gray-100 text-gray-700 border border-gray-200'
-                         : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>{o.status}</Badge>
-                     </div>
+                   <div className="flex items-center gap-2">
+                     <Badge variant="secondary">{o.modality}</Badge>
+                     <Badge className={`${o.status === 'Em captação'
+                       ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                       : o.status === 'Encerrada'
+                       ? 'bg-gray-100 text-gray-700 border border-gray-200'
+                       : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>{o.status}</Badge>
                    </div>
+                   <CardTitle className="mt-2 text-base font-semibold leading-snug">{o.name}</CardTitle>
                  </CardHeader>
                  <CardContent className="space-y-3 text-sm text-muted-foreground">
                    <div className="space-y-2">
