@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     const {
       name,
       category,
-      categoryType,
+      // removed: categoryType,
       modality,
       min,
       goal,
@@ -48,18 +48,17 @@ export async function POST(req: Request) {
       try {
         const { rows } = await db.query(
           `INSERT INTO ofertas (
-            nome, slug, categoria, tipo_categoria, modalidade, minimo_investimento, arrecadado, meta, data_limite, prazo_texto, capa, status,
+            nome, slug, categoria, modalidade, minimo_investimento, arrecadado, meta, data_limite, prazo_texto, capa, status,
             subtitulo, produto, pagamento, tir, resumo_pdf, sobre_operacao, sobre_empresa,
             empreendedores, financeiros, documentos, informacoes_essenciais, investidores
-          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,
-                    $13,$14,$15,$16,$17,$18,$19,
-                    $20,$21,$22,$23,$24)
+          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,
+                    $12,$13,$14,$15,$16,$17,$18,
+                    $19,$20,$21,$22,$23)
           RETURNING id, slug` as string,
           [
             name,
             finalSlug,
             category,
-            categoryType ?? null,
             modality,
             min,
             raised ?? 0,
