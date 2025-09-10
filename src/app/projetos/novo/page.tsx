@@ -19,7 +19,7 @@ const statuses = ['Em captação', 'Encerrada', 'Em breve'] as const
 type Entrepreneur = { name: string; role?: string }
 type KeyVal = { label: string; value: string }
 type DocumentLink = { label: string; url: string }
-type Investor = { name: string }
+// investors removidos — serão calculados dinamicamente na página de oferta
 
 // Rich text editor reutilizável (TipTap)
 function RichTextEditor({ value, onChange }: { value: string; onChange: (html: string) => void }) {
@@ -62,32 +62,56 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (html: s
   )
 }
 
-export default function NovoProjetoPage() {
+// Modelo completo para criação
+type NewOffer = {
+  name: string
+  subtitle?: string
+  category: (typeof categories)[number]
+  modality: (typeof modalities)[number]
+  product?: string
+  min: number
+  goal: number
+  raised: number
+  deadline: string // prazo_texto (ex.: "30 dias")
+  deadlineDate?: string // data_limite (YYYY-MM-DD)
+  cover: string
+  status: (typeof statuses)[number]
+  payment?: string
+  tir?: number
+  summaryPdf?: string
+  aboutOperation?: string
+  aboutCompany?: string
+  entrepreneurs: Entrepreneur[]
+  financials: KeyVal[]
+  documents: DocumentLink[]
+  essentialInfo: KeyVal[]
+}
+
+ export default function NovoProjetoPage() {
   const [form, setForm] = useState<NewOffer>({
-    name: '',
-    subtitle: '',
-    category: 'Fintech',
-    // removed: categoryType: '',
-    modality: 'Equity',
-    product: '',
-    min: 1000,
-    goal: 100000,
-    raised: 0,
-    deadline: '30 dias',
-    deadlineDate: '',
-    cover: '',
-    status: 'Em captação',
-    payment: '',
-    tir: undefined,
-    summaryPdf: '',
-    aboutOperation: '',
-    aboutCompany: '',
-    entrepreneurs: [{ name: '', role: '' }],
-    financials: [{ label: '', value: '' }],
-    documents: [{ label: '', url: '' }],
-    essentialInfo: [{ label: '', value: '' }],
-    investors: [{ name: '' }],
-  })
+     name: '',
+     subtitle: '',
+     category: 'Fintech',
+     // removed: categoryType: '',
+     modality: 'Equity',
+     product: '',
+     min: 1000,
+     goal: 100000,
+     raised: 0,
+     deadline: '30 dias',
+     deadlineDate: '',
+     cover: '',
+     status: 'Em captação',
+     payment: '',
+     tir: undefined,
+     summaryPdf: '',
+     aboutOperation: '',
+     aboutCompany: '',
+     entrepreneurs: [{ name: '', role: '' }],
+     financials: [{ label: '', value: '' }],
+     documents: [{ label: '', url: '' }],
+     essentialInfo: [{ label: '', value: '' }],
+   })
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -101,7 +125,7 @@ export default function NovoProjetoPage() {
       const res = await fetch('/api/upload', { method: 'POST', body: fd })
       if (!res.ok) throw new Error('Falha no upload')
       const data = (await res.json()) as { url: string }
-      setForm((f) => ({ ...f, cover: data.url }))
+      setForm((f: NewOffer) => ({ ...f, cover: data.url }))
       setMessage('Imagem enviada com sucesso!')
     } catch (e) {
       console.error(e)
@@ -110,7 +134,7 @@ export default function NovoProjetoPage() {
   }
 
   function handleChange<K extends keyof NewOffer>(key: K, value: NewOffer[K]) {
-    setForm((f) => ({ ...f, [key]: value }))
+    setForm((f: NewOffer) => ({ ...f, [key]: value }))
   }
 
   type ArrayItemMap = {
@@ -118,7 +142,6 @@ export default function NovoProjetoPage() {
     financials: KeyVal
     documents: DocumentLink
     essentialInfo: KeyVal
-    investors: Investor
   }
   type ArrayKeys = keyof ArrayItemMap
 
@@ -126,7 +149,7 @@ export default function NovoProjetoPage() {
     setForm((f) => {
       const current = f[key] as unknown as ArrayItemMap[K][]
       const arr = [...current]
-      const item = { ...(arr[index] as any), [field]: value } as ArrayItemMap[K]
+      const item = { ...(arr[index] as ArrayItemMap[K]), [field]: value } as ArrayItemMap[K]
       arr[index] = item
       return { ...f, [key]: arr } as typeof f
     })
@@ -157,7 +180,7 @@ export default function NovoProjetoPage() {
       const res = await fetch('/api/upload', { method: 'POST', body: fd })
       if (!res.ok) throw new Error('Falha no upload do resumo')
       const data = (await res.json()) as { url: string }
-      setForm((f) => ({ ...f, summaryPdf: data.url }))
+      setForm((f: NewOffer) => ({ ...f, summaryPdf: data.url }))
       setMessage('Resumo enviado com sucesso!')
     } catch (e) {
       console.error(e)
@@ -219,7 +242,6 @@ export default function NovoProjetoPage() {
         financials: form.financials?.filter((kv) => kv.label || kv.value) || [],
         documents: form.documents?.filter((d) => d.label || d.url) || [],
         essentialInfo: form.essentialInfo?.filter((kv) => kv.label || kv.value) || [],
-        investors: form.investors?.filter((i) => i.name) || [],
       }
 
       const res = await fetch('/api/ofertas', {
@@ -507,20 +529,6 @@ export default function NovoProjetoPage() {
                    ))}
                  </div>
 
-                <div className="grid gap-3">
-                  <div className="flex items-center justify-between">
-                    <Label>Investidores (nomes)</Label>
-                    <Button type="button" variant="outline" onClick={() => addArrayItem('investors', { name: '' })}>Adicionar</Button>
-                  </div>
-                  {form.investors.map((inv, idx) => (
-                    <div key={idx} className="flex gap-2">
-                      <input placeholder="Nome" value={inv.name}
-                        onChange={(e) => updateArrayItem('investors', idx, 'name', e.target.value)}
-                        className="h-9 w-full rounded-md border bg-background px-3 text-sm" />
-                      <Button type="button" variant="ghost" onClick={() => removeArrayItem('investors', idx)}>Remover</Button>
-                    </div>
-                  ))}
-                </div>
 
                 <div className="flex items-center gap-3 pt-2">
                   <Button type="submit" disabled={saving}>{saving ? 'Salvando…' : 'Salvar no banco'}</Button>
