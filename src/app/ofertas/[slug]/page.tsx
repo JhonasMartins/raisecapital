@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { slugify } from '@/lib/utils'
-import { TrendingUp, Clock, FileDown, HandCoins, FileText } from 'lucide-react'
+import { TrendingUp, Clock, FileDown, HandCoins, FileText, ChevronDown } from 'lucide-react'
 import sanitizeHtml from 'sanitize-html'
 
 type Entrepreneur = { name: string; role?: string }
@@ -422,22 +422,27 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
             </Card>
 
             {/* Informações essenciais */}
-            <Card className="scroll-mt-24">
+            <Card id="informacoes-essenciais" className="scroll-mt-24">
               <CardHeader>
                 <CardTitle>Informações essenciais</CardTitle>
               </CardHeader>
               <CardContent>
                 {offer.essentialInfo && offer.essentialInfo.length > 0 ? (
-                  <div className="grid sm:grid-cols-2 gap-3">
+                  <div className="rounded-lg border bg-muted/30 divide-y">
                     {offer.essentialInfo.map((kv, i) => (
-                      <div key={i} className="rounded-lg border p-3 bg-muted/30">
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{kv.label}</div>
-                        {kv.value ? (
-                          <div className="mt-0.5 prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: richTextSanitize(kv.value) }} />
-                        ) : (
-                          <div className="mt-0.5 text-sm text-muted-foreground">—</div>
-                        )}
-                      </div>
+                      <details key={i} className="group">
+                        <summary className="flex items-center justify-between cursor-pointer list-none px-3 py-2 hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-md">
+                          <span className="text-sm font-medium">{kv.label}</span>
+                          <ChevronDown className="size-4 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden />
+                        </summary>
+                        <div className="px-3 pb-3">
+                          {kv.value ? (
+                            <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: richTextSanitize(kv.value) }} />
+                          ) : (
+                            <div className="text-sm text-muted-foreground">—</div>
+                          )}
+                        </div>
+                      </details>
                     ))}
                   </div>
                 ) : (
