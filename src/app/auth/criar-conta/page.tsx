@@ -144,11 +144,14 @@ export default function CreateAccountPage() {
     try {
       const res = await fetch(`https://brasilapi.com.br/api/cep/v2/${cep}`)
       if (!res.ok) throw new Error("CEP não encontrado")
-      const data: any = await res.json()
-      set.setEndereco(data.street || "")
-      set.setBairro(data.neighborhood || "")
-      set.setCidade(data.city || "")
-      set.setUf(data.state || "")
+      const data = (await res.json()) as unknown
+      if (data && typeof data === 'object') {
+        const d = data as Record<string, unknown>
+        set.setEndereco(typeof d.street === 'string' ? d.street : "")
+        set.setBairro(typeof d.neighborhood === 'string' ? d.neighborhood : "")
+        set.setCidade(typeof d.city === 'string' ? d.city : "")
+        set.setUf(typeof d.state === 'string' ? d.state : "")
+      }
     } catch (e) {
       console.error(e)
       alert("Não foi possível buscar o CEP. Verifique o número e tente novamente.")
@@ -161,9 +164,14 @@ export default function CreateAccountPage() {
     try {
       const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`)
       if (!res.ok) throw new Error("CNPJ não encontrado")
-      const data: any = await res.json()
-      setters.setRazao(data.razao_social || "")
-      setters.setFantasia(data.nome_fantasia || "")
+      const data = (await res.json()) as unknown
+      if (data && typeof data === 'object') {
+        const d = data as Record<string, unknown>
+        const razao = typeof d.razao_social === 'string' ? d.razao_social : ""
+        const fantasia = typeof d.nome_fantasia === 'string' ? d.nome_fantasia : ""
+        setters.setRazao(razao)
+        setters.setFantasia(fantasia)
+      }
     } catch (e) {
       console.error(e)
       alert("Não foi possível buscar o CNPJ. Verifique o número e tente novamente.")
