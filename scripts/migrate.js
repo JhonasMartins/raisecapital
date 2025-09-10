@@ -116,6 +116,18 @@ async function main() {
       CREATE INDEX IF NOT EXISTS blog_comments_blog_id_idx ON blog_comments (blog_id);
     `)
 
+    // Newsletter subscriptions
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS newsletter_subscriptions (
+        id BIGSERIAL PRIMARY KEY,
+        email TEXT NOT NULL,
+        name TEXT,
+        source TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS newsletter_email_unique_idx
+        ON newsletter_subscriptions ((lower(email)));
+    `)
     await client.query('COMMIT')
     console.log('Database setup successful: tables ofertas, blog and blog_comments are ready.')
   } catch (err) {

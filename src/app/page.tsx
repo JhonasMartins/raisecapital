@@ -811,15 +811,50 @@ export default function Home() {
                   Receba novidades sobre ofertas, atualizações e conteúdos da Raise Capital.
                 </p>
               </div>
-              <form className="flex w-full items-center gap-3" onSubmit={(e) => e.preventDefault()}>
+              <form
+                className="flex w-full items-center gap-3"
+                onSubmit={async (e) => {
+                  e.preventDefault()
+                  if (!nlEmail) return
+                  try {
+                    setNlStatus('loading')
+                    setNlMsg('')
+                    const res = await fetch('/api/newsletter', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ email: nlEmail, source: 'home' })
+                    })
+                    const data = await res.json().catch(() => ({}))
+                    if (!res.ok || !data?.ok) throw new Error(data?.error || 'Falha ao inscrever')
+                    setNlStatus('success')
+                    setNlMsg('Inscrição realizada com sucesso!')
+                    setNlEmail('')
+                  } catch (err: any) {
+                    setNlStatus('error')
+                    setNlMsg(err?.message || 'Erro ao inscrever, tente novamente.')
+                  } finally {
+                    setTimeout(() => { setNlStatus('idle'); setNlMsg('') }, 4000)
+                  }
+                }}
+              >
                 <input
                   type="email"
                   required
                   placeholder="Seu e-mail"
+                  value={nlEmail}
+                  onChange={(e) => setNlEmail(e.target.value)}
                   className="h-11 w-full max-w-md rounded-md border bg-background px-3 text-sm outline-none ring-0 focus:border-foreground/30"
+                  aria-label="Seu e-mail"
                 />
-                <Button type="submit">Inscrever</Button>
+                <Button type="submit" disabled={nlStatus==='loading'}>
+                  {nlStatus==='loading' ? 'Enviando...' : 'Inscrever'}
+                </Button>
               </form>
+              {nlMsg && (
+                <p role="status" className={`text-sm mt-2 ${nlStatus==='error' ? 'text-red-600' : 'text-emerald-600'}`}>
+                  {nlMsg}
+                </p>
+              )}
             </div>
           </div>
         </section>
