@@ -33,6 +33,9 @@ export default function Home() {
   type OfferItem = { name: string; slug?: string; category: string; modality: string; min: number; raised: number; goal: number; deadline: string; cover: string; status: string }
   const [featuredOffers, setFeaturedOffers] = useState<OfferItem[]>([])
   const [loadingFeatured, setLoadingFeatured] = useState(false)
+  const [nlEmail, setNlEmail] = useState('')
+  const [nlStatus, setNlStatus] = useState<'idle'|'loading'|'success'|'error'>('idle')
+  const [nlMsg, setNlMsg] = useState('')
 
   useEffect(() => {
     let cancelled = false
