@@ -4,13 +4,37 @@ import { slugify } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
 
+type PostBody = {
+  name: string
+  category: string
+  modality: string
+  min: number
+  goal: number
+  raised?: number
+  deadline?: string | null
+  deadlineDate?: string | null
+  cover: string
+  status?: string
+  subtitle?: string | null
+  product?: string | null
+  payment?: string | null
+  tir?: string | null
+  summaryPdf?: string | null
+  aboutOperation?: string | null
+  aboutCompany?: string | null
+  entrepreneurs?: unknown[]
+  financials?: unknown[]
+  documents?: unknown[]
+  essentialInfo?: unknown[]
+  investors?: unknown[]
+}
+
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
+    const body = (await req.json()) as Partial<PostBody>
     const {
       name,
       category,
-      // removed: categoryType,
       modality,
       min,
       goal,
@@ -32,7 +56,7 @@ export async function POST(req: Request) {
       documents,
       essentialInfo,
       investors,
-    } = body as any
+    } = body
 
     if (!name || !category || !modality || typeof min !== 'number' || typeof goal !== 'number' || !cover) {
       return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
@@ -46,7 +70,7 @@ export async function POST(req: Request) {
     let attempt = 0
     while (true) {
       try {
-        const { rows } = await db.query(
+        const { rows } = await db.query<{ id: number; slug: string }>(
           `INSERT INTO ofertas (
             nome, slug, categoria, modalidade, minimo_investimento, arrecadado, meta, data_limite, prazo_texto, capa, status,
             subtitulo, produto, pagamento, tir, resumo_pdf, sobre_operacao, sobre_empresa,
@@ -80,14 +104,14 @@ export async function POST(req: Request) {
             JSON.stringify(documents ?? []),
             JSON.stringify(essentialInfo ?? []),
             JSON.stringify(investors ?? []),
-          ]
+          ] as const
         )
         const created = rows[0]
         return NextResponse.json({ ok: true, id: created.id, slug: created.slug })
-      } catch (e: any) {
-        const msg = e?.message || ''
+      } catch (e: unknown) {
+        const msg = (e as any)?.message || ''
         // código de violação de unicidade (pg) pode não estar sempre presente; usar mensagem
-        const isUnique = e?.code === '23505' || /duplicate key value/i.test(msg)
+        const isUnique = (e as any)?.code === '23505' || /duplicate key value/i.test(msg)
         if (isUnique && attempt < 3) {
           attempt += 1
           finalSlug = `${baseSlug}-${attempt}`
@@ -112,7 +136,7 @@ export async function GET(req: Request) {
     const modality = url.searchParams.get('modality') || ''
 
     const filters: string[] = []
-    const params: any[] = []
+    const params: unknown[] = []
 
     if (q) {
       params.push(`%${q}%`)
@@ -128,14 +152,27 @@ export async function GET(req: Request) {
     }
 
     const where = filters.length ? `WHERE ${filters.join(' AND ')}` : ''
-    const { rows } = await db.query(
+    const { rows } = await db.query<{
+      nome: string
+      slug: string
+      categoria: string
+      modalidade: string
+      minimo_investimento: number | string | null
+      arrecadado: number | string | null
+      meta: number | string | null
+      data_limite: Date | string | null
+      prazo_texto: string | null
+      capa: string | null
+      status: string | null
+    }>(
       `SELECT nome, slug, categoria, modalidade, minimo_investimento, arrecadado, meta, data_limite, prazo_texto, capa, status
        FROM ofertas
        ${where}
-       ORDER BY created_at DESC`
-    , params)
+       ORDER BY created_at DESC`,
+      params
+    )
 
-    const items = (rows || []).map((r: any) => {
+    const items = (rows || []).map((r) => {
       const deadline: string = r.prazo_texto
         ? String(r.prazo_texto)
         : (r.data_limite instanceof Date

@@ -12,17 +12,23 @@ export async function GET(req: Request) {
     const limit = Number.isFinite(parsed) ? Math.min(Math.max(parsed, 1), 50) : 10
 
     const db = getDb()
-    const { rows } = await db.query(
+    const { rows } = await db.query<{
+      titulo: string
+      slug: string
+      resumo: string | null
+      capa: string | null
+      data_publicacao: Date | string | null
+    }>(
       `SELECT titulo, slug, resumo, capa, data_publicacao FROM blog
        ORDER BY data_publicacao DESC, created_at DESC
        LIMIT $1`,
       [limit]
     )
 
-    const items = rows.map((r: any) => ({
+    const items = rows.map((r) => ({
       title: r.titulo as string,
       slug: r.slug as string,
-      excerpt: r.resumo as string,
+      excerpt: (r.resumo ?? '') as string,
       cover: (r.capa ?? '/file.svg') as string,
       date:
         typeof r.data_publicacao === 'string'
@@ -31,7 +37,7 @@ export async function GET(req: Request) {
     }))
 
     return NextResponse.json({ items })
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('GET /api/blog error', e)
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
   }
@@ -86,8 +92,8 @@ export async function POST(req: Request) {
       ]
     )
 
-    return NextResponse.json({ ok: true, id: result.rows?.[0]?.id, slug })
-  } catch (e: any) {
+    return NextResponse.json({ ok: true, id: (result as any).rows?.[0]?.id, slug })
+  } catch (e: unknown) {
     console.error('POST /api/blog error', e)
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
   }

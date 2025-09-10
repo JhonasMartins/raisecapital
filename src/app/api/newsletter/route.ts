@@ -24,8 +24,8 @@ export async function POST(req: NextRequest) {
     try { await sendWelcomeEmail(email, name ?? undefined) } catch (e) { console.error('sendWelcomeEmail failed:', (e as any)?.message) }
 
     return NextResponse.json({ ok: true })
-  } catch (e: any) {
-    console.error('newsletter POST error:', e?.message)
+  } catch (e: unknown) {
+    console.error('newsletter POST error:', (e as any)?.message || e)
     return NextResponse.json({ ok: false, error: 'Erro interno' }, { status: 500 })
   }
 }
@@ -43,7 +43,7 @@ export async function GET() {
         'X-Robots-Tag': 'noindex, nofollow',
       },
     })
-  } catch (e: any) {
+  } catch (e: unknown) {
     return NextResponse.json({ ok: false, error: 'Erro ao gerar preview' }, { status: 500 })
   }
 }

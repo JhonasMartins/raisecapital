@@ -19,8 +19,8 @@ export function getDb() {
   return _pool
 }
 
-export async function query<T = unknown>(text: string, params?: unknown[]): Promise<{ rows: T[] }> {
+export async function query<T = unknown>(text: string, params?: readonly unknown[]): Promise<{ rows: T[] }> {
   const pool = getDb()
-  const res = await pool.query(text, params as any)
+  const res = await pool.query(text, params ? [...params] as unknown[] : undefined)
   return { rows: res.rows as T[] }
 }
