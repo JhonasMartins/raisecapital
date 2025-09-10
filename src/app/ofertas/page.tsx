@@ -180,7 +180,7 @@ import { slugify } from '@/lib/utils'
 
                   {/* Categoria */}
                   <div className="grid gap-1">
-                    <label className="text-xs text-muted-foreground">Categoria</label>
+                    <label className="text-xs text-white/80">Categoria</label>
                     <div className="relative">
                       <select
                         value={selectedCategory}
@@ -197,7 +197,7 @@ import { slugify } from '@/lib/utils'
 
                   {/* Modalidade */}
                   <div className="grid gap-1">
-                    <label className="text-xs text-muted-foreground">Modalidade</label>
+                    <label className="text-xs text-white/80">Modalidade</label>
                     <div className="relative">
                       <select
                         value={selectedModality}
