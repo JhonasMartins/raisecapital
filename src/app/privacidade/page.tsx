@@ -1,14 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { Metadata } from "next";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Link from "next/link";
-
-export const metadata: Metadata = {
-  title: "Política de Privacidade — Raise Capital",
-  description: "Nossa política de privacidade, conforme documento oficial da Raise Capital.",
-};
 
 export default function Page() {
   const filePath = path.join(process.cwd(), "docs", "politica.md");
