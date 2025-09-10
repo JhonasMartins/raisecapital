@@ -53,12 +53,12 @@ export default function Home() {
               </p>
               <div className="mt-6 flex gap-3">
                 <Button asChild className="bg-white text-blue-950 hover:bg-white/90">
-                  <a href="#projetos" className="inline-flex items-center gap-2">
+                  <Link href="/ofertas" className="inline-flex items-center gap-2">
                     Explorar oportunidades <ArrowRight className="size-4" />
-                  </a>
+                  </Link>
                 </Button>
                 <Button variant="outline" asChild className="bg-transparent border-white/40 text-white hover:bg-white/10">
-                  <a href="#como-funciona">Como funciona</a>
+                  <a href="#investidores">Como funciona</a>
                 </Button>
               </div>
               <div className="mt-6 text-xs text-white/70">
