@@ -28,6 +28,12 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: '**.traefik.me',
       },
+      // MinIO console/endpoint com porta 9000 (path-style)
+      {
+        protocol: 'http',
+        hostname: '**.traefik.me',
+        port: '9000',
+      },
     ],
   },
 }
