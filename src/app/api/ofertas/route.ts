@@ -101,3 +101,63 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
   }
 }
+
+// Added: GET handler to list offers
+export async function GET(req: Request) {
+  try {
+    const db = getDb()
+    const url = new URL(req.url)
+    const q = (url.searchParams.get('q') || '').trim().toLowerCase()
+    const category = url.searchParams.get('category') || ''
+    const modality = url.searchParams.get('modality') || ''
+
+    const filters: string[] = []
+    const params: any[] = []
+
+    if (q) {
+      params.push(`%${q}%`)
+      filters.push(`LOWER(nome) LIKE $${params.length}`)
+    }
+    if (category) {
+      params.push(category)
+      filters.push(`categoria = $${params.length}`)
+    }
+    if (modality) {
+      params.push(modality)
+      filters.push(`modalidade = $${params.length}`)
+    }
+
+    const where = filters.length ? `WHERE ${filters.join(' AND ')}` : ''
+    const { rows } = await db.query(
+      `SELECT nome, slug, categoria, modalidade, minimo_investimento, arrecadado, meta, data_limite, prazo_texto, capa, status
+       FROM ofertas
+       ${where}
+       ORDER BY created_at DESC`
+    , params)
+
+    const items = (rows || []).map((r: any) => {
+      const deadline: string = r.prazo_texto
+        ? String(r.prazo_texto)
+        : (r.data_limite instanceof Date
+            ? r.data_limite.toISOString().slice(0, 10)
+            : (typeof r.data_limite === 'string' ? r.data_limite : ''))
+      return {
+        name: r.nome,
+        slug: r.slug,
+        category: r.categoria,
+        modality: r.modalidade,
+        min: Number(r.minimo_investimento ?? 0),
+        raised: Number(r.arrecadado ?? 0),
+        goal: Number(r.meta ?? 0),
+        deadline,
+        cover: r.capa ?? '/file.svg',
+        status: r.status ?? 'Em captação',
+      }
+    })
+
+    return NextResponse.json({ items })
+  } catch (e) {
+    console.error('GET /api/ofertas error', e)
+    return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
+  }
+}
