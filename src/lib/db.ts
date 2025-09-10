@@ -10,6 +10,7 @@ let totalQueryTime = 0
 export function getDb() {
   if (!_pool) {
     const connectionString = process.env.DATABASE_URL
+    console.log('DATABASE_URL:', connectionString ? 'SET' : 'NOT SET')
     if (!connectionString) {
       throw new Error('DATABASE_URL is not set')
     }

@@ -55,7 +55,7 @@ const offers: Offer[] = [
     tir: 28, // rentabilidade alvo em % a.a. (exemplo)
     cover: '/offers/fintech.svg',
     status: 'Em captação',
-    summaryPdf: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    summaryPdf: '/uploads/sample-summary.pdf',
     aboutOperation:
       'Rodada para expansão comercial e melhorias no core bancário. Alocação de recursos em marketing, time e tecnologia.',
     aboutCompany:
@@ -70,8 +70,8 @@ const offers: Offer[] = [
       { label: 'Crescimento (a/a)', value: '120%' },
     ],
     documents: [
-      { label: 'Pitch Deck (PDF)', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
-      { label: 'Contrato da Oferta (PDF)', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+      { label: 'Pitch Deck (PDF)', url: '/uploads/sample-pitch-deck.pdf' },
+    { label: 'Contrato da Oferta (PDF)', url: '/uploads/sample-contract.pdf' },
     ],
     essentialInfo: [
       { label: 'Setor', value: 'Serviços Financeiros' },
@@ -98,7 +98,7 @@ const offers: Offer[] = [
     tir: 20,
     cover: '/offers/agrotech.svg',
     status: 'Em captação',
-    summaryPdf: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    summaryPdf: '/uploads/sample-summary-2.pdf',
     aboutOperation:
       'Captação para financiar linhas de crédito a produtores parceiros com lastro em recebíveis sazonais.',
     aboutCompany:
@@ -113,7 +113,7 @@ const offers: Offer[] = [
       { label: 'Yield bruto', value: '26% a.a.' },
     ],
     documents: [
-      { label: 'Termo de Emissão', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+      { label: 'Termo de Emissão', url: '/uploads/sample-terms.pdf' },
     ],
     essentialInfo: [
       { label: 'Rating interno', value: 'BBB-' },
