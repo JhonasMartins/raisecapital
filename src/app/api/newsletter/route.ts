@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { query } from '@/lib/db'
+import { sendWelcomeEmail } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,6 +19,9 @@ export async function POST(req: NextRequest) {
        ON CONFLICT ((lower(email))) DO UPDATE SET email = newsletter_subscriptions.email`,
       [email, name, source]
     )
+
+    // send welcome email (best-effort; failures should not impedir a resposta de sucesso)
+    try { await sendWelcomeEmail(email, name ?? undefined) } catch (e) { console.error('sendWelcomeEmail failed:', (e as any)?.message) }
 
     return NextResponse.json({ ok: true })
   } catch (e: any) {
