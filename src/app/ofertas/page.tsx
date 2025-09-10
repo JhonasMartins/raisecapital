@@ -295,7 +295,7 @@ import { slugify } from '@/lib/utils'
                <div className="col-span-full text-sm text-muted-foreground">Nenhuma oferta encontrada.</div>
              )}
              {filteredOffers.map((o) => (
-               <Card key={o.name} className="relative overflow-hidden">
+               <Card key={o.name} className="relative overflow-hidden pt-0">
                  <div className="relative h-36 w-full">
                    <Image src={o.cover} alt="" fill className="object-cover" />
                  </div>
@@ -307,25 +307,34 @@ import { slugify } from '@/lib/utils'
                  <CardHeader className="pb-2">
                    <div className="flex items-center justify-between">
                      <CardTitle className="text-base font-semibold">{o.name}</CardTitle>
-                     <Badge variant="secondary">{o.modality}</Badge>
+                     <div className="flex items-center gap-2">
+                       <Badge variant="secondary">{o.modality}</Badge>
+                       <Badge className={`${o.status === 'Em captação'
+                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                         : o.status === 'Encerrada'
+                         ? 'bg-gray-100 text-gray-700 border border-gray-200'
+                         : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>{o.status}</Badge>
+                     </div>
                    </div>
                  </CardHeader>
                  <CardContent className="space-y-3 text-sm text-muted-foreground">
-                   <div className="flex items-center justify-between">
-                     <span>Meta</span>
-                     <span className="text-foreground font-medium">R$ {o.goal.toLocaleString('pt-BR')}</span>
-                   </div>
-                   <div className="flex items-center justify-between">
-                     <span>Arrecadado</span>
-                     <span className="text-foreground font-medium">R$ {o.raised.toLocaleString('pt-BR')}</span>
+                   <div className="space-y-2">
+                     <div className="flex items-center justify-between text-xs">
+                       <span className="text-muted-foreground">Arrecadado</span>
+                       <span className="text-foreground font-medium">
+                         R$ {o.raised.toLocaleString('pt-BR')} de R$ {o.goal.toLocaleString('pt-BR')} ({Math.min(100, Math.round((o.raised / o.goal) * 100))}%)
+                       </span>
+                     </div>
+                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                       <div
+                         className="h-full bg-primary"
+                         style={{ width: `${Math.min(100, Math.round((o.raised / o.goal) * 100))}%` }}
+                       />
+                     </div>
                    </div>
                    <div className="flex items-center justify-between">
                      <span>Investimento mínimo</span>
                      <span className="text-foreground font-medium">R$ {o.min.toLocaleString('pt-BR')}</span>
-                   </div>
-                   <div className="flex items-center justify-between">
-                     <span>Status</span>
-                     <span className="text-foreground font-medium">{o.status}</span>
                    </div>
                  </CardContent>
                </Card>
