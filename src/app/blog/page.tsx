@@ -2,6 +2,7 @@ import { getDb } from '@/lib/db'
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Search, ChevronDown, XCircle } from 'lucide-react'
+import Image from 'next/image'
 
 export const dynamic = 'force-dynamic'
 
@@ -170,8 +171,16 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((a) => (
             <Link key={a.slug} href={`/blog/${a.slug}`} className="group rounded-lg border p-3 hover:shadow-sm transition">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={a.cover} alt="" className="h-40 w-full rounded object-cover border" />
+              <div className="relative h-40 w-full overflow-hidden rounded">
+                <Image
+                  src={a.cover}
+                  alt={`Capa do artigo ${a.title}`}
+                  fill
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  className="object-cover border"
+                  unoptimized
+                />
+              </div>
               <div className="mt-3 text-xs text-muted-foreground">{new Date(a.date).toLocaleDateString('pt-BR')}</div>
               <div className="mt-1 line-clamp-2 font-medium group-hover:underline">{a.title}</div>
               <div className="mt-1 text-sm text-muted-foreground line-clamp-3">{a.excerpt}</div>

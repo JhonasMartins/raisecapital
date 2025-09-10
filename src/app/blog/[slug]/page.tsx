@@ -9,15 +9,30 @@ import CommentsSection from '@/components/blog/comments-section'
 
 export const dynamic = 'force-dynamic'
 
+type BlogRow = { slug: string }
+
+type ArticleRow = {
+  id: number
+  titulo: string
+  slug: string
+  resumo: string | null
+  data_publicacao: Date | string | null
+  autor: string | null
+  capa: string | null
+  categorias: string[] | null
+  corpo: string[] | null
+  corpo_html: string | null
+}
+
 export async function generateStaticParams() {
   const db = getDb()
-  const { rows } = await db.query(`SELECT slug FROM blog ORDER BY created_at DESC LIMIT 1000`)
-  return rows.map((r: any) => ({ slug: r.slug as string }))
+  const { rows } = await db.query<BlogRow>(`SELECT slug FROM blog ORDER BY created_at DESC LIMIT 1000`)
+  return rows.map((r) => ({ slug: r.slug as string }))
 }
 
 async function fetchArticle(slug: string) {
   const db = getDb()
-  const { rows } = await db.query(
+  const { rows } = await db.query<ArticleRow>(
     `SELECT id, titulo, slug, resumo, data_publicacao, autor, capa, categorias, corpo, corpo_html
      FROM blog
      WHERE slug = $1
@@ -30,7 +45,7 @@ async function fetchArticle(slug: string) {
     id: r.id as number,
     title: r.titulo as string,
     slug: r.slug as string,
-    excerpt: r.resumo as string,
+    excerpt: (r.resumo ?? '') as string,
     date: typeof r.data_publicacao === 'string' ? r.data_publicacao : (r.data_publicacao?.toISOString?.().slice(0, 10) ?? ''),
     author: (r.autor ?? '') as string,
     cover: (r.capa ?? '/file.svg') as string,
@@ -42,7 +57,13 @@ async function fetchArticle(slug: string) {
 
 async function fetchRelated(slug: string, categories: string[]) {
   const db = getDb()
-  const { rows } = await db.query(
+  const { rows } = await db.query<{
+    titulo: string
+    slug: string
+    resumo: string | null
+    capa: string | null
+    data_publicacao: Date | string | null
+  }>(
     `SELECT titulo, slug, resumo, capa, data_publicacao
      FROM blog
      WHERE slug <> $1
@@ -51,10 +72,10 @@ async function fetchRelated(slug: string, categories: string[]) {
      LIMIT 3`,
     [slug, categories?.length ? categories : null]
   )
-  return rows.map((r: any) => ({
+  return rows.map((r) => ({
     title: r.titulo as string,
     slug: r.slug as string,
-    excerpt: r.resumo as string,
+    excerpt: (r.resumo ?? '') as string,
     cover: (r.capa ?? '/file.svg') as string,
     date: typeof r.data_publicacao === 'string' ? r.data_publicacao : (r.data_publicacao?.toISOString?.().slice(0, 10) ?? ''),
   }))
@@ -98,8 +119,9 @@ export default async function BlogArticlePage({ params }: { params: { slug: stri
         {article.cover && (
           <div className="w-full border-t bg-muted/30">
             <div className="mx-auto max-w-6xl px-6">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={article.cover} alt="Capa do artigo" className="h-64 w-full object-cover rounded-md my-6" />
+              <div className="relative h-64 w-full my-6">
+                <Image src={article.cover} alt="Capa do artigo" fill className="object-cover rounded-md" sizes="100vw" />
+              </div>
             </div>
           </div>
         )}
@@ -126,8 +148,9 @@ export default async function BlogArticlePage({ params }: { params: { slug: stri
                   {related.map((r) => (
                     <Link key={r.slug} href={`/blog/${r.slug}`} className="group block">
                       <div className="flex gap-3">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={r.cover} alt="" className="h-16 w-24 rounded object-cover border" />
+                        <div className="relative h-16 w-24 flex-shrink-0 overflow-hidden rounded border">
+                          <Image src={r.cover} alt="" fill className="object-cover" sizes="96px" />
+                        </div>
                         <div>
                           <div className="text-xs text-muted-foreground">{new Date(r.date).toLocaleDateString('pt-BR')}</div>
                           <div className="text-sm font-medium leading-snug group-hover:underline line-clamp-2">{r.title}</div>
