@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import FooterGate from "@/components/footer-gate";
 import { Button } from "@/components/ui/button";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,10 +17,64 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3002";
+const siteName = "Raise Capital";
+const siteTitle = `${siteName} — Investimentos em Equity Crowdfunding`;
+const siteDescription =
+  "Plataforma de investimentos em equity crowdfunding. Conectamos você a oportunidades selecionadas com transparência e segurança.";
+
 export const metadata: Metadata = {
-  title: "Raise Capital — Investimentos em Equity Crowdfunding",
-  description:
-    "Plataforma de investimentos em equity crowdfunding. Conectamos você a oportunidades selecionadas com transparência e segurança.",
+  metadataBase: new URL(siteUrl),
+  title: siteTitle,
+  description: siteDescription,
+  applicationName: siteName,
+  generator: "Next.js",
+  keywords: [
+    "equity crowdfunding",
+    "investimento",
+    "startups",
+    "ofertas",
+    "plataforma de investimentos",
+    "Raise Capital",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  category: "Investimentos",
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName,
+    title: siteTitle,
+    description: siteDescription,
+    locale: "pt_BR",
+    images: [
+      {
+        url: "/background-hero.png",
+        width: 1200,
+        height: 630,
+        alt: `${siteName} — Investimentos em Equity Crowdfunding`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+    images: ["/background-hero.png"],
+    creator: "@raisecapital",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  themeColor: "#0B5ED7",
+  icons: {
+    icon: "/favicon.svg",
+  },
+  authors: [{ name: siteName }],
+  creator: siteName,
+  publisher: siteName,
 };
 
 export default function RootLayout({
@@ -27,9 +82,36 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const orgLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteName,
+    url: siteUrl,
+    logo: `${siteUrl}/favicon.svg`,
+    sameAs: [
+      "https://www.linkedin.com/company/raisecapital-br/",
+    ],
+  } as const;
+
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteName,
+    url: siteUrl,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${siteUrl}/ofertas?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  } as const;
+
   return (
     <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* JSON-LD base */}
+        <Script id="ld-org" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }} />
+        <Script id="ld-website" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }} />
+
         {/* Navbar (oculta em /auth via FooterGate) */}
         <FooterGate>
           <header className="sticky top-0 inset-x-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
