@@ -492,9 +492,34 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
 
 // Buscar oferta no banco por slug com fallback aos mocks estáticos
 async function getOfferBySlug(slug: string): Promise<Offer | null> {
+  type OfferRow = {
+    nome: string
+    slug: string
+    categoria: string
+    modalidade: string
+    minimo_investimento: number | string | null
+    arrecadado: number | string | null
+    meta: number | string | null
+    data_limite: Date | string | null
+    prazo_texto: string | null
+    capa: string | null
+    status: string | null
+    subtitulo: string | null
+    produto: string | null
+    pagamento: string | null
+    tir: number | string | null
+    resumo_pdf: string | null
+    sobre_operacao: string | null
+    sobre_empresa: string | null
+    empreendedores: unknown | null
+    financeiros: unknown | null
+    documentos: unknown | null
+    informacoes_essenciais: unknown | null
+    investidores: unknown | null
+  }
   try {
     const db = getDb()
-    const { rows } = await db.query(
+    const { rows } = await db.query<OfferRow>(
       `SELECT nome, slug, categoria, modalidade, minimo_investimento, arrecadado, meta,
                data_limite, prazo_texto, capa, status, subtitulo, produto, pagamento, tir,
                resumo_pdf, sobre_operacao, sobre_empresa,
@@ -504,7 +529,7 @@ async function getOfferBySlug(slug: string): Promise<Offer | null> {
         LIMIT 1`,
       [slug]
     )
-    const r = rows?.[0] as any
+    const r = rows?.[0]
     if (!r) return null
     const deadline: string = r.prazo_texto
       ? String(r.prazo_texto)
@@ -529,16 +554,16 @@ async function getOfferBySlug(slug: string): Promise<Offer | null> {
       summaryPdf: r.resumo_pdf ?? undefined,
       aboutOperation: r.sobre_operacao ?? undefined,
       aboutCompany: r.sobre_empresa ?? undefined,
-      entrepreneurs: Array.isArray(r.empreendedores) ? r.empreendedores : undefined,
-      financials: Array.isArray(r.financeiros) ? r.financeiros : undefined,
-      documents: Array.isArray(r.documentos) ? r.documentos : undefined,
-      essentialInfo: Array.isArray(r.informacoes_essenciais) ? r.informacoes_essenciais : undefined,
-      investors: Array.isArray(r.investidores) ? r.investidores : undefined,
+      entrepreneurs: Array.isArray(r.empreendedores) ? r.empreendedores as Entrepreneur[] : undefined,
+      financials: Array.isArray(r.financeiros) ? r.financeiros as KeyVal[] : undefined,
+      documents: Array.isArray(r.documentos) ? r.documentos as DocumentLink[] : undefined,
+      essentialInfo: Array.isArray(r.informacoes_essenciais) ? r.informacoes_essenciais as KeyVal[] : undefined,
+      investors: Array.isArray(r.investidores) ? r.investidores as Investor[] : undefined,
     }
     return offer
   } catch (e) {
     // Em caso de erro de conexão, apenas faça fallback aos mocks
-    return null
+    return offers.find((o) => slugify(o.name) === slug) ?? null
   }
 }
 

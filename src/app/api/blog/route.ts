@@ -65,7 +65,7 @@ export async function POST(req: Request) {
     const slug = slugify(title)
 
     // Inserir no esquema já existente da tabela blog
-    const result = await db.query(
+    const result = await db.query<{ id: number }>(
       `INSERT INTO blog (titulo, slug, resumo, data_publicacao, autor, capa, categorias, corpo, corpo_html)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        ON CONFLICT (slug) DO UPDATE SET
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
       ]
     )
 
-    return NextResponse.json({ ok: true, id: (result as any).rows?.[0]?.id, slug })
+    return NextResponse.json({ ok: true, id: result.rows?.[0]?.id, slug })
   } catch (e: unknown) {
     console.error('POST /api/blog error', e)
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 })

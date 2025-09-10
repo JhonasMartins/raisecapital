@@ -6,7 +6,7 @@ export async function GET() {
     const { rows } = await query<{ now: string }>('SELECT NOW() as now')
     return Response.json({ ok: true, now: rows[0]?.now })
   } catch (e: unknown) {
-    const msg = e && typeof e === 'object' && 'message' in e ? String((e as any).message) : 'Connection failed'
+    const msg = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : 'Connection failed'
     console.error('DB connection error', e)
     return Response.json({ ok: false, error: msg }, { status: 500 })
   }

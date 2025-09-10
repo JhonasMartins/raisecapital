@@ -109,17 +109,21 @@ export async function POST(req: Request) {
         const created = rows[0]
         return NextResponse.json({ ok: true, id: created.id, slug: created.slug })
       } catch (e: unknown) {
-        const msg = (e as any)?.message || ''
-        // código de violação de unicidade (pg) pode não estar sempre presente; usar mensagem
-        const isUnique = (e as any)?.code === '23505' || /duplicate key value/i.test(msg)
-        if (isUnique && attempt < 3) {
-          attempt += 1
-          finalSlug = `${baseSlug}-${attempt}`
-          continue
-        }
-        console.error('POST /api/ofertas error', e)
-        return NextResponse.json({ error: 'Erro ao salvar' }, { status: 500 })
-      }
+-        const msg = (e as any)?.message || ''
+-        // código de violação de unicidade (pg) pode não estar sempre presente; usar mensagem
+-        const isUnique = (e as any)?.code === '23505' || /duplicate key value/i.test(msg)
++        const msg = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : ''
++        // código de violação de unicidade (pg) pode não estar sempre presente; usar mensagem
++        const code = e && typeof e === 'object' && 'code' in e ? String((e as { code?: unknown }).code) : ''
++        const isUnique = code === '23505' || /duplicate key value/i.test(msg)
+         if (isUnique && attempt < 3) {
+           attempt += 1
+           finalSlug = `${baseSlug}-${attempt}`
+           continue
+         }
+         console.error('POST /api/ofertas error', e)
+         return NextResponse.json({ error: 'Erro ao salvar' }, { status: 500 })
+       }
     }
   } catch (e) {
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 })

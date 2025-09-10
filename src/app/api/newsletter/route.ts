@@ -21,11 +21,17 @@ export async function POST(req: NextRequest) {
     )
 
     // send welcome email (best-effort; failures should not impedir a resposta de sucesso)
-    try { await sendWelcomeEmail(email, name ?? undefined) } catch (e) { console.error('sendWelcomeEmail failed:', (e as any)?.message) }
+    try {
+      await sendWelcomeEmail(email, name ?? undefined)
+    } catch (e: unknown) {
+      const msg = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : String(e)
+      console.error('sendWelcomeEmail failed:', msg)
+    }
 
     return NextResponse.json({ ok: true })
   } catch (e: unknown) {
-    console.error('newsletter POST error:', (e as any)?.message || e)
+    const msg = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : String(e)
+    console.error('newsletter POST error:', msg)
     return NextResponse.json({ ok: false, error: 'Erro interno' }, { status: 500 })
   }
 }
