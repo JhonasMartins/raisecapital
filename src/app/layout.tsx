@@ -19,21 +19,21 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Raise Capital - Plataforma de Equity Crowdfunding no Brasil",
+    default: "Raise Capital — Investimento Coletivo em Participações (Equity)",
     template: "%s | Raise Capital"
   },
-  description: "Invista em startups e empresas promissoras através da maior plataforma de equity crowdfunding do Brasil. Conectamos investidores a oportunidades de alto potencial com transparência e segurança.",
+  description: "Conectamos investidores a ofertas públicas de empresas em crescimento por meio de investimento coletivo em participações (equity). Curadoria, transparência de documentos e indicadores, e jornada digital de ponta a ponta — em conformidade com a regulação brasileira.",
   keywords: [
     "equity crowdfunding",
-    "investimento em startups",
-    "crowdfunding brasil",
-    "investir em empresas",
-    "captação de recursos",
     "investimento coletivo",
-    "startups brasil",
-    "venture capital",
-    "investimento anjo",
-    "CVM"
+    "investimentos em empresas",
+    "startups",
+    "pequenas e médias empresas",
+    "ofertas públicas",
+    "investimentos alternativos",
+    "plataforma de investimentos",
+    "CVM",
+    "crowdfunding de investimento"
   ],
   authors: [{ name: "Raise Capital" }],
   creator: "Raise Capital",
@@ -51,23 +51,23 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'pt_BR',
     url: '/',
-    title: 'Raise Capital - Plataforma de Equity Crowdfunding no Brasil',
-    description: 'Invista em startups e empresas promissoras através da maior plataforma de equity crowdfunding do Brasil. Conectamos investidores a oportunidades de alto potencial.',
+    title: 'Raise Capital — Investimento Coletivo em Equity para empresas em crescimento',
+    description: 'Invista em empresas em crescimento por meio de investimento coletivo em participações (equity). Curadoria, transparência e conformidade regulatória.',
     siteName: 'Raise Capital',
     images: [
       {
-        url: '/og-image.jpg',
+        url: '/og-image.svg',
         width: 1200,
         height: 630,
-        alt: 'Raise Capital - Plataforma de Equity Crowdfunding',
+        alt: 'Raise Capital — Investimento Coletivo em Participações (Equity)',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Raise Capital - Plataforma de Equity Crowdfunding no Brasil',
-    description: 'Invista em startups e empresas promissoras através da maior plataforma de equity crowdfunding do Brasil.',
-    images: ['/og-image.jpg'],
+    title: 'Raise Capital — Investimento Coletivo em Participações (Equity)',
+    description: 'Conectamos investidores a empresas em crescimento com curadoria, transparência e conformidade regulatória.',
+    images: ['/og-image.svg'],
     creator: '@raisecapitalbr',
   },
   robots: {
@@ -168,7 +168,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": "Raise Capital",
-              "description": "Plataforma de equity crowdfunding que conecta investidores a startups e empresas promissoras no Brasil",
+              "description": "Plataforma de investimento coletivo em participações (equity) que conecta investidores a empresas privadas em crescimento, com curadoria e conformidade regulatória no Brasil.",
               "url": "https://raisecapital.com.br",
               "logo": "https://raisecapital.com.br/logo.avif",
               "contactPoint": {
@@ -214,7 +214,7 @@ export default function RootLayout({
                     </div>
                   </div>
                   <p className="mt-4 text-sm text-muted-foreground">
-                    Plataforma de crowdfunding de investimento no Brasil que conecta investidores a projetos promissores e de alto impacto.
+                    Plataforma de investimento coletivo em participações (equity) que conecta investidores a empresas em crescimento, com curadoria, transparência e conformidade regulatória.
                   </p>
                 </div>
 
