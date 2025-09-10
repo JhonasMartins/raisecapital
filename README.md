@@ -1,66 +1,83 @@
 # Raise Capital
 
-Landing page construída com Next.js (App Router) e Tailwind CSS, com componentes de UI no estilo shadcn/ui. Inclui seções institucionais e cards com imagens otimizadas.
+Plataforma web para captação de recursos e gestão de ofertas de investimento. O projeto reúne uma landing institucional, listagem e detalhes de ofertas, criação de projetos e um blog com editor rico. O backend é implementado via rotas de API do Next.js e o armazenamento de dados usa PostgreSQL.
 
-## Destaques
+## Stack
 - Next.js 15 (App Router) + React 19
 - Tailwind CSS v4
 - Componentes de UI locais (inspirados no shadcn/ui)
 - Animações com framer-motion
 - Ícones com lucide-react
-- Charts com Recharts (componentes utilitários prontos)
-- Imagens otimizadas com next/image (Sharp)
+- Gráficos com Recharts
+- Renderização de imagens com next/image (Sharp)
+- Banco de dados: PostgreSQL (pg)
 
-## Pré‑requisitos
-- Node.js e npm instalados
+## Funcionalidades
+- Landing page institucional
+- Ofertas: listagem e página de detalhes
+- Projetos: criação de novos projetos/ofertas via formulário
+- Blog: criação de posts com editor (TipTap)
+- Páginas institucionais (políticas, termos, etc.)
 
-## Instalação e uso
+## Pré-requisitos
+- Node.js LTS (>= 18) e npm
+- PostgreSQL disponível e acessível
+
+## Instalação
 ```bash
 npm install
+```
+
+## Configuração de Ambiente
+Crie um arquivo `.env` na raiz com as seguintes variáveis:
+```bash
+# String de conexão do PostgreSQL (ex.: postgres://user:pass@host:5432/database)
+DATABASE_URL="postgres://USER:PASS@HOST:5432/DBNAME"
+
+# SSL habilitado por padrão. Para desabilitar (ex.: ambiente local), defina como 'false'.
+DATABASE_SSL=false
+```
+
+### Migrações de Banco de Dados
+Execute as migrações antes de iniciar a aplicação:
+```bash
+npm run db:migrate
+```
+
+## Execução em Desenvolvimento
+```bash
 npm run dev
 ```
-Abra http://localhost:3000 para visualizar.
+Acesse a aplicação em http://localhost:3000/.
 
-Build de produção e servidor:
+## Build e Produção
 ```bash
 npm run build
 npm start
 ```
 
-Lint:
-```bash
-npm run lint
-```
+## Scripts NPM
+- dev: inicia o servidor de desenvolvimento (Turbopack)
+- build: build de produção (Turbopack)
+- start: inicia o servidor em modo produção
+- lint: executa o ESLint
+- db:migrate: executa migrações de banco
 
-## Scripts
-- dev: Inicia o Dev Server com Turbopack
-- build: Build de produção com Turbopack
-- start: Sobe o servidor em produção
-- lint: Executa o ESLint
-
-## Estrutura do projeto
-- src/app/
-  - layout.tsx: layout raiz e metadata
-  - page.tsx: composição da landing page (seções e conteúdo)
-- src/components/ui/: componentes básicos (Button, Card, Badge, etc.)
-- src/lib/utils.ts: utilitários (ex.: composição de classes)
-- public/: assets e imagens (inclui as imagens dos cards e ícones)
-
-## Seções principais
-- Hero e chamadas
-- Benefícios da Raise Capital (layout em 2 colunas)
-- Como Investir (3 cards: Cadastre‑se, Explore e Invista, cada um com imagem)
-- Para Investidores (fundo #f2f2f2)
-- Outras seções institucionais conforme evoluções
-
-## Personalização
-- Conteúdo: edite src/app/page.tsx
-- Estilos: utilize classes do Tailwind (ex.: cores arbitrárias como bg-[#f2f2f2])
-- Imagens: adicione em /public e referencie em src/app/page.tsx com next/image
+## Estrutura do Projeto (resumo)
+- src/app: páginas (App Router), rotas de API e layout
+- src/components/ui: componentes de UI reutilizáveis
+- src/lib: utilitários e acesso ao banco de dados
+- public: assets e imagens
 
 ## Deploy
 Recomendado: Vercel.
 - Build Command: `npm run build`
 - Output: `.next`
 
-Contribuições e melhorias são bem‑vindas!
+## Licença
+Todos os direitos reservados. É proibida a cópia, distribuição, modificação ou uso deste software, no todo ou em parte, sem autorização prévia e por escrito do detentor dos direitos. O acesso ao código-fonte não implica concessão de qualquer licença tácita.
+
+Qualquer solicitação de uso, distribuição, sublicenciamento ou integração deve ser formalmente encaminhada e aprovada por escrito.
+
+## Direitos Autorais
+Copyright (c) 2025 codnodo studio
