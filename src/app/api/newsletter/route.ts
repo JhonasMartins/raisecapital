@@ -39,8 +39,8 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   try {
     const html = getWelcomeEmailHtml('Maria', {
-      baseUrl: 'http://localhost:3002',
-      linkBaseUrl: 'https://raisecapital.com.br',
+      baseUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://raisecapital.com.br',
+    linkBaseUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://raisecapital.com.br',
     })
     return new Response(html, {
       headers: {
