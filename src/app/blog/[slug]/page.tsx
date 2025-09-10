@@ -25,12 +25,22 @@ type ArticleRow = {
 }
 
 export async function generateStaticParams() {
-  const db = getDb()
-  const { rows } = await db.query<BlogRow>(`SELECT slug FROM blog ORDER BY created_at DESC LIMIT 1000`)
-  return rows.map((r) => ({ slug: r.slug as string }))
+  if (!process.env.DATABASE_URL) {
+    // Evita falha no build quando a variável de ambiente não está presente
+    // e deixa a rota funcionar de forma dinâmica em runtime
+    return []
+  }
+  try {
+    const db = getDb()
+    const { rows } = await db.query<BlogRow>(`SELECT slug FROM blog ORDER BY created_at DESC LIMIT 1000`)
+    return rows.map((r) => ({ slug: r.slug as string }))
+  } catch {
+    return []
+  }
 }
 
 async function fetchArticle(slug: string) {
+  if (!process.env.DATABASE_URL) return null
   const db = getDb()
   const { rows } = await db.query<ArticleRow>(
     `SELECT id, titulo, slug, resumo, data_publicacao, autor, capa, categorias, corpo, corpo_html
@@ -56,6 +66,7 @@ async function fetchArticle(slug: string) {
 }
 
 async function fetchRelated(slug: string, categories: string[]) {
+  if (!process.env.DATABASE_URL) return []
   const db = getDb()
   const { rows } = await db.query<{
     titulo: string
