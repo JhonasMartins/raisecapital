@@ -32,7 +32,10 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const html = getWelcomeEmailHtml('Maria')
+    const html = getWelcomeEmailHtml('Maria', {
+      baseUrl: 'http://localhost:3002',
+      linkBaseUrl: 'https://raisecapital.com.br',
+    })
     return new Response(html, {
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
