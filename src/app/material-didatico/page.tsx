@@ -1,14 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { Metadata } from "next";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Link from "next/link";
-
-export const metadata: Metadata = {
-  title: "Material Didático — Raise Capital",
-  description: "Material didático e orientações gerais da Raise Capital.",
-};
 
 export default function Page() {
   const filePath = path.join(process.cwd(), "docs", "material-didatico.md");

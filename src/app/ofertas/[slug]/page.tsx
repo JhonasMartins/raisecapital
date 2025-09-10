@@ -172,20 +172,7 @@ const offers: Offer[] = [
 
 import { getDb } from '@/lib/db'
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params
-  const dbOffer = await getOfferBySlug(slug)
-  const offer = dbOffer ?? offers.find((o) => slugify(o.name) === slug)
-  const title = offer ? `${offer.name} — Oferta` : 'Oferta não encontrada'
-  const description = offer
-    ? `Detalhes da oferta ${offer.name}: ${offer.category}${offer.modality ? ` • ${offer.modality}` : ''}.`
-    : 'A oferta solicitada não foi encontrada.'
-  return {
-    title,
-    description,
-    alternates: { canonical: `/ofertas/${slug}` },
-  }
-}
+
 
 export default async function OfferDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

@@ -92,13 +92,7 @@ async function fetchRelated(slug: string, categories: string[]) {
   }))
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const article = await fetchArticle(params.slug)
-  return {
-    title: article ? `${article.title} — Blog` : 'Artigo não encontrado',
-    description: article ? article.excerpt : 'O artigo solicitado não foi encontrado.',
-  }
-}
+
 
 export default async function BlogArticlePage({ params }: { params: { slug: string } }) {
   const article = await fetchArticle(params.slug)
