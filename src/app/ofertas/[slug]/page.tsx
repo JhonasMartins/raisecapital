@@ -212,17 +212,20 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
   return (
     <div className="min-h-dvh font-sans pt-28">
 
-      {/* Header de página */}
-      <header className="border-b">
-        <div className="mx-auto max-w-6xl px-6 py-8">
-          <nav className="text-xs text-muted-foreground">
-            <Link href="/ofertas" className="hover:underline">Ofertas</Link>
+      {/* Header com gradiente azul */}
+      <section className="relative -mt-28 pt-28 overflow-hidden">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900" />
+        <div className="absolute inset-0 -z-10 opacity-20 [background:radial-gradient(800px_400px_at_10%_10%,white,transparent_50%),radial-gradient(600px_300px_at_90%_20%,white,transparent_50%)]" />
+
+        <div className="mx-auto max-w-6xl px-6 py-10">
+          <nav className="text-xs text-white/80">
+            <Link href="/ofertas" className="hover:underline text-white/80">Ofertas</Link>
             <span className="mx-2">/</span>
-            <span>{offer.name}</span>
+            <span className="text-white/80">{offer.name}</span>
           </nav>
-          <h1 className="mt-2 text-3xl font-semibold">{offer.name}</h1>
+          <h1 className="mt-2 text-3xl font-semibold text-white">{offer.name}</h1>
           {offer.subtitle && (
-            <p className="mt-1 text-muted-foreground">{offer.subtitle}</p>
+            <p className="mt-1 text-white/80">{offer.subtitle}</p>
           )}
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${categoryAccent.bg} ${categoryAccent.text} ${categoryAccent.ring}`}>{offer.category}</span>
@@ -234,32 +237,32 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
           <div className="mt-4 -mb-1 overflow-x-auto">
             <div className="grid grid-flow-col auto-cols-[minmax(180px,1fr)] gap-3 pb-1">
               {offer.tir != null && (
-                <div className={`flex items-center gap-3 rounded-xl p-3 ring-1 ${categoryAccent.ring} ${categoryAccent.bg}`}>
-                  <div className={`h-8 w-8 rounded-md bg-white/70 ring-1 ring-white/60 flex items-center justify-center ${categoryAccent.icon}`}>
+                <div className={"flex items-center gap-3 rounded-2xl p-3 bg-white/10 backdrop-blur-md ring-1 ring-white/25 text-white shadow-md"}>
+                  <div className={`h-8 w-8 rounded-md bg-white/80 ring-1 ring-white/70 backdrop-blur-sm flex items-center justify-center ${categoryAccent.icon}`}>
                     <TrendingUp className="size-4" />
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">TIR (alvo)</div>
+                    <div className="text-[10px] uppercase tracking-wider text-white/70 font-medium">TIR (alvo)</div>
                     <div className="mt-0.5 text-sm font-semibold">{offer.tir}% a.a.</div>
                   </div>
                 </div>
               )}
-              <div className={`flex items-center gap-3 rounded-xl p-3 ring-1 ${categoryAccent.ring} ${categoryAccent.bg}`}>
-                <div className={`h-8 w-8 rounded-md bg-white/70 ring-1 ring-white/60 flex items-center justify-center ${categoryAccent.icon}`}>
+              <div className={"flex items-center gap-3 rounded-2xl p-3 bg-white/10 backdrop-blur-md ring-1 ring-white/25 text-white shadow-md"}>
+                <div className={`h-8 w-8 rounded-md bg-white/80 ring-1 ring-white/70 backdrop-blur-sm flex items-center justify-center ${categoryAccent.icon}`}>
                   <Clock className="size-4" />
                 </div>
                 <div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Prazo</div>
+                  <div className="text-[10px] uppercase tracking-wider text-white/70 font-medium">Prazo</div>
                   <div className="mt-0.5 text-sm font-semibold">{offer.deadline}</div>
                 </div>
               </div>
               {offer.payment && (
-                <div className={`flex items-center gap-3 rounded-xl p-3 ring-1 ${categoryAccent.ring} ${categoryAccent.bg}`}>
-                  <div className={`h-8 w-8 rounded-md bg-white/70 ring-1 ring-white/60 flex items-center justify-center ${categoryAccent.icon}`}>
+                <div className={"flex items-center gap-3 rounded-2xl p-3 bg-white/10 backdrop-blur-md ring-1 ring-white/25 text-white shadow-md"}>
+                  <div className={`h-8 w-8 rounded-md bg-white/80 ring-1 ring-white/70 backdrop-blur-sm flex items-center justify-center ${categoryAccent.icon}`}>
                     <HandCoins className="size-4" />
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Pagamento</div>
+                    <div className="text-[10px] uppercase tracking-wider text-white/70 font-medium">Pagamento</div>
                     <div className="mt-0.5 text-sm font-semibold">{offer.payment}</div>
                   </div>
                 </div>
@@ -267,7 +270,7 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
             </div>
           </div>
         </div>
-      </header>
+      </section>
 
       {/* Subnav sticky por seções */}
       <nav className="sticky top-16 z-40 bg-background/80 backdrop-blur border-b">
