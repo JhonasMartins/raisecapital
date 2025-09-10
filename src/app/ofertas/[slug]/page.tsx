@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { slugify } from '@/lib/utils'
-import { TrendingUp, Clock, FileDown, HandCoins } from 'lucide-react'
+import { TrendingUp, Clock, FileDown, HandCoins, FileText } from 'lucide-react'
 import sanitizeHtml from 'sanitize-html'
 
 type Entrepreneur = { name: string; role?: string }
@@ -173,14 +173,18 @@ import { getDb } from '@/lib/db'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const offer = offers.find((o) => slugify(o.name) === slug)
-   return {
-     title: offer ? `${offer.name} — Oferta` : 'Oferta não encontrada',
-     description: offer
-      ? `Detalhes da oferta ${offer.name}: ${offer.category}, ${offer.modality}.`
-      : 'A oferta solicitada não foi encontrada.',
-   }
- }
+  const dbOffer = await getOfferBySlug(slug)
+  const offer = dbOffer ?? offers.find((o) => slugify(o.name) === slug)
+  const title = offer ? `${offer.name} — Oferta` : 'Oferta não encontrada'
+  const description = offer
+    ? `Detalhes da oferta ${offer.name}: ${offer.category}${offer.modality ? ` • ${offer.modality}` : ''}.`
+    : 'A oferta solicitada não foi encontrada.'
+  return {
+    title,
+    description,
+    alternates: { canonical: `/ofertas/${slug}` },
+  }
+}
 
 export default async function OfferDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -211,7 +215,7 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
         <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center">
-              <Image src="/logo.avif" alt="Raise Capital" width={180} height={44} sizes="180px" quality={100} className="block" priority />
+              <Image src="/logo.avif" alt="Raise Capital" width={180} height={44} sizes="180px" className="block" priority />
             </Link>
           </div>
           <nav className="hidden sm:flex items-center gap-6 text-sm text-muted-foreground">
@@ -397,9 +401,11 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
                         target="_blank"
                         rel="noopener noreferrer"
                         className="block group"
+                        aria-label={`Abrir ${d.label || 'documento'} (PDF)`}
+                        title={`${d.label || d.url} — PDF`}
                       >
                         <div className="flex items-center gap-3 rounded-lg border p-3 bg-muted/30 hover:bg-muted/50 transition-colors">
-                          <Image src="/file.svg" alt="PDF" width={24} height={24} className="shrink-0" />
+                          <FileText className="size-5 text-red-600 shrink-0" aria-hidden />
                           <div className="flex-1 min-w-0">
                             <div className="truncate text-sm font-medium text-foreground group-hover:underline">{d.label || d.url}</div>
                             <div className="text-[10px] uppercase tracking-wider text-muted-foreground">PDF</div>
@@ -563,10 +569,13 @@ const richTextSanitize = (html: string) =>
     allowedTags: [
       'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's',
       'ul', 'ol', 'li', 'blockquote', 'code', 'pre',
-      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'a'
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'a',
+      'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td'
     ],
     allowedAttributes: {
-      a: ['href', 'target', 'rel']
+      a: ['href', 'target', 'rel'],
+      th: ['colspan', 'rowspan', 'align'],
+      td: ['colspan', 'rowspan', 'align']
     },
     allowedSchemes: ['http', 'https', 'mailto']
   })
