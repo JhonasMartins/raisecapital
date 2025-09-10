@@ -171,19 +171,21 @@ const offers: Offer[] = [
 
 import { getDb } from '@/lib/db'
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const offer = offers.find((o) => slugify(o.name) === params.slug)
-  return {
-    title: offer ? `${offer.name} — Oferta` : 'Oferta não encontrada',
-    description: offer
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const offer = offers.find((o) => slugify(o.name) === slug)
+   return {
+     title: offer ? `${offer.name} — Oferta` : 'Oferta não encontrada',
+     description: offer
       ? `Detalhes da oferta ${offer.name}: ${offer.category}, ${offer.modality}.`
       : 'A oferta solicitada não foi encontrada.',
-  }
-}
+   }
+ }
 
-export default async function OfferDetailPage({ params }: { params: { slug: string } }) {
-  const dbOffer = await getOfferBySlug(params.slug)
-  const offer = dbOffer ?? offers.find((o) => slugify(o.name) === params.slug)
+export default async function OfferDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const dbOffer = await getOfferBySlug(slug)
+  const offer = dbOffer ?? offers.find((o) => slugify(o.name) === slug)
   if (!offer) return notFound()
 
   const pct = Math.min(100, Math.round((offer.raised / offer.goal) * 100))
@@ -366,7 +368,11 @@ export default async function OfferDetailPage({ params }: { params: { slug: stri
                     {offer.financials.map((kv, i) => (
                       <div key={i} className="rounded-lg border p-3 bg-muted/30">
                         <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{kv.label}</div>
-                        <div className="mt-0.5 text-sm font-semibold">{kv.value}</div>
+                        {kv.value ? (
+                          <div className="mt-0.5 prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: richTextSanitize(kv.value) }} />
+                        ) : (
+                          <div className="mt-0.5 text-sm text-muted-foreground">—</div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -408,7 +414,11 @@ export default async function OfferDetailPage({ params }: { params: { slug: stri
                     {offer.essentialInfo.map((kv, i) => (
                       <div key={i} className="rounded-lg border p-3 bg-muted/30">
                         <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{kv.label}</div>
-                        <div className="mt-0.5 text-sm font-semibold">{kv.value}</div>
+                        {kv.value ? (
+                          <div className="mt-0.5 prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: richTextSanitize(kv.value) }} />
+                        ) : (
+                          <div className="mt-0.5 text-sm text-muted-foreground">—</div>
+                        )}
                       </div>
                     ))}
                   </div>
