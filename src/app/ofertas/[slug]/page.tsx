@@ -389,11 +389,23 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
               </CardHeader>
               <CardContent>
                 {offer.documents && offer.documents.length > 0 ? (
-                  <div className="grid gap-2">
+                  <div className="grid sm:grid-cols-2 gap-3">
                     {offer.documents.map((d, i) => (
-                      <Link key={i} href={d.url} target="_blank" className="flex items-center gap-2 text-sm text-primary hover:underline">
-                        <FileDown className="size-4" />
-                        <span>{d.label || d.url}</span>
+                      <Link
+                        key={i}
+                        href={d.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block group"
+                      >
+                        <div className="flex items-center gap-3 rounded-lg border p-3 bg-muted/30 hover:bg-muted/50 transition-colors">
+                          <Image src="/file.svg" alt="PDF" width={24} height={24} className="shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="truncate text-sm font-medium text-foreground group-hover:underline">{d.label || d.url}</div>
+                            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">PDF</div>
+                          </div>
+                          <FileDown className="size-4 text-primary/80 group-hover:text-primary" aria-hidden />
+                        </div>
                       </Link>
                     ))}
                   </div>
