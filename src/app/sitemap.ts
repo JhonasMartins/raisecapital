@@ -34,7 +34,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: `${base}/blog/${r.slug}`,
         changeFrequency: 'weekly',
         priority: 0.7,
-        lastModified: r.data_publicacao ? new Date(r.data_publicacao as any) : undefined,
+        lastModified: r.data_publicacao
+          ? (typeof r.data_publicacao === 'string' ? new Date(r.data_publicacao) : r.data_publicacao)
+          : undefined,
       })
     }
   } catch (e) {
