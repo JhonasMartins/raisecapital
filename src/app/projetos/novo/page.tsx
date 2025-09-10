@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { useRouter } from 'next/navigation'
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
 
 const categories = ['Fintech', 'Agronegócio', 'Ativos Judiciais', 'Comercial', 'Energia', 'Imobiliário', 'Startups', 'HealthTech'] as const
 const modalities = ['Equity', 'Dívida', 'Revenue Share'] as const
@@ -19,31 +21,45 @@ type KeyVal = { label: string; value: string }
 type DocumentLink = { label: string; url: string }
 type Investor = { name: string }
 
-// Modelo completo para criação
-type NewOffer = {
-  name: string
-  subtitle?: string
-  category: (typeof categories)[number]
-  // removed: categoryType?: string
-  modality: (typeof modalities)[number]
-  product?: string
-  min: number
-  goal: number
-  raised: number
-  deadline: string // prazo_texto (ex.: "30 dias")
-  deadlineDate?: string // data_limite (YYYY-MM-DD)
-  cover: string
-  status: (typeof statuses)[number]
-  payment?: string
-  tir?: number
-  summaryPdf?: string
-  aboutOperation?: string
-  aboutCompany?: string
-  entrepreneurs: Entrepreneur[]
-  financials: KeyVal[]
-  documents: DocumentLink[]
-  essentialInfo: KeyVal[]
-  investors: Investor[]
+// Rich text editor reutilizável (TipTap)
+function RichTextEditor({ value, onChange }: { value: string; onChange: (html: string) => void }) {
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: value || '',
+    editorProps: {
+      attributes: {
+        class:
+          'prose prose-sm max-w-none dark:prose-invert min-h-[180px] rounded-md border bg-background px-4 py-3 focus:outline-none',
+      },
+    },
+    onUpdate: ({ editor }) => {
+      onChange(editor.getHTML())
+    },
+    immediatelyRender: false,
+  })
+
+  if (!editor) return null
+
+  return (
+    <div className="grid gap-2">
+      <div className="mb-1 flex flex-wrap items-center gap-1">
+        <button type="button" onClick={() => editor.chain().focus().setParagraph().run()} className={`border rounded px-2 py-1 text-xs ${editor.isActive('paragraph') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}>P</button>
+        <button type="button" onClick={() => editor.chain().focus().setHeading({ level: 2 }).run()} className={`border rounded px-2 py-1 text-xs ${editor.isActive('heading', { level: 2 }) ? 'bg-gray-200 dark:bg-gray-700' : ''}`}>H2</button>
+        <button type="button" onClick={() => editor.chain().focus().setHeading({ level: 3 }).run()} className={`border rounded px-2 py-1 text-xs ${editor.isActive('heading', { level: 3 }) ? 'bg-gray-200 dark:bg-gray-700' : ''}`}>H3</button>
+        <span className="mx-1 h-4 w-px bg-border" />
+        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={`border rounded px-2 py-1 text-xs ${editor.isActive('bold') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}>B</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={`border rounded px-2 py-1 text-xs ${editor.isActive('italic') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}>I</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleStrike().run()} className={`border rounded px-2 py-1 text-xs ${editor.isActive('strike') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}>S</button>
+        <span className="mx-1 h-4 w-px bg-border" />
+        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={`border rounded px-2 py-1 text-xs ${editor.isActive('bulletList') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}>• Lista</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={`border rounded px-2 py-1 text-xs ${editor.isActive('orderedList') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}>1. Lista</button>
+        <span className="mx-1 h-4 w-px bg-border" />
+        <button type="button" onClick={() => editor.chain().focus().undo().run()} className="border rounded px-2 py-1 text-xs">↶ Undo</button>
+        <button type="button" onClick={() => editor.chain().focus().redo().run()} className="border rounded px-2 py-1 text-xs">↷ Redo</button>
+      </div>
+      <EditorContent editor={editor} />
+    </div>
+  )
 }
 
 export default function NovoProjetoPage() {
@@ -390,16 +406,12 @@ export default function NovoProjetoPage() {
 
                 <div className="grid gap-1">
                   <Label htmlFor="aboutOperation">Sobre a operação</Label>
-                  <textarea id="aboutOperation" value={form.aboutOperation}
-                    onChange={(e) => handleChange('aboutOperation', e.target.value)}
-                    className="min-h-24 w-full rounded-md border bg-background px-3 py-2 text-sm" placeholder="Descreva a operação" />
+                  <RichTextEditor value={form.aboutOperation || ''} onChange={(html) => handleChange('aboutOperation', html)} />
                 </div>
 
                 <div className="grid gap-1">
                   <Label htmlFor="aboutCompany">Sobre a empresa</Label>
-                  <textarea id="aboutCompany" value={form.aboutCompany}
-                    onChange={(e) => handleChange('aboutCompany', e.target.value)}
-                    className="min-h-24 w-full rounded-md border bg-background px-3 py-2 text-sm" placeholder="Descreva a empresa" />
+                  <RichTextEditor value={form.aboutCompany || ''} onChange={(html) => handleChange('aboutCompany', html)} />
                 </div>
 
                 {/* Listas dinâmicas */}
@@ -482,18 +494,18 @@ export default function NovoProjetoPage() {
                   </div>
                   {form.essentialInfo.map((kv, idx) => (
                     <div key={idx} className="grid sm:grid-cols-2 gap-2">
-                      <input placeholder="Label" value={kv.label}
+                      <input placeholder="Título" value={kv.label}
                         onChange={(e) => updateArrayItem('essentialInfo', idx, 'label', e.target.value)}
                         className="h-9 w-full rounded-md border bg-background px-3 text-sm" />
-                      <div className="flex gap-2">
-                        <input placeholder="Valor" value={kv.value}
-                          onChange={(e) => updateArrayItem('essentialInfo', idx, 'value', e.target.value)}
-                          className="h-9 w-full rounded-md border bg-background px-3 text-sm" />
-                        <Button type="button" variant="ghost" onClick={() => removeArrayItem('essentialInfo', idx)}>Remover</Button>
+                      <div className="flex flex-col gap-2">
+                        <RichTextEditor value={kv.value} onChange={(html) => updateArrayItem('essentialInfo', idx, 'value', html)} />
+                        <div className="flex">
+                          <Button type="button" variant="ghost" onClick={() => removeArrayItem('essentialInfo', idx)}>Remover</Button>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                   ))}
+                 </div>
 
                 <div className="grid gap-3">
                   <div className="flex items-center justify-between">
