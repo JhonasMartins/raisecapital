@@ -7,8 +7,9 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { slugify } from '@/lib/utils'
-import { TrendingUp, Clock, FileDown, HandCoins, FileText, ChevronDown } from 'lucide-react'
+import { TrendingUp, Clock, FileDown, HandCoins, FileText } from 'lucide-react'
 import sanitizeHtml from 'sanitize-html'
+import EssentialInfoAccordion from '@/components/essential-info-accordion'
 
 type Entrepreneur = { name: string; role?: string }
 type KeyVal = { label: string; value: string }
@@ -210,21 +211,6 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
 
   return (
     <div className="min-h-dvh font-sans pt-28">
-      {/* Navbar */}
-      <header className="fixed top-0 inset-x-0 z-50 border-b bg-background/80 backdrop-blur-md">
-        <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center">
-              <Image src="/logo.avif" alt="Raise Capital" width={180} height={44} sizes="180px" className="block" priority />
-            </Link>
-          </div>
-          <nav className="hidden sm:flex items-center gap-6 text-sm text-muted-foreground">
-            <Link href="/#como-funciona" className="hover:text-foreground transition-colors">Como funciona</Link>
-            <Link href="/#projetos" className="hover:text-foreground transition-colors">Projetos</Link>
-            <Link href="/#sobre" className="hover:text-foreground transition-colors">Sobre</Link>
-          </nav>
-        </div>
-      </header>
 
       {/* Header de página */}
       <header className="border-b">
@@ -373,7 +359,7 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
                       <div key={i} className="rounded-lg border p-3 bg-muted/30">
                         <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{kv.label}</div>
                         {kv.value ? (
-                          <div className="mt-0.5 prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: richTextSanitize(kv.value) }} />
+                          <div className="mt-0.5 prose prose-sm max-w-none font-semibold text-foreground" dangerouslySetInnerHTML={{ __html: richTextSanitize(kv.value) }} />
                         ) : (
                           <div className="mt-0.5 text-sm text-muted-foreground">—</div>
                         )}
@@ -428,23 +414,7 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
               </CardHeader>
               <CardContent>
                 {offer.essentialInfo && offer.essentialInfo.length > 0 ? (
-                  <div className="rounded-lg border bg-muted/30 divide-y">
-                    {offer.essentialInfo.map((kv, i) => (
-                      <details key={i} className="group">
-                        <summary className="flex items-center justify-between cursor-pointer list-none px-3 py-2 hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-md">
-                          <span className="text-sm font-medium">{kv.label}</span>
-                          <ChevronDown className="size-4 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden />
-                        </summary>
-                        <div className="px-3 pb-3">
-                          {kv.value ? (
-                            <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: richTextSanitize(kv.value) }} />
-                          ) : (
-                            <div className="text-sm text-muted-foreground">—</div>
-                          )}
-                        </div>
-                      </details>
-                    ))}
-                  </div>
+                  <EssentialInfoAccordion items={offer.essentialInfo} />
                 ) : (
                   <p className="text-sm text-muted-foreground">Sem informações essenciais cadastradas.</p>
                 )}
