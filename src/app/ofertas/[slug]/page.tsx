@@ -481,12 +481,12 @@ async function getOfferBySlug(slug: string): Promise<Offer | null> {
     const db = getDb()
     const { rows } = await db.query(
       `SELECT nome, slug, categoria, modalidade, minimo_investimento, arrecadado, meta,
-              data_limite, prazo_texto, capa, status, subtitulo, produto, pagamento, tir,
-              resumo_pdf, sobre_operacao, sobre_empresa,
-              empreendedores, financeiros, documentos, informacoes_essenciais, investidores
-       FROM ofertas
-       WHERE slug = $1
-       LIMIT 1`,
+               data_limite, prazo_texto, capa, status, subtitulo, produto, pagamento, tir,
+               resumo_pdf, sobre_operacao, sobre_empresa,
+               empreendedores, financeiros, documentos, informacoes_essenciais, investidores
+        FROM ofertas
+        WHERE slug = $1
+        LIMIT 1`,
       [slug]
     )
     const r = rows?.[0] as any

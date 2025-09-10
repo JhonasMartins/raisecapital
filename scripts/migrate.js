@@ -34,6 +34,7 @@ async function main() {
         nome TEXT NOT NULL,
         slug TEXT NOT NULL UNIQUE,
         categoria TEXT NOT NULL,
+        tipo_categoria TEXT,
         modalidade TEXT NOT NULL,
         minimo_investimento NUMERIC(12,2) NOT NULL,
         arrecadado NUMERIC(14,2) NOT NULL DEFAULT 0,
@@ -77,6 +78,7 @@ async function main() {
       ALTER TABLE ofertas ADD COLUMN IF NOT EXISTS documentos JSONB DEFAULT '[]'::jsonb;
       ALTER TABLE ofertas ADD COLUMN IF NOT EXISTS informacoes_essenciais JSONB DEFAULT '[]'::jsonb;
       ALTER TABLE ofertas ADD COLUMN IF NOT EXISTS investidores JSONB DEFAULT '[]'::jsonb;
+      ALTER TABLE ofertas ADD COLUMN IF NOT EXISTS tipo_categoria TEXT;
     `)
 
     // blog

@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { useRouter } from 'next/navigation'
 
-const categories = ['Fintech', 'Agrotech', 'HealthTech'] as const
+const categories = ['Fintech', 'Agronegócio', 'Ativos Judiciais', 'Comercial', 'Energia', 'Imobiliário', 'Startups', 'HealthTech'] as const
 const modalities = ['Equity', 'Dívida', 'Revenue Share'] as const
 const statuses = ['Em captação', 'Encerrada', 'Em breve'] as const
 
@@ -24,6 +24,7 @@ type NewOffer = {
   name: string
   subtitle?: string
   category: (typeof categories)[number]
+  // removed: categoryType?: string
   modality: (typeof modalities)[number]
   product?: string
   min: number
@@ -50,6 +51,7 @@ export default function NovoProjetoPage() {
     name: '',
     subtitle: '',
     category: 'Fintech',
+    // removed: categoryType: '',
     modality: 'Equity',
     product: '',
     min: 1000,
@@ -180,6 +182,7 @@ export default function NovoProjetoPage() {
       const payload = {
         name: form.name,
         category: form.category,
+        // removed: categoryType: form.categoryType || undefined,
         modality: form.modality,
         min: form.min,
         goal: form.goal,
@@ -275,6 +278,7 @@ export default function NovoProjetoPage() {
                       {categories.map((c) => (<option key={c} value={c}>{c}</option>))}
                     </select>
                   </div>
+                  {/* removed Tipo de categoria field */}
                   <div className="grid gap-1">
                     <Label htmlFor="modality">Modalidade</Label>
                     <select id="modality" value={form.modality}
