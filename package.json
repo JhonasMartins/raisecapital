@@ -27,6 +27,7 @@
     "react-markdown": "^9.0.1",
     "recharts": "^2.15.4",
     "remark-gfm": "^4.0.0",
+    "sanitize-html": "^2.17.0",
     "sharp": "^0.34.3",
     "tailwind-merge": "^3.3.1"
   },
@@ -38,6 +39,7 @@
     "@types/pg": "^8.15.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/sanitize-html": "^2.16.0",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
     "tailwindcss": "^4",

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { slugify } from '@/lib/utils'
 import { TrendingUp, Clock, FileDown, HandCoins } from 'lucide-react'
+import sanitizeHtml from 'sanitize-html'
 
 type Entrepreneur = { name: string; role?: string }
 type KeyVal = { label: string; value: string }
@@ -309,7 +310,11 @@ export default async function OfferDetailPage({ params }: { params: { slug: stri
                 <CardTitle>Sobre a operação</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm text-muted-foreground">
-                <p>{offer.aboutOperation}</p>
+                 {offer.aboutOperation ? (
+                   <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: richTextSanitize(offer.aboutOperation) }} />
+                 ) : (
+                   <p className="text-muted-foreground">Sem conteúdo.</p>
+                 )}
               </CardContent>
             </Card>
 
@@ -319,7 +324,11 @@ export default async function OfferDetailPage({ params }: { params: { slug: stri
                 <CardTitle>Sobre a empresa</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm text-muted-foreground">
-                <p>{offer.aboutCompany}</p>
+                 {offer.aboutCompany ? (
+                   <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: richTextSanitize(offer.aboutCompany) }} />
+                 ) : (
+                   <p className="text-muted-foreground">Sem conteúdo.</p>
+                 )}
               </CardContent>
             </Card>
 
@@ -526,3 +535,16 @@ async function getOfferBySlug(slug: string): Promise<Offer | null> {
     return null
   }
 }
+
+const richTextSanitize = (html: string) =>
+  sanitizeHtml(html, {
+    allowedTags: [
+      'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's',
+      'ul', 'ol', 'li', 'blockquote', 'code', 'pre',
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'a'
+    ],
+    allowedAttributes: {
+      a: ['href', 'target', 'rel']
+    },
+    allowedSchemes: ['http', 'https', 'mailto']
+  })
