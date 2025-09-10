@@ -31,10 +31,6 @@ import { slugify } from '@/lib/utils'
     status: string
   }
  
-   // Removido: pills desktop (redundância)
-   // const categoriesNoAll = categories.filter((c) => c !== 'Todos')
-   // const modalitiesNoAll = modalities.filter((m) => m !== 'Todas')
- 
   const offersMock = [
      {
        name: 'Fintech XYZ',
@@ -102,7 +98,7 @@ import { slugify } from '@/lib/utils'
        cover: '/offers/health.svg',
        status: 'Em captação',
      },
-  ] as const
+  ]
 
   const [offers, setOffers] = useState<OfferItem[]>([])
 
