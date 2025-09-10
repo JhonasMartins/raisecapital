@@ -15,6 +15,19 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '**.vercel-storage.com',
       },
+      // MinIO/domínio do bucket ou CDN
+      {
+        protocol: 'https',
+        hostname: '**.traefik.me',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.codnodo.com',
+      },
+      {
+        protocol: 'http',
+        hostname: '**.traefik.me',
+      },
     ],
   },
 }

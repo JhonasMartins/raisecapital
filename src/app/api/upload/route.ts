@@ -42,6 +42,43 @@ export async function POST(req: Request) {
       return NextResponse.json({ url: blob.url, filename })
     }
 
+    // MinIO/S3 (se configurado)
+    if (
+      process.env.S3_ENDPOINT &&
+      process.env.S3_BUCKET &&
+      process.env.S3_ACCESS_KEY_ID &&
+      process.env.S3_SECRET_ACCESS_KEY
+    ) {
+      const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3')
+      const s3 = new S3Client({
+        region: process.env.S3_REGION || 'us-east-1',
+        endpoint: process.env.S3_ENDPOINT,
+        forcePathStyle: String(process.env.S3_FORCE_PATH_STYLE || 'true') !== 'false',
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID!,
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
+        },
+      })
+
+      const bytes = await file.arrayBuffer()
+      const body = Buffer.from(bytes)
+
+      const key = `uploads/${filename}`
+
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: process.env.S3_BUCKET!,
+          Key: key,
+          Body: body,
+          ContentType: mime || 'application/octet-stream',
+        })
+      )
+
+      const publicBase = (process.env.S3_PUBLIC_BASE_URL || process.env.S3_ENDPOINT).replace(/\/+$/, '')
+      const url = `${publicBase}/${process.env.S3_BUCKET}/${key}`
+      return NextResponse.json({ url, filename })
+    }
+
     // Fallback local: salva em public/uploads (útil em dev)
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
