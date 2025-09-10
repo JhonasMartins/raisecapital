@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { query } from '@/lib/db'
-import { sendWelcomeEmail } from '@/lib/email'
+import { sendWelcomeEmail, getWelcomeEmailHtml } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,5 +27,20 @@ export async function POST(req: NextRequest) {
   } catch (e: any) {
     console.error('newsletter POST error:', e?.message)
     return NextResponse.json({ ok: false, error: 'Erro interno' }, { status: 500 })
+  }
+}
+
+export async function GET() {
+  try {
+    const html = getWelcomeEmailHtml('Maria')
+    return new Response(html, {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        // block indexing
+        'X-Robots-Tag': 'noindex, nofollow',
+      },
+    })
+  } catch (e: any) {
+    return NextResponse.json({ ok: false, error: 'Erro ao gerar preview' }, { status: 500 })
   }
 }
