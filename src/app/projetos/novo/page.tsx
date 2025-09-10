@@ -115,6 +115,7 @@ type NewOffer = {
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [tirNA, setTirNA] = useState<boolean>(form.tir == null)
   const router = useRouter()
 
   async function handleUpload(file: File) {
@@ -352,8 +353,31 @@ type NewOffer = {
                     <Label htmlFor="tir">TIR (% a.a.)</Label>
                     <input id="tir" type="number" min={0} step="0.01"
                       value={form.tir ?? ''}
-                      onChange={(e) => handleChange('tir', e.target.value === '' ? undefined : Number(e.target.value))}
-                      className="h-9 w-full rounded-md border bg-background px-3 text-sm" />
+                      onChange={(e) => {
+                        const v = e.target.value
+                        if (v === '') {
+                          handleChange('tir', undefined)
+                        } else {
+                          handleChange('tir', Number(v))
+                        }
+                        if (tirNA) setTirNA(false)
+                      }}
+                      disabled={tirNA}
+                      className="h-9 w-full rounded-md border bg-background px-3 text-sm" placeholder="Ex.: 18" />
+                    <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <input
+                        type="checkbox"
+                        checked={tirNA}
+                        onChange={(e) => {
+                          const checked = e.target.checked
+                          setTirNA(checked)
+                          if (checked) {
+                            handleChange('tir', undefined)
+                          }
+                        }}
+                      />
+                      Não aplicável
+                    </label>
                   </div>
                 </div>
 
