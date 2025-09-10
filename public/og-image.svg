@@ -1,0 +1,78 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Decorative Elements -->
+  <circle cx="1000" cy="100" r="150" fill="#3b82f6" opacity="0.1"/>
+  <circle cx="200" cy="500" r="100" fill="#1d4ed8" opacity="0.15"/>
+  
+  <!-- Main Content Container -->
+  <g transform="translate(80, 0)">
+    <!-- Logo/Brand -->
+    <text x="0" y="180" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#ffffff">
+      Raise Capital
+    </text>
+    
+    <!-- Tagline -->
+    <text x="0" y="240" font-family="Arial, sans-serif" font-size="32" fill="#94a3b8">
+      Plataforma de Equity Crowdfunding
+    </text>
+    
+    <!-- Main Description -->
+    <text x="0" y="320" font-family="Arial, sans-serif" font-size="24" fill="#e2e8f0">
+      Conectamos investidores a startups
+    </text>
+    <text x="0" y="360" font-family="Arial, sans-serif" font-size="24" fill="#e2e8f0">
+      e empresas promissoras no Brasil
+    </text>
+    
+    <!-- Call to Action -->
+    <rect x="0" y="420" width="280" height="60" rx="30" fill="url(#accentGradient)"/>
+    <text x="140" y="460" font-family="Arial, sans-serif" font-size="20" font-weight="600" fill="#ffffff" text-anchor="middle">
+      Comece a Investir
+    </text>
+    
+    <!-- Features -->
+    <g transform="translate(0, 520)">
+      <circle cx="15" cy="15" r="8" fill="#10b981"/>
+      <text x="35" y="22" font-family="Arial, sans-serif" font-size="16" fill="#94a3b8">
+        Regulamentado pela CVM
+      </text>
+      
+      <circle cx="250" cy="15" r="8" fill="#10b981"/>
+      <text x="270" y="22" font-family="Arial, sans-serif" font-size="16" fill="#94a3b8">
+        Transparência Total
+      </text>
+      
+      <circle cx="450" cy="15" r="8" fill="#10b981"/>
+      <text x="470" y="22" font-family="Arial, sans-serif" font-size="16" fill="#94a3b8">
+        Investimento Seguro
+      </text>
+    </g>
+  </g>
+  
+  <!-- Right Side Graphic -->
+  <g transform="translate(750, 150)">
+    <!-- Investment Chart Representation -->
+    <rect x="0" y="200" width="40" height="120" fill="#3b82f6" opacity="0.8"/>
+    <rect x="60" y="150" width="40" height="170" fill="#1d4ed8" opacity="0.8"/>
+    <rect x="120" y="100" width="40" height="220" fill="#2563eb" opacity="0.8"/>
+    <rect x="180" y="80" width="40" height="240" fill="#1e40af" opacity="0.8"/>
+    
+    <!-- Arrow pointing up -->
+    <path d="M280 200 L320 160 L300 160 L300 140 L340 140 L340 160 L320 160 L280 200" fill="#10b981"/>
+  </g>
+</svg>

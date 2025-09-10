@@ -18,8 +18,72 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Raise Capital",
-  description: "Plataforma de investimentos em equity crowdfunding",
+  title: {
+    default: "Raise Capital - Plataforma de Equity Crowdfunding no Brasil",
+    template: "%s | Raise Capital"
+  },
+  description: "Invista em startups e empresas promissoras através da maior plataforma de equity crowdfunding do Brasil. Conectamos investidores a oportunidades de alto potencial com transparência e segurança.",
+  keywords: [
+    "equity crowdfunding",
+    "investimento em startups",
+    "crowdfunding brasil",
+    "investir em empresas",
+    "captação de recursos",
+    "investimento coletivo",
+    "startups brasil",
+    "venture capital",
+    "investimento anjo",
+    "CVM"
+  ],
+  authors: [{ name: "Raise Capital" }],
+  creator: "Raise Capital",
+  publisher: "Raise Capital",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://raisecapital.com.br'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    url: '/',
+    title: 'Raise Capital - Plataforma de Equity Crowdfunding no Brasil',
+    description: 'Invista em startups e empresas promissoras através da maior plataforma de equity crowdfunding do Brasil. Conectamos investidores a oportunidades de alto potencial.',
+    siteName: 'Raise Capital',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Raise Capital - Plataforma de Equity Crowdfunding',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Raise Capital - Plataforma de Equity Crowdfunding no Brasil',
+    description: 'Invista em startups e empresas promissoras através da maior plataforma de equity crowdfunding do Brasil.',
+    images: ['/og-image.jpg'],
+    creator: '@raisecapitalbr',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+  },
 };
 
 export default function RootLayout({
@@ -94,6 +158,48 @@ export default function RootLayout({
         </FooterGate>
 
         {children}
+
+        {/* JSON-LD Structured Data */}
+        <Script
+          id="structured-data"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "Raise Capital",
+              "description": "Plataforma de equity crowdfunding que conecta investidores a startups e empresas promissoras no Brasil",
+              "url": "https://raisecapital.com.br",
+              "logo": "https://raisecapital.com.br/logo.avif",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+55-11-5286-3852",
+                "contactType": "customer service",
+                "email": "contato@raisecapital.com",
+                "availableLanguage": "Portuguese"
+              },
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Av. Horacio Lafer, 160",
+                "addressLocality": "São Paulo",
+                "addressRegion": "SP",
+                "postalCode": "04538-080",
+                "addressCountry": "BR"
+              },
+              "sameAs": [
+                "https://linkedin.com/company/raisecapital",
+                "https://twitter.com/raisecapitalbr"
+              ],
+              "foundingDate": "2024",
+              "numberOfEmployees": "10-50",
+              "industry": "Financial Services",
+              "serviceArea": {
+                "@type": "Country",
+                "name": "Brazil"
+              }
+            })
+          }}
+        />
 
         {/* Footer (oculto em rotas /auth via FooterGate) */}
         <FooterGate>
