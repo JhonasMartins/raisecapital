@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /dashboard/
+
+# Allow important pages
+Allow: /ofertas
+Allow: /blog
+Allow: /capte-recursos
+
+# Sitemap location
+Sitemap: https://raisecapital.com.br/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1
