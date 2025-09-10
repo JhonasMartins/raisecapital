@@ -569,3 +569,40 @@ const richTextSanitize = (html: string) =>
     },
     allowedSchemes: ['http', 'https', 'mailto']
   })
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const offer = await getOfferBySlug(slug)
+  const fallback = offers.find((o) => slugify(o.name) === slug)
+  const item = offer ?? fallback
+  if (!item) return {}
+  const url = `/ofertas/${slug}`
+  const title = item.name
+  const description = item.subtitle || `Conheça a oferta ${item.name} na Raise Capital.`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      type: 'website',
+      url,
+      title,
+      description,
+      images: [
+        {
+          url: item.cover || '/background-hero.png',
+          width: 1200,
+          height: 630,
+          alt: `Capa da oferta ${item.name}`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [item.cover || '/og-image.svg'],
+    },
+    alternates: { canonical: url },
+  }
+}

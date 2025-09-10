@@ -5,6 +5,7 @@ import { getDb } from '@/lib/db'
 import { Badge } from '@/components/ui/badge'
 import ShareBar from '@/components/blog/share-bar'
 import CommentsSection from '@/components/blog/comments-section'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
 
@@ -92,6 +93,40 @@ async function fetchRelated(slug: string, categories: string[]) {
 }
 
 
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const article = await fetchArticle(params.slug)
+  if (!article) return {}
+  const url = `/blog/${article.slug}`
+  const title = article.title
+  const description = article.excerpt || 'Leia este artigo no blog da Raise Capital.'
+
+  return {
+    title,
+    description,
+    openGraph: {
+      type: 'article',
+      url,
+      title,
+      description,
+      images: [
+        {
+          url: article.cover || '/background-hero.png',
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [article.cover || '/background-hero.png'],
+    },
+    alternates: { canonical: url },
+  }
+}
 
 export default async function BlogArticlePage({ params }: { params: { slug: string } }) {
   const article = await fetchArticle(params.slug)

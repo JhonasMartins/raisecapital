@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     siteName: 'Raise Capital',
     images: [
       {
-        url: '/og-image.svg',
+        url: '/background-hero.png',
         width: 1200,
         height: 630,
         alt: 'Raise Capital — Investimento Coletivo em Participações (Equity)',
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Raise Capital — Investimento Coletivo em Participações (Equity)',
     description: 'Conectamos investidores a empresas em crescimento com curadoria, transparência e conformidade regulatória.',
-    images: ['/og-image.svg'],
+    images: ['/background-hero.png'],
     creator: '@raisecapitalbr',
   },
   robots: {
