@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Shield, Layers, BarChart3, ArrowRight, DollarSign, TrendingUp, Users } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { slugify } from "@/lib/utils";
 
 export default function Home() {
   // Helper para montar URL de embed do TradingView com opções JSON
@@ -25,6 +26,35 @@ export default function Home() {
       .then((r) => r.ok ? r.json() : Promise.reject(new Error('failed')))
       .then((d) => { if (!cancelled) setLatestPosts(Array.isArray(d?.items) ? d.items : []) })
       .catch(() => { /* noop */ })
+    return () => { cancelled = true }
+  }, [])
+
+  // Ofertas em destaque (últimas 3 da plataforma)
+  type OfferItem = { name: string; slug?: string; category: string; modality: string; min: number; raised: number; goal: number; deadline: string; cover: string; status: string }
+  const [featuredOffers, setFeaturedOffers] = useState<OfferItem[]>([])
+  const [loadingFeatured, setLoadingFeatured] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      try {
+        setLoadingFeatured(true)
+        const res = await fetch('/api/ofertas?limit=3', { cache: 'no-store' })
+        if (!res.ok) throw new Error('failed')
+        const d = await res.json()
+        const items: OfferItem[] = Array.isArray(d?.items) ? d.items : []
+        if (!cancelled) setFeaturedOffers(items.slice(0, 3))
+      } catch (e) {
+        if (!cancelled) setFeaturedOffers([
+          { name: 'Fintech XYZ', category: 'Fintech', modality: 'Equity', min: 1000, raised: 350000, goal: 500000, deadline: '25 dias', cover: '/offers/fintech.svg', status: 'Em captação' },
+          { name: 'Agrotech Verde', category: 'Agrotech', modality: 'Dívida', min: 500, raised: 120000, goal: 300000, deadline: '18 dias', cover: '/offers/agrotech.svg', status: 'Em captação' },
+          { name: 'HealthTech Vida', category: 'HealthTech', modality: 'Revenue Share', min: 2000, raised: 450000, goal: 450000, deadline: 'Encerrando', cover: '/offers/health.svg', status: 'Encerrada' },
+        ])
+      } finally {
+        if (!cancelled) setLoadingFeatured(false)
+      }
+    }
+    load()
     return () => { cancelled = true }
   }, [])
 
@@ -177,7 +207,7 @@ export default function Home() {
 
             {/* Ticker de cotações */}
             <div className="mt-6">
-              <div className="rounded-lg border bg-background overflow-hidden">
+              <div className="rounded-lg border bg-background overflow-hidden relative">
                 <iframe
                   src={tvUrl('ticker-tape', {
                     symbols: [
@@ -199,6 +229,15 @@ export default function Home() {
                   scrolling="no"
                   title="Ticker em tempo real"
                 />
+                <a
+                  href="https://raisecapital.com.br"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Acessar raisecapital.com.br"
+                  className="absolute inset-0"
+                >
+                  <span className="sr-only">Acessar raisecapital.com.br</span>
+                </a>
               </div>
             </div>
 
@@ -213,84 +252,62 @@ export default function Home() {
               <h2 className="text-2xl font-semibold">Ofertas em destaque</h2>
               <div className="flex items-center gap-2">
                 <Button variant="outline" asChild>
-                  <a href="#">Ver todas as ofertas</a>
+                  <Link href="/ofertas">Ver todas as ofertas</Link>
                 </Button>
-                <Button asChild>
-                  <Link href="/projetos/novo">Adicionar projeto</Link>
-                </Button>
+                {/* Removido: botão Adicionar projeto */}
               </div>
             </div>
 
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {[
-                { name: "Fintech XYZ", category: "Fintech", modality: "Equity", min: 1000, raised: 350000, goal: 500000, deadline: "25 dias", cover: "/offers/fintech.svg" },
-                { name: "Agrotech Verde", category: "Agrotech", modality: "Dívida", min: 500, raised: 120000, goal: 300000, deadline: "18 dias", cover: "/offers/agrotech.svg" },
-                { name: "HealthTech Vida", category: "HealthTech", modality: "Revenue Share", min: 2000, raised: 450000, goal: 450000, deadline: "Encerrando", cover: "/offers/health.svg" },
-              ].map((o) => {
-                const pct = Math.min(100, Math.round((o.raised / o.goal) * 100));
-                return (
-                  <Card key={o.name} className="flex flex-col overflow-hidden p-0 gap-0">
-                    <div className="relative h-40 w-full">
-                      <Image
-                        src={o.cover}
-                        alt={`Capa da oferta ${o.name}`}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover"
-                        priority={false}
-                      />
+              {loadingFeatured && featuredOffers.length === 0 && (
+                <div className="col-span-full text-sm text-muted-foreground">Carregando ofertas...</div>
+              )}
+              {!loadingFeatured && featuredOffers.length === 0 && (
+                <div className="col-span-full text-sm text-muted-foreground">Nenhuma oferta disponível.</div>
+              )}
+              {featuredOffers.map((o) => (
+                <Card key={o.name} className="relative overflow-hidden pt-0">
+                  <div className="relative h-36 w-full">
+                    <Image src={o.cover} alt="" fill className="object-cover" />
+                  </div>
+                  <Link
+                    href={`/ofertas/${o.slug ?? slugify(o.name)}`}
+                    className="absolute inset-0 z-10"
+                    aria-label={`Ver detalhes da oferta ${o.name}`}
+                  />
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary">{o.modality}</Badge>
+                      <Badge className={`${o.status === 'Em captação'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : o.status === 'Encerrada'
+                        ? 'bg-gray-100 text-gray-700 border border-gray-200'
+                        : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>{o.status}</Badge>
                     </div>
-                    <CardHeader className="space-y-2 px-6 pt-4 pb-2">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-base font-semibold">{o.name}</CardTitle>
-                        <Badge variant="secondary">{o.category}</Badge>
+                    <CardTitle className="mt-2 text-base font-semibold leading-snug">{o.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3 text-sm text-muted-foreground">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">Arrecadado</span>
+                        <span className="text-foreground font-medium">
+                          R$ {o.raised.toLocaleString('pt-BR')} de R$ {o.goal.toLocaleString('pt-BR')} ({Math.min(100, Math.round((o.raised / o.goal) * 100))}%)
+                        </span>
                       </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4 px-6 pt-2 pb-6">
-                      <div>
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span>Progresso</span>
-                          <span>{pct}%</span>
-                        </div>
-                        <div className="mt-2 h-2 w-full rounded-full bg-secondary">
-                          <div className="h-2 rounded-full bg-primary" style={{ width: `${pct}%` }} />
-                        </div>
-                        <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-                          <span>R$ {o.raised.toLocaleString("pt-BR")}</span>
-                          <span>Meta R$ {o.goal.toLocaleString("pt-BR")}</span>
-                        </div>
+                      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary"
+                          style={{ width: `${Math.min(100, Math.round((o.raised / o.goal) * 100))}%` }}
+                        />
                       </div>
-
-                      <div className="grid grid-cols-2 gap-4 pt-2">
-                        <div>
-                          <div className="text-xs text-muted-foreground">Modalidade</div>
-                          <div className="text-sm font-medium">{o.modality}</div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground">Investimento mínimo</div>
-                          <div className="text-sm font-medium">R$ {o.min.toLocaleString("pt-BR")}</div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground">Prazo</div>
-                          <div className="text-sm font-medium">{o.deadline}</div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground">Total captado</div>
-                          <div className="text-sm font-medium">R$ {o.raised.toLocaleString("pt-BR")}</div>
-                        </div>
-                      </div>
-
-                      <div className="pt-2">
-                        <Button className="w-full" asChild>
-                          <a href="#">
-                            <DollarSign className="mr-2 size-4" /> Investir agora
-                          </a>
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Investimento mínimo</span>
+                      <span className="text-foreground font-medium">R$ {o.min.toLocaleString('pt-BR')}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </section>
@@ -777,7 +794,7 @@ export default function Home() {
               </p>
               <div className="mt-6 inline-flex">
                 <Button asChild variant="secondary">
-                  <a href="#">Criar conta</a>
+                  <Link href="/auth/criar-conta">Criar conta</Link>
                 </Button>
               </div>
             </div>
