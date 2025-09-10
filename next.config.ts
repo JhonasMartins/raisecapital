@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
     // Ignora erros de TypeScript durante a build (útil para destravar o build enquanto corrigimos)
     ignoreBuildErrors: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.vercel-storage.com',
+      },
+    ],
+  },
 }
 
 export default nextConfig
