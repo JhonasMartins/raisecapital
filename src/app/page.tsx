@@ -832,9 +832,10 @@ export default function Home() {
                     setNlStatus('success')
                     setNlMsg('Inscrição realizada com sucesso!')
                     setNlEmail('')
-                  } catch (err: any) {
+                  } catch (err: unknown) {
                     setNlStatus('error')
-                    setNlMsg(err?.message || 'Erro ao inscrever, tente novamente.')
+                    const message = err && typeof err === 'object' && 'message' in err ? String((err as any).message) : 'Erro ao inscrever, tente novamente.'
+                    setNlMsg(message)
                   } finally {
                     setTimeout(() => { setNlStatus('idle'); setNlMsg('') }, 4000)
                   }
