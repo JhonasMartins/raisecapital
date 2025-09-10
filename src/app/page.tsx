@@ -471,10 +471,10 @@ export default function Home() {
 
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 <Button asChild>
-                  <a href="#">Submeter projeto</a>
+                  <Link href="/auth/criar-conta">Submeter projeto</Link>
                 </Button>
                 <Button variant="outline" asChild>
-                  <a href="#">Falar com especialista</a>
+                  <a href="https://wa.me/5511976511371" target="_blank" rel="noopener noreferrer">Falar com especialista</a>
                 </Button>
               </div>
             </div>
