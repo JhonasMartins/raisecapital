@@ -211,9 +211,14 @@ export default function Home() {
           <div className="mx-auto max-w-6xl px-6">
             <div className="flex items-end justify-between gap-4">
               <h2 className="text-2xl font-semibold">Ofertas em destaque</h2>
-              <Button variant="outline" asChild>
-                <a href="#">Ver todas as ofertas</a>
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" asChild>
+                  <a href="#">Ver todas as ofertas</a>
+                </Button>
+                <Button asChild>
+                  <Link href="/projetos/novo">Adicionar projeto</Link>
+                </Button>
+              </div>
             </div>
 
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

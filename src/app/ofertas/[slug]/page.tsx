@@ -168,6 +168,8 @@ const offers: Offer[] = [
   },
 ] as const
 
+import { getDb } from '@/lib/db'
+
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const offer = offers.find((o) => slugify(o.name) === params.slug)
   return {
@@ -178,8 +180,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default function OfferDetailPage({ params }: { params: { slug: string } }) {
-  const offer = offers.find((o) => slugify(o.name) === params.slug)
+export default async function OfferDetailPage({ params }: { params: { slug: string } }) {
+  const dbOffer = await getOfferBySlug(params.slug)
+  const offer = dbOffer ?? offers.find((o) => slugify(o.name) === params.slug)
   if (!offer) return notFound()
 
   const pct = Math.min(100, Math.round((offer.raised / offer.goal) * 100))
@@ -326,7 +329,20 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
                 <CardTitle>Empreendedor(es)</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* ... lista de empreendedores ... */}
+                {offer.entrepreneurs && offer.entrepreneurs.length > 0 ? (
+                  <div className="grid gap-3">
+                    {offer.entrepreneurs.map((p, i) => (
+                      <div key={i} className="flex items-center justify-between rounded-lg border p-3">
+                        <div>
+                          <div className="text-sm font-medium">{p.name}</div>
+                          {p.role && <div className="text-xs text-muted-foreground">{p.role}</div>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Sem empreendedores cadastrados.</p>
+                )}
               </CardContent>
             </Card>
 
@@ -336,7 +352,18 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
                 <CardTitle>Financials</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* ... financials ... */}
+                {offer.financials && offer.financials.length > 0 ? (
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {offer.financials.map((kv, i) => (
+                      <div key={i} className="rounded-lg border p-3 bg-muted/30">
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{kv.label}</div>
+                        <div className="mt-0.5 text-sm font-semibold">{kv.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Sem dados financeiros cadastrados.</p>
+                )}
               </CardContent>
             </Card>
 
@@ -346,7 +373,18 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
                 <CardTitle>Documentos</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* ... documentos ... */}
+                {offer.documents && offer.documents.length > 0 ? (
+                  <div className="grid gap-2">
+                    {offer.documents.map((d, i) => (
+                      <Link key={i} href={d.url} target="_blank" className="flex items-center gap-2 text-sm text-primary hover:underline">
+                        <FileDown className="size-4" />
+                        <span>{d.label || d.url}</span>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Nenhum documento disponível.</p>
+                )}
               </CardContent>
             </Card>
 
@@ -356,7 +394,18 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
                 <CardTitle>Informações essenciais</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* ... essenciais ... */}
+                {offer.essentialInfo && offer.essentialInfo.length > 0 ? (
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {offer.essentialInfo.map((kv, i) => (
+                      <div key={i} className="rounded-lg border p-3 bg-muted/30">
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{kv.label}</div>
+                        <div className="mt-0.5 text-sm font-semibold">{kv.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Sem informações essenciais cadastradas.</p>
+                )}
               </CardContent>
             </Card>
 
@@ -366,7 +415,15 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
                 <CardTitle>Investidores</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* ... investidores ... */}
+                {offer.investors && offer.investors.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {offer.investors.map((inv, i) => (
+                      <span key={i} className="inline-flex items-center rounded-full border px-2.5 py-1 text-xs bg-muted/30">{inv.name}</span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Nenhum investidor listado.</p>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -416,4 +473,56 @@ export default function OfferDetailPage({ params }: { params: { slug: string } }
       </main>
     </div>
   )
+}
+
+// Buscar oferta no banco por slug com fallback aos mocks estáticos
+async function getOfferBySlug(slug: string): Promise<Offer | null> {
+  try {
+    const db = getDb()
+    const { rows } = await db.query(
+      `SELECT nome, slug, categoria, modalidade, minimo_investimento, arrecadado, meta,
+              data_limite, prazo_texto, capa, status, subtitulo, produto, pagamento, tir,
+              resumo_pdf, sobre_operacao, sobre_empresa,
+              empreendedores, financeiros, documentos, informacoes_essenciais, investidores
+       FROM ofertas
+       WHERE slug = $1
+       LIMIT 1`,
+      [slug]
+    )
+    const r = rows?.[0] as any
+    if (!r) return null
+    const deadline: string = r.prazo_texto
+      ? String(r.prazo_texto)
+      : (r.data_limite instanceof Date
+          ? r.data_limite.toISOString().slice(0, 10)
+          : (typeof r.data_limite === 'string' ? r.data_limite : ''))
+
+    const offer: Offer = {
+      name: r.nome,
+      subtitle: r.subtitulo ?? undefined,
+      category: r.categoria,
+      modality: r.modalidade,
+      product: r.produto ?? undefined,
+      min: Number(r.minimo_investimento ?? 0),
+      raised: Number(r.arrecadado ?? 0),
+      goal: Number(r.meta ?? 0),
+      deadline,
+      payment: r.pagamento ?? undefined,
+      tir: r.tir != null ? Number(r.tir) : undefined,
+      cover: r.capa ?? '/file.svg',
+      status: r.status ?? 'Em captação',
+      summaryPdf: r.resumo_pdf ?? undefined,
+      aboutOperation: r.sobre_operacao ?? undefined,
+      aboutCompany: r.sobre_empresa ?? undefined,
+      entrepreneurs: Array.isArray(r.empreendedores) ? r.empreendedores : undefined,
+      financials: Array.isArray(r.financeiros) ? r.financeiros : undefined,
+      documents: Array.isArray(r.documentos) ? r.documentos : undefined,
+      essentialInfo: Array.isArray(r.informacoes_essenciais) ? r.informacoes_essenciais : undefined,
+      investors: Array.isArray(r.investidores) ? r.investidores : undefined,
+    }
+    return offer
+  } catch (e) {
+    // Em caso de erro de conexão, apenas faça fallback aos mocks
+    return null
+  }
 }
