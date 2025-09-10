@@ -130,6 +130,44 @@ export default function NovoProjetoPage() {
     })
   }
 
+  // Uploads auxiliares
+  async function handleUploadSummary(file: File) {
+    setError(null)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/upload', { method: 'POST', body: fd })
+      if (!res.ok) throw new Error('Falha no upload do resumo')
+      const data = (await res.json()) as { url: string }
+      setForm((f) => ({ ...f, summaryPdf: data.url }))
+      setMessage('Resumo enviado com sucesso!')
+    } catch (e) {
+      console.error(e)
+      setError('Não foi possível enviar o resumo. Tente novamente.')
+    }
+  }
+
+  async function handleUploadDocument(index: number, file: File) {
+    setError(null)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/upload', { method: 'POST', body: fd })
+      if (!res.ok) throw new Error('Falha no upload do documento')
+      const data = (await res.json()) as { url: string }
+      updateArrayItem('documents', index, 'url', data.url)
+      setMessage('Documento enviado com sucesso!')
+    } catch (e) {
+      console.error(e)
+      setError('Não foi possível enviar o documento. Tente novamente.')
+    }
+  }
+
+  async function handleUploadCover(file: File) {
+    // alias para compatibilidade com handleUpload antigo
+    await handleUpload(file)
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)
@@ -327,10 +365,23 @@ export default function NovoProjetoPage() {
                 </div>
 
                 <div className="grid gap-1">
-                  <Label htmlFor="summaryPdf">Resumo (PDF URL)</Label>
-                  <input id="summaryPdf" value={form.summaryPdf}
-                    onChange={(e) => handleChange('summaryPdf', e.target.value)}
-                    className="h-9 w-full rounded-md border bg-background px-3 text-sm" placeholder="https://...pdf" />
+                  <Label htmlFor="summaryPdf">Resumo (PDF)</Label>
+                  <input
+                    id="summaryPdf"
+                    type="file"
+                    accept="application/pdf"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) void handleUploadSummary(file)
+                    }}
+                  />
+                  {form.summaryPdf && (
+                    <div className="mt-1">
+                      <a href={form.summaryPdf} target="_blank" className="inline-flex items-center gap-2 text-sm text-primary hover:underline">
+                        Ver arquivo enviado
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid gap-1">
@@ -394,14 +445,28 @@ export default function NovoProjetoPage() {
                     <Button type="button" variant="outline" onClick={() => addArrayItem('documents', { label: '', url: '' })}>Adicionar</Button>
                   </div>
                   {form.documents.map((doc, idx) => (
-                    <div key={idx} className="grid sm:grid-cols-[1fr_1fr_auto] gap-2">
+                    <div key={idx} className="grid sm:grid-cols-[1fr_auto] gap-2">
                       <input placeholder="Rótulo" value={doc.label}
                         onChange={(e) => updateArrayItem('documents', idx, 'label', e.target.value)}
                         className="h-9 w-full rounded-md border bg-background px-3 text-sm" />
-                      <input placeholder="https://..." value={doc.url}
-                        onChange={(e) => updateArrayItem('documents', idx, 'url', e.target.value)}
-                        className="h-9 w-full rounded-md border bg-background px-3 text-sm" />
-                      <Button type="button" variant="ghost" onClick={() => removeArrayItem('documents', idx)}>Remover</Button>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="file"
+                          accept="application/pdf,image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (file) void handleUploadDocument(idx, file)
+                          }}
+                        />
+                        <Button type="button" variant="ghost" onClick={() => removeArrayItem('documents', idx)}>Remover</Button>
+                      </div>
+                      {doc.url ? (
+                        <div className="sm:col-span-2 text-xs text-muted-foreground">
+                          <a href={doc.url} target="_blank" className="hover:underline">Arquivo enviado</a>
+                        </div>
+                      ) : (
+                        <div className="sm:col-span-2 text-xs text-muted-foreground">Nenhum arquivo enviado</div>
+                      )}
                     </div>
                   ))}
                 </div>

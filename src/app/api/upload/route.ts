@@ -13,10 +13,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 })
     }
 
-    // Opcional: validação simples de tipo
+    // Validação simples de tipo: permitir imagens e PDFs
     const mime = (file as any).type as string | undefined
-    if (mime && !mime.startsWith('image/')) {
-      return NextResponse.json({ error: 'Apenas imagens são permitidas' }, { status: 400 })
+    const allowed = !mime || mime.startsWith('image/') || mime === 'application/pdf'
+    if (!allowed) {
+      return NextResponse.json({ error: 'Apenas imagens ou PDF são permitidos' }, { status: 400 })
     }
 
     const bytes = await (file as File).arrayBuffer()
