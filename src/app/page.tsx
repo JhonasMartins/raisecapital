@@ -572,8 +572,14 @@ export default function Home() {
                 <Link key={a.slug} href={`/blog/${a.slug}`} className="block group" aria-label={`Abrir artigo: ${a.title}`}>
                   <Card className="flex flex-col overflow-hidden p-0 gap-0 transition-shadow group-hover:shadow-md">
                     <div className="relative h-40 w-full overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={a.cover} alt={`Capa do artigo ${a.title}`} className="h-full w-full object-cover border" />
+                      <Image
+                        src={a.cover}
+                        alt={`Capa do artigo ${a.title}`}
+                        fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                        className="object-cover border"
+                        unoptimized
+                      />
                     </div>
                     <CardHeader className="space-y-2 px-6 pt-4 pb-2">
                       <CardTitle className="text-base font-semibold">{a.title}</CardTitle>
