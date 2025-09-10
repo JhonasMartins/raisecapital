@@ -120,7 +120,7 @@ export default async function BlogArticlePage({ params }: { params: { slug: stri
           <div className="w-full border-t bg-muted/30">
             <div className="mx-auto max-w-6xl px-6">
               <div className="relative h-64 w-full my-6">
-                <Image src={article.cover} alt="Capa do artigo" fill className="object-cover rounded-md" sizes="100vw" />
+                <Image src={article.cover} alt="Capa do artigo" fill className="object-cover rounded-md" sizes="100vw" unoptimized />
               </div>
             </div>
           </div>
@@ -149,7 +149,7 @@ export default async function BlogArticlePage({ params }: { params: { slug: stri
                     <Link key={r.slug} href={`/blog/${r.slug}`} className="group block">
                       <div className="flex gap-3">
                         <div className="relative h-16 w-24 flex-shrink-0 overflow-hidden rounded border">
-                          <Image src={r.cover} alt="" fill className="object-cover" sizes="96px" />
+                          <Image src={r.cover} alt={r.title} fill className="object-cover" sizes="96px" unoptimized />
                         </div>
                         <div>
                           <div className="text-xs text-muted-foreground">{new Date(r.date).toLocaleDateString('pt-BR')}</div>
