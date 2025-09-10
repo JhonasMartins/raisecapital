@@ -840,7 +840,9 @@ export default function Home() {
                     setNlEmail('')
                   } catch (err: unknown) {
                     setNlStatus('error')
-                    const message = err && typeof err === 'object' && 'message' in err ? String((err as any).message) : 'Erro ao inscrever, tente novamente.'
+                    const message = err && typeof err === 'object' && 'message' in err && typeof (err as { message?: unknown }).message === 'string'
+                      ? (err as { message?: unknown }).message as string
+                      : 'Erro ao inscrever, tente novamente.'
                     setNlMsg(message)
                   } finally {
                     setTimeout(() => { setNlStatus('idle'); setNlMsg('') }, 4000)
