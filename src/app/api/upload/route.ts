@@ -9,24 +9,24 @@ export async function POST(req: Request) {
     const form = await req.formData()
     const file = form.get('file')
 
-    if (!file || !(file instanceof File)) {
+    if (!(file instanceof File)) {
       return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 })
     }
 
     // Validação simples de tipo: permitir imagens e PDFs
-    const mime = (file as any).type as string | undefined
+    const mime = file.type
     const allowed = !mime || mime.startsWith('image/') || mime === 'application/pdf'
     if (!allowed) {
       return NextResponse.json({ error: 'Apenas imagens ou PDF são permitidos' }, { status: 400 })
     }
 
-    const bytes = await (file as File).arrayBuffer()
+    const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
     await fs.mkdir(uploadsDir, { recursive: true })
 
-    const originalName = (file as File).name || 'upload'
+    const originalName = file.name || 'upload'
     const ext = path.extname(originalName) || '.bin'
     const base = path
       .basename(originalName, ext)
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 
     const url = `/uploads/${filename}`
     return NextResponse.json({ url, filename })
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('Upload error:', err)
     return NextResponse.json({ error: 'Falha no upload' }, { status: 500 })
   }

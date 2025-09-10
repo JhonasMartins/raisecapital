@@ -5,8 +5,9 @@ export async function GET() {
   try {
     const { rows } = await query<{ now: string }>('SELECT NOW() as now')
     return Response.json({ ok: true, now: rows[0]?.now })
-  } catch (e: any) {
+  } catch (e: unknown) {
+    const msg = e && typeof e === 'object' && 'message' in e ? String((e as any).message) : 'Connection failed'
     console.error('DB connection error', e)
-    return Response.json({ ok: false, error: e?.message || 'Connection failed' }, { status: 500 })
+    return Response.json({ ok: false, error: msg }, { status: 500 })
   }
 }
