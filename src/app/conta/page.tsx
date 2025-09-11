@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator"
 
 export default function ContaDashboardPage() {
   return (
-    <div className="grid gap-6 md:grid-cols-3">
+    <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-3">
       {/* Saldo e posição */}
       <Card className="md:col-span-2">
         <CardHeader>

@@ -15,7 +15,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     <>
       <div className="min-h-svh bg-muted/30">
         <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-4">
+          <div className="container mx-auto grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-4">
             {/* Left: Logo apenas */}
             <div className="justify-self-start">
               <Link href="/conta" className="inline-flex items-center">
@@ -78,7 +78,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         </header>
 
         {/* Header da página junto do card */}
-        <main className="container py-6">
+        <main className="container mx-auto py-6">
           <div className="mb-3 flex items-center justify-between">
             <h1 className="text-lg font-semibold tracking-tight">Resumo</h1>
             <div className="flex items-center gap-2"></div>
