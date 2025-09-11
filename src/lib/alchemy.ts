@@ -71,8 +71,8 @@ export async function getErcTokenBalances(
   const alchemy = getAlchemy(network)
   const { tokenBalances } = await alchemy.core.getTokenBalances(address)
   return (tokenBalances || [])
-    .filter((t): t is { contractAddress: string; tokenBalance: string } => !!(t as any).tokenBalance && (t as any).tokenBalance !== "0x0")
-    .map((t) => ({ contractAddress: (t as any).contractAddress, tokenBalance: (t as any).tokenBalance }))
+    .filter((t): t is { contractAddress: string; tokenBalance: string; error: null } => t.tokenBalance !== null)
+    .map((t) => ({ contractAddress: t.contractAddress, tokenBalance: t.tokenBalance }))
 }
 
 export async function getOwnedNfts(
@@ -86,7 +86,7 @@ export async function getOwnedNfts(
     items: (res.ownedNfts || []).map((n) => ({
       contractAddress: n.contract?.address || "",
       tokenId: n.tokenId,
-      title: (n as any).title || n.name || n.contract?.name || n.rawMetadata?.name || null,
+      title: n.name || n.contract?.name || null,
       raw: {
         contract: n.contract?.address,
         tokenType: n.tokenType,
