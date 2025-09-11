@@ -49,10 +49,10 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                 </summary>
                 <div className="absolute right-0 top-full mt-2 w-56 rounded-md border bg-popover text-popover-foreground shadow-md">
                   <nav className="flex flex-col p-2 text-sm">
-                    <Link href="/conta" className="rounded px-3 py-2 hover:bg-accent/30">Resumo</Link>
-                    <Link href="/conta/investimentos" className="rounded px-3 py-2 hover:bg-accent/30">Investimentos</Link>
-                    <Link href="/conta/extratos" className="rounded px-3 py-2 hover:bg-accent/30">Extratos</Link>
-                    <Link href="/conta/rendimentos" className="rounded px-3 py-2 hover:bg-accent/30">Rendimentos</Link>
+                    <Link href="/conta" className="rounded px-3 py-2 hover:bg-accent/30">Minha carteira</Link>
+                    <Link href="/conta/investimentos" className="rounded px-3 py-2 hover:bg-accent/30">Meus investimentos</Link>
+                    <Link href="/conta/extratos" className="rounded px-3 py-2 hover:bg-accent/30">Extrato</Link>
+                    <Link href="/conta/rendimentos" className="rounded px-3 py-2 hover:bg-accent/30">Proventos</Link>
                     <Link href="/conta/documentos" className="rounded px-3 py-2 hover:bg-accent/30">Documentos</Link>
                     <Link href="/conta/suitability" className="rounded px-3 py-2 hover:bg-accent/30">Suitability</Link>
                     <Link href="/conta/assinaturas" className="rounded px-3 py-2 hover:bg-accent/30">Assinaturas</Link>
@@ -87,10 +87,6 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
         {/* Header da página junto do card */}
         <main className="mx-auto max-w-6xl px-6 py-6">
-          <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-lg font-semibold tracking-tight">Resumo</h1>
-            <div className="flex items-center gap-2"></div>
-          </div>
           {children}
         </main>
       </div>

@@ -4,10 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const items = [
-  { href: "/conta", label: "Resumo", match: (p: string) => p === "/conta" },
-  { href: "/conta/investimentos", label: "Investimentos", match: (p: string) => p.startsWith("/conta/investimentos") },
-  { href: "/conta/extratos", label: "Extratos", match: (p: string) => p.startsWith("/conta/extratos") },
-  { href: "/conta/rendimentos", label: "Rendimentos", match: (p: string) => p.startsWith("/conta/rendimentos") },
+  { href: "/conta", label: "Minha carteira", match: (p: string) => p === "/conta" },
+  { href: "/conta/investimentos", label: "Meus investimentos", match: (p: string) => p.startsWith("/conta/investimentos") },
+  { href: "/conta/extratos", label: "Extrato", match: (p: string) => p.startsWith("/conta/extratos") },
+  { href: "/conta/rendimentos", label: "Proventos", match: (p: string) => p.startsWith("/conta/rendimentos") },
   { href: "/conta/documentos", label: "Documentos", match: (p: string) => p.startsWith("/conta/documentos") },
   { href: "/conta/suitability", label: "Suitability", match: (p: string) => p.startsWith("/conta/suitability") },
   { href: "/conta/assinaturas", label: "Assinaturas", match: (p: string) => p.startsWith("/conta/assinaturas") },

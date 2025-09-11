@@ -7,14 +7,24 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Wallet, PieChart, TrendingUp, IdCard, ClipboardList, Banknote, Building2, Wheat, Factory } from "lucide-react"
 import { formatBRL } from "@/lib/utils"
+import PortfolioDistributionChart from "@/components/portfolio-distribution-chart"
 
 export default function ContaDashboardPage() {
+  const distribuicao = [
+    { key: "imobiliario", label: "Imobiliário", value: 23000, color: "#64748b" },
+    { key: "agro", label: "Agro", value: 12000, color: "#94a3b8" },
+    { key: "infra", label: "Infra", value: 7000, color: "#cbd5e1" },
+    { key: "credito", label: "Crédito", value: 6000, color: "#475569" },
+    { key: "outros", label: "Outros", value: 2000, color: "#e2e8f0" },
+  ] as const
+  const totalDistribuicao = distribuicao.reduce((acc, i) => acc + i.value, 0)
+
   return (
     <div className="grid w-full gap-6 md:grid-cols-3">
       {/* Saldo e posição */}
       <Card className="md:col-span-2">
         <CardHeader>
-          <CardTitle className="text-base font-semibold">Resumo</CardTitle>
+          <CardTitle className="text-base font-semibold">Minha carteira</CardTitle>
           <CardDescription>Saldo disponível, posição consolidada e próximos passos</CardDescription>
         </CardHeader>
         <CardContent>
@@ -69,6 +79,43 @@ export default function ContaDashboardPage() {
               <p className="text-sm text-muted-foreground">Variação e movimentações dos últimos 30 dias.</p>
             </TabsContent>
           </Tabs>
+        </CardContent>
+      </Card>
+
+      {/* Distribuição da carteira */}
+      <Card className="md:col-span-2">
+        <CardHeader>
+          <CardTitle className="text-base font-semibold">Distribuição da carteira</CardTitle>
+          <CardDescription>Percentual por segmento com valores em BRL</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6 sm:grid-cols-3">
+            <div className="sm:col-span-2">
+              <PortfolioDistributionChart data={distribuicao} />
+            </div>
+            <div className="space-y-3">
+              {distribuicao.map((s) => {
+                const pct = Math.round((s.value / totalDistribuicao) * 1000) / 10
+                return (
+                  <div key={s.key} className="flex items-center justify-between gap-3 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: s.color }} />
+                      <span>{s.label}</span>
+                    </div>
+                    <div className="tabular-nums text-muted-foreground">
+                      <span className="mr-2">{pct}%</span>
+                      <span>{formatBRL(s.value)}</span>
+                    </div>
+                  </div>
+                )
+              })}
+              <Separator />
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Total</span>
+                <span className="tabular-nums">{formatBRL(totalDistribuicao)}</span>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -182,17 +229,17 @@ export default function ContaDashboardPage() {
                       </div>
                     </TableCell>
                     <TableCell className="py-2 text-sm">
-                      <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />Liquidado</Badge>
+                      <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-green-600" />Liquidado</Badge>
                     </TableCell>
-                    <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(23000)}</TableCell>
-                    <TableCell className="py-2 text-right text-sm tabular-nums">+9,1%</TableCell>
-                    <TableCell className="py-2 text-right text-sm">há 1 semana</TableCell>
+                    <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(7000)}</TableCell>
+                    <TableCell className="py-2 text-right text-sm tabular-nums">+2,1%</TableCell>
+                    <TableCell className="py-2 text-right text-sm">há 3 dias</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </TabsContent>
             <TabsContent value="movs">
-              <div className="rounded-lg border p-4 text-sm text-muted-foreground">Histórico de movimentações (em breve).</div>
+              <div className="text-sm text-muted-foreground">Sem movimentações recentes.</div>
             </TabsContent>
           </Tabs>
         </CardContent>
@@ -200,4 +247,3 @@ export default function ContaDashboardPage() {
     </div>
   )
 }
-<div className="mt-4 border-t pt-3 text-xs text-muted-foreground">Custódia/Compliance: sob instituição parceira regulada</div>
