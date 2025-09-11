@@ -23,7 +23,7 @@ export default function NavMobile() {
     <div className="sm:hidden">
       <details ref={detailsRef} className="group relative z-[60]">
         <summary
-          className="list-none inline-flex items-center justify-center rounded-md p-2 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          className="appearance-none list-none inline-flex items-center justify-center rounded-md p-2 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden [&::marker]:content-['']"
           aria-label="Abrir menu"
         >
           <svg
