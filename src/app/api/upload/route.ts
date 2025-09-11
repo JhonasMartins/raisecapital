@@ -82,17 +82,20 @@ export async function POST(req: Request) {
     const isImage = !!mime && mime.startsWith('image/')
     const outBuffer = buffer
     if (DEBUG && isImage) console.log(`compress: SKIPPED (disabled) ${originalName} ${buffer.length} bytes | mime=${mime}`)
+    if (DEBUG) console.log(`Upload: received ${filename} ${outBuffer.length} bytes mime=${mime}`)
 
     // 1) Preferir armazenar no Postgres (com fallback se falhar)
     if (process.env.DATABASE_URL) {
       try {
         const size = outBuffer.length
+        if (DEBUG) console.log('Upload: trying Postgres insert', { filename, mime, size })
         const insert = await query<{ id: string }>(
           `INSERT INTO files (filename, mime, size, data) VALUES ($1, $2, $3, $4) RETURNING id`,
           [filename, mime || null, size, outBuffer]
         )
         const id = insert.rows[0].id
         const url = `/api/u/${id}`
+        if (DEBUG) console.log('Upload: Postgres insert success ->', url)
         return NextResponse.json({ url, filename, id })
       } catch (e) {
         if (DEBUG) console.warn('Upload: insert no Postgres falhou, tentando fallback...', (e as Error).message)
@@ -102,11 +105,13 @@ export async function POST(req: Request) {
     // 2) Fallback Vercel Blob (se configurado e sem DB)
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       try {
+        if (DEBUG) console.log('Upload: trying Vercel Blob')
         const { put } = await import('@vercel/blob')
         const blob = await put(`uploads/${filename}`, new Blob([outBuffer], { type: mime || 'application/octet-stream' }), {
           access: 'public',
           token: process.env.BLOB_READ_WRITE_TOKEN,
         })
+        if (DEBUG) console.log('Upload: Vercel Blob success ->', blob.url)
         return NextResponse.json({ url: blob.url, filename })
       } catch (e) {
         if (DEBUG) console.warn('Upload: envio ao Vercel Blob falhou, tentando filesystem...', (e as Error).message)
@@ -118,9 +123,12 @@ export async function POST(req: Request) {
     await fs.mkdir(uploadsDir, { recursive: true })
     const filePath = path.join(uploadsDir, filename)
 
+    if (DEBUG) console.log('Upload: writing local file', { filePath })
     await fs.writeFile(filePath, outBuffer)
+    if (DEBUG) console.log('Upload: local write success')
 
     const url = `/uploads/${filename}`
+    if (DEBUG) console.log('Upload: returning url', url)
     return NextResponse.json({ url, filename })
   } catch (err: unknown) {
     console.error('Upload error (geral):', err)
