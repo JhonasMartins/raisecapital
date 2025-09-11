@@ -6,6 +6,7 @@ import { query } from '@/lib/db'
 export const runtime = 'nodejs'
 
 const DEBUG = process.env.UPLOAD_DEBUG === 'true'
+const FORCE_LOCAL = process.env.UPLOAD_FORCE_LOCAL === 'true'
 const STRICT_LOSSLESS = process.env.UPLOAD_IMAGE_STRICT_LOSSLESS === 'true'
 const JPEG_QUALITY = Number(process.env.UPLOAD_IMAGE_JPEG_QUALITY || 85)
 const WEBP_QUALITY = Number(process.env.UPLOAD_IMAGE_WEBP_QUALITY || 85)
@@ -49,21 +50,22 @@ async function compressImage(input: Buffer, mime: string): Promise<Buffer> {
 export async function POST(req: Request) {
   try {
     const form = await req.formData()
-    const file = form.get('file')
+    const fileAny = form.get('file') as any
 
-    if (!(file instanceof File)) {
+    // Aceitar Blob/File sem depender de instanceof (que pode variar por runtime)
+    if (!fileAny || typeof fileAny.arrayBuffer !== 'function') {
       return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 })
     }
 
     // Validação simples de tipo: permitir imagens e PDFs
-    const mime = file.type
+    const mime: string | undefined = fileAny.type
     const allowed = !mime || mime.startsWith('image/') || mime === 'application/pdf'
     if (!allowed) {
       return NextResponse.json({ error: 'Apenas imagens ou PDF são permitidos' }, { status: 400 })
     }
 
     // Normalização de nome/ extensão
-    const originalName = file.name || 'upload'
+    const originalName = (fileAny.name as string | undefined) || 'upload'
     const extFromName = path.extname(originalName) || ''
     const baseFromName = path
       .basename(originalName, extFromName)
@@ -75,14 +77,35 @@ export async function POST(req: Request) {
     const filename = `${Date.now()}_${safeBase}${ext}`
 
     // Lemos os bytes uma única vez para reutilizar
-    const bytes = await file.arrayBuffer()
+    const bytes = await fileAny.arrayBuffer()
     const buffer = Buffer.from(bytes)
+
+    if (buffer.length === 0) {
+      return NextResponse.json({ error: 'Arquivo vazio' }, { status: 400 })
+    }
 
     // Compressão desativada a pedido: usar o buffer original sempre
     const isImage = !!mime && mime.startsWith('image/')
     const outBuffer = buffer
     if (DEBUG && isImage) console.log(`compress: SKIPPED (disabled) ${originalName} ${buffer.length} bytes | mime=${mime}`)
     if (DEBUG) console.log(`Upload: received ${filename} ${outBuffer.length} bytes mime=${mime}`)
+
+    // 0) Force local write if flag enabled (debug/contingency)
+    if (FORCE_LOCAL) {
+      try {
+        const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
+        await fs.mkdir(uploadsDir, { recursive: true })
+        const filePath = path.join(uploadsDir, filename)
+        if (DEBUG) console.log('Upload: FORCE_LOCAL active, writing', { filePath })
+        await fs.writeFile(filePath, outBuffer)
+        const url = `/uploads/${filename}`
+        if (DEBUG) console.log('Upload: FORCE_LOCAL success ->', url)
+        return NextResponse.json({ url, filename })
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e)
+        if (DEBUG) console.error('Upload: FORCE_LOCAL failed', msg)
+      }
+    }
 
     // 1) Preferir armazenar no Postgres (com fallback se falhar)
     if (process.env.DATABASE_URL) {
@@ -97,8 +120,38 @@ export async function POST(req: Request) {
         const url = `/api/u/${id}`
         if (DEBUG) console.log('Upload: Postgres insert success ->', url)
         return NextResponse.json({ url, filename, id })
-      } catch (e) {
-        if (DEBUG) console.warn('Upload: insert no Postgres falhou, tentando fallback...', (e as Error).message)
+      } catch (e: any) {
+        const msg = e?.message || ''
+        const code = e?.code
+        if (DEBUG) console.warn('Upload: insert no Postgres falhou', { code, msg })
+        // Se a tabela não existir, tentar criar e repetir uma vez
+        if (code === '42P01' || /relation "?files"? does not exist/i.test(msg)) {
+          try {
+            if (DEBUG) console.log('Upload: creating files table and retrying insert')
+            await query(`
+              CREATE TABLE IF NOT EXISTS files (
+                id BIGSERIAL PRIMARY KEY,
+                filename TEXT NOT NULL,
+                mime TEXT,
+                size BIGINT NOT NULL,
+                data BYTEA NOT NULL,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+              );
+              CREATE INDEX IF NOT EXISTS files_created_at_idx ON files (created_at);
+            `)
+            const retry = await query<{ id: string }>(
+              `INSERT INTO files (filename, mime, size, data) VALUES ($1, $2, $3, $4) RETURNING id`,
+              [filename, mime || null, outBuffer.length, outBuffer]
+            )
+            const id = retry.rows[0].id
+            const url = `/api/u/${id}`
+            if (DEBUG) console.log('Upload: Postgres insert success after creating table ->', url)
+            return NextResponse.json({ url, filename, id })
+          } catch (e2: any) {
+            if (DEBUG) console.warn('Upload: retry after creating table failed', e2?.message)
+          }
+        }
+        if (DEBUG) console.warn('Upload: tentando fallbacks...')
       }
     }
 
@@ -133,6 +186,6 @@ export async function POST(req: Request) {
   } catch (err: unknown) {
     console.error('Upload error (geral):', err)
     const detail = err instanceof Error ? err.message : String(err)
-    return NextResponse.json({ error: 'Falha no upload', ...(DEBUG ? { detail } : {}) }, { status: 500 })
+    return NextResponse.json({ error: 'Falha no upload', ...(DEBUG ? { detail, debug: { hasDb: !!process.env.DATABASE_URL, hasBlob: !!process.env.BLOB_READ_WRITE_TOKEN, forceLocal: FORCE_LOCAL } } : {}) }, { status: 500 })
   }
 }
