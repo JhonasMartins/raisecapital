@@ -15,11 +15,19 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     <>
       <div className="min-h-svh bg-muted/30">
         <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container mx-auto grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-4">
+          <div className="mx-auto max-w-6xl px-6 grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-4">
             {/* Left: Logo apenas */}
             <div className="justify-self-start">
-              <Link href="/conta" className="inline-flex items-center">
-                <Image src="/logo.avif" alt="Raise Capital" width={32} height={32} priority className="rounded" />
+              <Link href="/conta" className="inline-flex items-center" aria-label="Ir para a página de resumo da conta">
+                <Image
+                  src="/logo.avif"
+                  alt="Raise Capital"
+                  width={180}
+                  height={44}
+                  sizes="(max-width: 640px) 112px, 180px"
+                  priority
+                  className="block h-8 w-auto sm:h-10"
+                />
               </Link>
             </div>
 
@@ -78,7 +86,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         </header>
 
         {/* Header da página junto do card */}
-        <main className="container mx-auto py-6">
+        <main className="mx-auto max-w-6xl px-6 py-6">
           <div className="mb-3 flex items-center justify-between">
             <h1 className="text-lg font-semibold tracking-tight">Resumo</h1>
             <div className="flex items-center gap-2"></div>
