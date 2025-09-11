@@ -18,26 +18,26 @@ export default function ContaDashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Wallet className="h-4 w-4" />
+            <div className="rounded-lg border p-4 bg-blue-50 border-blue-200">
+              <div className="flex items-center gap-2 text-sm text-blue-700">
+                <Wallet className="h-4 w-4 text-blue-600" />
                 <span>Saldo disponível</span>
               </div>
-              <div className="mt-1 text-2xl font-semibold">R$ 12.450,00</div>
+              <div className="mt-1 text-2xl font-semibold text-blue-900">R$ 12.450,00</div>
             </div>
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <PieChart className="h-4 w-4" />
+            <div className="rounded-lg border p-4 bg-violet-50 border-violet-200">
+              <div className="flex items-center gap-2 text-sm text-violet-700">
+                <PieChart className="h-4 w-4 text-violet-600" />
                 <span>Posição investida</span>
               </div>
-              <div className="mt-1 text-2xl font-semibold">R$ 38.000,00</div>
+              <div className="mt-1 text-2xl font-semibold text-violet-900">R$ 38.000,00</div>
             </div>
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <TrendingUp className="h-4 w-4" />
+            <div className="rounded-lg border p-4 bg-emerald-50 border-emerald-200">
+              <div className="flex items-center gap-2 text-sm text-emerald-700">
+                <TrendingUp className="h-4 w-4 text-emerald-600" />
                 <span>Rentabilidade acumulada</span>
               </div>
-              <div className="mt-1 text-2xl font-semibold">+8,2%</div>
+              <div className="mt-1 text-2xl font-semibold text-emerald-900">+8,2%</div>
             </div>
           </div>
           <Separator className="my-6" />
