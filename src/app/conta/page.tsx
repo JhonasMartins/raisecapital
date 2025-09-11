@@ -14,7 +14,7 @@ export default function ContaDashboardPage() {
       {/* Saldo e posição */}
       <Card className="md:col-span-2">
         <CardHeader>
-          <CardTitle>Resumo</CardTitle>
+          <CardTitle className="text-base font-semibold">Resumo</CardTitle>
           <CardDescription>Saldo disponível, posição consolidada e próximos passos</CardDescription>
         </CardHeader>
         <CardContent>
@@ -24,7 +24,7 @@ export default function ContaDashboardPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Saldo disponível</div>
-                  <div className="mt-1 text-3xl font-semibold text-foreground">{formatBRL(12450)}</div>
+                  <div className="mt-1 text-3xl font-semibold text-foreground tabular-nums">{formatBRL(12450)}</div>
                 </div>
                 <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
                   <Wallet className="h-5 w-5" />
@@ -36,7 +36,7 @@ export default function ContaDashboardPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Posição investida</div>
-                  <div className="mt-1 text-3xl font-semibold text-foreground">{formatBRL(38000)}</div>
+                  <div className="mt-1 text-3xl font-semibold text-foreground tabular-nums">{formatBRL(38000)}</div>
                 </div>
                 <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
                   <PieChart className="h-5 w-5" />
@@ -48,7 +48,7 @@ export default function ContaDashboardPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Rentabilidade acumulada</div>
-                  <div className="mt-1 text-3xl font-semibold text-foreground">+8,2%</div>
+                  <div className="mt-1 text-3xl font-semibold text-foreground tabular-nums">+8,2%</div>
                 </div>
                 <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
                   <TrendingUp className="h-5 w-5" />
@@ -75,7 +75,7 @@ export default function ContaDashboardPage() {
       {/* Próximos passos */}
       <Card>
         <CardHeader>
-          <CardTitle>Próximos passos</CardTitle>
+          <CardTitle className="text-base font-semibold">Próximos passos</CardTitle>
           <CardDescription>Itens que pedem sua atenção</CardDescription>
         </CardHeader>
         <CardContent>
@@ -119,11 +119,12 @@ export default function ContaDashboardPage() {
         <CardHeader>
           <div className="flex items-center justify-between gap-4">
             <div>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-base font-semibold">
                 <TrendingUp className="h-5 w-5 text-muted-foreground" />
                 Investimentos em andamento
               </CardTitle>
               <CardDescription>Acompanhe o status de cada etapa</CardDescription>
+              <div className="text-xs text-muted-foreground">Última atualização há 2 dias</div>
             </div>
           </div>
         </CardHeader>
@@ -137,55 +138,55 @@ export default function ContaDashboardPage() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/40">
-                    <TableHead className="text-[11px] uppercase tracking-wide text-muted-foreground">Oferta</TableHead>
-                    <TableHead className="text-[11px] uppercase tracking-wide text-muted-foreground">Status</TableHead>
-                    <TableHead className="text-right text-[11px] uppercase tracking-wide text-muted-foreground">Aporte</TableHead>
-                    <TableHead className="text-right text-[11px] uppercase tracking-wide text-muted-foreground">Rentab.</TableHead>
-                    <TableHead className="text-right text-[11px] uppercase tracking-wide text-muted-foreground">Atualização</TableHead>
+                    <TableHead className="pl-0 py-2 text-[11px] uppercase tracking-wide text-foreground">Oferta</TableHead>
+                    <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground">Status</TableHead>
+                    <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Aporte</TableHead>
+                    <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Rentab.</TableHead>
+                    <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Atualização</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
-                    <TableCell>
+                    <TableCell className="pl-0 py-2 text-sm">
                       <div className="flex items-center gap-2">
                         <Building2 className="h-5 w-5 text-muted-foreground" />
                         <span>Imobiliário Alpha</span>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="py-2 text-sm">
                       <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" />Aportado</Badge>
                     </TableCell>
-                    <TableCell className="text-right">{formatBRL(10000)}</TableCell>
-                    <TableCell className="text-right">+7,3%</TableCell>
-                    <TableCell className="text-right">há 2 dias</TableCell>
+                    <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(10000)}</TableCell>
+                    <TableCell className="py-2 text-right text-sm tabular-nums">+7,3%</TableCell>
+                    <TableCell className="py-2 text-right text-sm">há 2 dias</TableCell>
                   </TableRow>
                   <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
-                    <TableCell>
+                    <TableCell className="pl-0 py-2 text-sm">
                       <div className="flex items-center gap-2">
                         <Wheat className="h-5 w-5 text-muted-foreground" />
                         <span>Crédito Agro Beta</span>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="py-2 text-sm">
                       <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-amber-500" />Em análise</Badge>
                     </TableCell>
-                    <TableCell className="text-right">{formatBRL(5000)}</TableCell>
-                    <TableCell className="text-right">—</TableCell>
-                    <TableCell className="text-right">há 1 dia</TableCell>
+                    <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(5000)}</TableCell>
+                    <TableCell className="py-2 text-right text-sm tabular-nums">—</TableCell>
+                    <TableCell className="py-2 text-right text-sm">há 1 dia</TableCell>
                   </TableRow>
                   <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
-                    <TableCell>
+                    <TableCell className="pl-0 py-2 text-sm">
                       <div className="flex items-center gap-2">
                         <Factory className="h-5 w-5 text-muted-foreground" />
                         <span>Infra Gamma</span>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="py-2 text-sm">
                       <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />Liquidado</Badge>
                     </TableCell>
-                    <TableCell className="text-right">{formatBRL(23000)}</TableCell>
-                    <TableCell className="text-right">+9,1%</TableCell>
-                    <TableCell className="text-right">há 1 semana</TableCell>
+                    <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(23000)}</TableCell>
+                    <TableCell className="py-2 text-right text-sm tabular-nums">+9,1%</TableCell>
+                    <TableCell className="py-2 text-right text-sm">há 1 semana</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -199,3 +200,4 @@ export default function ContaDashboardPage() {
     </div>
   )
 }
+<div className="mt-4 border-t pt-3 text-xs text-muted-foreground">Custódia/Compliance: sob instituição parceira regulada</div>
