@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Search, ChevronDown, XCircle } from 'lucide-react'
 import Image from 'next/image'
+import BlogFilters from '@/components/blog/filters'
 
 export const dynamic = 'force-dynamic'
 
@@ -67,102 +68,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
 
           {/* Filtros (dentro do hero) */}
           <div className="mt-6">
-            <Card className="border border-white/20 bg-white/10 backdrop-blur-md shadow-lg">
-              <CardContent className="p-4">
-                <form method="GET" action="/blog" className="grid gap-4">
-                  {/* Mobile */}
-                  <div className="sm:hidden grid gap-3">
-                    {/* Busca */}
-                    <div className="relative">
-                      <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                      <input
-                        type="text"
-                        name="q"
-                        defaultValue={q}
-                        placeholder="Buscar por título do artigo"
-                        className="h-9 w-full rounded-md border bg-background pl-9 pr-3 text-sm"
-                        aria-label="Buscar no blog"
-                      />
-                    </div>
-
-                    {/* Categoria */}
-                    <div className="grid gap-1">
-                      <label className="text-xs text-white/80">Categoria</label>
-                      <div className="relative">
-                        <select
-                          name="cat"
-                          defaultValue={cat || 'Todas'}
-                          className="h-9 w-full rounded-md border bg-background pl-3 pr-8 text-sm"
-                        >
-                          {categories.map((c) => (
-                            <option key={c} value={c}>{c}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                      </div>
-                    </div>
-
-                    {/* Limpar filtros */}
-                    {!isDefaultFilters && (
-                      <Link
-                        href="/blog"
-                        className="inline-flex items-center gap-2 self-start rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
-                        aria-label="Limpar filtros"
-                      >
-                        <XCircle className="size-4" /> Limpar filtros
-                      </Link>
-                    )}
-                  </div>
-
-                  {/* Desktop */}
-                  <div className="hidden sm:grid sm:grid-cols-[1fr_auto_auto] sm:items-end gap-4">
-                    {/* Busca */}
-                    <div className="relative">
-                      <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                      <input
-                        type="text"
-                        name="q"
-                        defaultValue={q}
-                        placeholder="Buscar por título do artigo"
-                        className="h-9 w-full rounded-md border bg-background pl-9 pr-3 text-sm"
-                        aria-label="Buscar no blog"
-                      />
-                    </div>
-
-                    {/* Categoria */}
-                    <div className="grid gap-1">
-                      <label className="text-xs text-white/80">Categoria</label>
-                      <div className="relative">
-                        <select
-                          name="cat"
-                          defaultValue={cat || 'Todas'}
-                          className="h-9 w-44 rounded-md border bg-background pl-3 pr-8 text-sm"
-                        >
-                          {categories.map((c) => (
-                            <option key={c} value={c}>{c}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                      </div>
-                    </div>
-
-                    {/* Reset */}
-                    {!isDefaultFilters && (
-                      <Link
-                        href="/blog"
-                        className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
-                        aria-label="Limpar filtros"
-                      >
-                        <XCircle className="size-4" /> Limpar filtros
-                      </Link>
-                    )}
-                  </div>
-
-                  {/* Submit invisível para permitir enter no input */}
-                  <button type="submit" className="hidden" aria-hidden="true">Filtrar</button>
-                </form>
-              </CardContent>
-            </Card>
+            <BlogFilters q={q} cat={cat || 'Todas'} categories={categories} isDefaultFilters={isDefaultFilters} />
           </div>
         </div>
       </section>
