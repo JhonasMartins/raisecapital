@@ -18,6 +18,7 @@ jobs:
         uses: actions/github-script@v7
         env:
           GOWA_BASE_URL: ${{ secrets.GOWA_BASE_URL }}
+          GOWA_SEND_PATH: ${{ secrets.GOWA_SEND_PATH }}
           WA_USER: ${{ secrets.WA_USER }}
           WA_PASSWORD: ${{ secrets.WA_PASSWORD }}
           WA_TARGET_NUMBER: ${{ secrets.WA_TARGET_NUMBER }}
@@ -83,24 +84,61 @@ jobs:
               'Content-Type': 'application/json'
             };
 
-            const payload = { phone, message: body };
+            // Optional explicit path override
+            const overridePath = (process.env.GOWA_SEND_PATH || '').trim();
 
-            const endpointsToTry = ['/send', '/messages/send', '/message/text', '/api/send'];
-            let lastStatus = 0, lastText = '';
+            // Candidate endpoints for common GOWA deployments (base path included in GOWA_BASE_URL if any)
+            const endpointsToTry = overridePath ? [overridePath] : [
+              '/send/message/text',
+              '/send/text',
+              '/send/message',
+              '/send',
+              '/message/text',
+              '/messages/send',
+              '/api/send',
+              '/api/sendText'
+            ];
+
+            // Candidate payload shapes used by different forks/versions
+            const payloadVariants = [
+              { label: 'phone+message', data: { phone, message: body } },
+              { label: 'to+message',    data: { to: phone, message: body } },
+              { label: 'number+text',   data: { number: phone, text: body } },
+              { label: 'chatId+text',   data: { chatId: `${phone}@c.us`, text: body } }
+            ];
+
+            // Small preflight to help diagnose base path issues
+            try {
+              const pre = await fetch(`${base}/app/login`, { method: 'GET', headers: { 'Authorization': `Basic ${auth}` } });
+              core.info(`Preflight GET ${base}/app/login -> ${pre.status}`);
+            } catch (e) {
+              core.warning(`Preflight request failed: ${e.message}`);
+            }
+
+            let lastStatus = 0, lastText = '', lastTried = '';
             for (const path of endpointsToTry) {
-              const url = `${base}${path}`;
-              core.info(`Trying ${url} ...`);
-              try {
-                const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload) });
-                lastStatus = res.status;
-                lastText = await res.text();
-                core.info(`Response ${res.status}: ${lastText.slice(0, 300)}`);
-                if (res.ok) {
-                  core.info(`WhatsApp notification sent to ${phone} via ${path}`);
-                  return;
+              const url = `${base}${path.startsWith('/') ? '' : '/'}${path}`;
+              for (const variant of payloadVariants) {
+                core.info(`Trying ${url} with payload=${variant.label} ...`);
+                try {
+                  const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(variant.data) });
+                  const text = await res.text();
+                  lastStatus = res.status; lastText = text; lastTried = `${url} :: ${variant.label}`;
+                  core.info(`Response ${res.status}: ${text.slice(0, 300)}`);
+                  if (res.ok) {
+                    core.info(`WhatsApp notification sent to ${phone} via ${url} using ${variant.label}`);
+                    return;
+                  }
+                  // For 401/403/404 provide early hints
+                  if (res.status === 401 || res.status === 403) {
+                    core.warning('Authentication failed (401/403). Check WA_USER/WA_PASSWORD and Basic Auth settings on the server.');
+                  }
+                  if (res.status === 404) {
+                    core.info('Endpoint not found (404). If your server uses a base path (e.g. /gowa), ensure GOWA_BASE_URL includes it, or set GOWA_SEND_PATH to the exact endpoint.');
+                  }
+                } catch (err) {
+                  core.warning(`Request error for ${url}: ${err.message}`);
                 }
-              } catch (err) {
-                core.warning(`Request error for ${url}: ${err.message}`);
               }
             }
-            core.setFailed(`Failed to send WhatsApp notification. Last status=${lastStatus}, body=${lastText.slice(0, 500)}`);
+            core.setFailed(`Failed to send WhatsApp notification. Last tried=${lastTried}, status=${lastStatus}, body=${lastText.slice(0, 500)}`);
