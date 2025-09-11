@@ -5,6 +5,10 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Table } from '@tiptap/extension-table'
+import { TableRow } from '@tiptap/extension-table-row'
+import { TableHeader } from '@tiptap/extension-table-header'
+import { TableCell } from '@tiptap/extension-table-cell'
 
 export default function BlogNewArticlePage() {
   const [title, setTitle] = useState('')
@@ -19,7 +23,7 @@ export default function BlogNewArticlePage() {
   const [coverError, setCoverError] = useState<string | null>(null)
 
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [StarterKit, Table.configure({ resizable: true }), TableRow, TableHeader, TableCell],
     content: '',
     editorProps: {
       attributes: {
@@ -302,6 +306,56 @@ export default function BlogNewArticlePage() {
                         className="border rounded px-2 py-1 text-xs"
                       >
                         — HR
+                      </button>
+                      <span className="mx-1 h-4 w-px bg-border" />
+                      {/* Tabela */}
+                      <button
+                        type="button"
+                        onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+                        className={`border rounded px-2 py-1 text-xs ${editor.isActive('table') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
+                        title="Inserir tabela 3x3"
+                      >
+                        ▦ Tabela
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => editor.chain().focus().addRowAfter().run()}
+                        className="border rounded px-2 py-1 text-xs"
+                        title="Adicionar linha"
+                      >
+                        + Linha
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => editor.chain().focus().addColumnAfter().run()}
+                        className="border rounded px-2 py-1 text-xs"
+                        title="Adicionar coluna"
+                      >
+                        + Coluna
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => editor.chain().focus().deleteRow().run()}
+                        className="border rounded px-2 py-1 text-xs"
+                        title="Remover linha"
+                      >
+                        − Linha
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => editor.chain().focus().deleteColumn().run()}
+                        className="border rounded px-2 py-1 text-xs"
+                        title="Remover coluna"
+                      >
+                        − Coluna
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => editor.chain().focus().deleteTable().run()}
+                        className="border rounded px-2 py-1 text-xs"
+                        title="Remover tabela"
+                      >
+                        ✕ Tabela
                       </button>
                       <span className="mx-1 h-4 w-px bg-border" />
                       <button
