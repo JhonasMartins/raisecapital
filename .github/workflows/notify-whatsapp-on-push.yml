@@ -23,9 +23,7 @@ jobs:
           WA_TARGET_NUMBER: ${{ secrets.WA_TARGET_NUMBER }}
         with:
           script: |
-            const core = require('@actions/core');
-            const { context } = require('@actions/github');
-
+            // 'core' and 'context' are provided by actions/github-script v7
             const baseRaw = process.env.GOWA_BASE_URL || '';
             const base = baseRaw.replace(/\/+$/,'');
             if (!base) {
