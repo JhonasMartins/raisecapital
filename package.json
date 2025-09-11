@@ -10,7 +10,6 @@
     "db:migrate": "node scripts/migrate.js"
   },
   "dependencies": {
-    "@alch/alchemy-sdk": "^1.1.1",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@tiptap/extension-table": "^3.4.2",
@@ -20,6 +19,7 @@
     "@tiptap/react": "^3.4.2",
     "@tiptap/starter-kit": "^3.4.2",
     "@vercel/blob": "^0.27.3",
+    "alchemy-sdk": "^3.6.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
