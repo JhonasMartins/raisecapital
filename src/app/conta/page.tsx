@@ -5,10 +5,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { Wallet, PieChart, TrendingUp, IdCard, ClipboardList, Banknote } from "lucide-react"
 
 export default function ContaDashboardPage() {
   return (
-    <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-3">
+    <div className="grid w-full gap-6 md:grid-cols-3">
       {/* Saldo e posição */}
       <Card className="md:col-span-2">
         <CardHeader>
@@ -18,15 +19,24 @@ export default function ContaDashboardPage() {
         <CardContent>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="rounded-lg border p-4">
-              <div className="text-sm text-muted-foreground">Saldo disponível</div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Wallet className="h-4 w-4" />
+                <span>Saldo disponível</span>
+              </div>
               <div className="mt-1 text-2xl font-semibold">R$ 12.450,00</div>
             </div>
             <div className="rounded-lg border p-4">
-              <div className="text-sm text-muted-foreground">Posição investida</div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <PieChart className="h-4 w-4" />
+                <span>Posição investida</span>
+              </div>
               <div className="mt-1 text-2xl font-semibold">R$ 38.000,00</div>
             </div>
             <div className="rounded-lg border p-4">
-              <div className="text-sm text-muted-foreground">Rentabilidade acumulada</div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <TrendingUp className="h-4 w-4" />
+                <span>Rentabilidade acumulada</span>
+              </div>
               <div className="mt-1 text-2xl font-semibold">+8,2%</div>
             </div>
           </div>
@@ -56,21 +66,30 @@ export default function ContaDashboardPage() {
           <ul className="space-y-3 text-sm">
             <li className="rounded border p-4">
               <div className="flex items-center justify-between gap-3">
-                <span className="font-medium">Finalize seu KYC</span>
+                <div className="flex items-center gap-2">
+                  <IdCard className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Finalize seu KYC</span>
+                </div>
                 <Link href="/conta/documentos" className="text-primary hover:underline">Enviar documentos</Link>
               </div>
               <Progress value={60} className="mt-2" aria-label="Progresso do KYC" />
             </li>
             <li className="rounded border p-4">
               <div className="flex items-center justify-between gap-3">
-                <span className="font-medium">Responda o suitability</span>
+                <div className="flex items-center gap-2">
+                  <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Responda o suitability</span>
+                </div>
                 <Link href="/conta/suitability" className="text-primary hover:underline">Responder</Link>
               </div>
               <Progress value={0} className="mt-2" aria-label="Progresso do suitability" />
             </li>
             <li className="rounded border p-4">
               <div className="flex items-center justify-between gap-3">
-                <span className="font-medium">Deposite via PIX para investir</span>
+                <div className="flex items-center gap-2">
+                  <Banknote className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Deposite via PIX para investir</span>
+                </div>
                 <Link href="/conta/pagamentos" className="text-primary hover:underline">Ver instruções</Link>
               </div>
               <Progress value={0} className="mt-2" aria-label="Progresso do depósito" />
@@ -84,7 +103,10 @@ export default function ContaDashboardPage() {
         <CardHeader>
           <div className="flex items-center justify-between gap-4">
             <div>
-              <CardTitle>Investimentos em andamento</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-muted-foreground" />
+                Investimentos em andamento
+              </CardTitle>
               <CardDescription>Acompanhe o status de cada etapa</CardDescription>
             </div>
           </div>
