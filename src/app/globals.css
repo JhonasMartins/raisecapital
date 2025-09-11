@@ -120,4 +120,15 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Hide the default browser marker of summary elements (so only our SVG icon shows) */
+  details > summary {
+    list-style: none;
+  }
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::marker {
+    content: "";
+  }
 }

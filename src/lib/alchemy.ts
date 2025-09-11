@@ -130,3 +130,17 @@ export async function getTransfers(
   })
   return merged.slice(0, 50)
 }
+
+export function parseNetworkParam(input?: string | null): SupportedNetwork {
+  const val = (input || "").toLowerCase().replace(/_/g, "-")
+  switch (val) {
+    case "mainnet":
+    case "eth-mainnet":
+      return "eth-mainnet"
+    case "sepolia":
+    case "eth-sepolia":
+      return "eth-sepolia"
+    default:
+      return "eth-mainnet"
+  }
+}

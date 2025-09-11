@@ -40,6 +40,7 @@ function Button({
   variant,
   size,
   asChild = false,
+  children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
@@ -47,12 +48,25 @@ function Button({
   }) {
   const Comp = asChild ? Slot : "button"
 
+  // When using asChild (Radix Slot), ensure we provide exactly one valid React element child
+  // This avoids errors like: React.Children.only expected to receive a single React element child
+  let safeChildren = children as React.ReactNode
+  if (asChild) {
+    const array = React.Children.toArray(children)
+    const firstElementChild = array.find((c) => React.isValidElement(c)) as React.ReactElement | undefined
+    if (firstElementChild) {
+      safeChildren = firstElementChild
+    }
+  }
+
   return (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    />
+    >
+      {safeChildren}
+    </Comp>
   )
 }
 
