@@ -13,7 +13,7 @@ export const metadata = {
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <div className="min-h-svh bg-muted/30">
+      <div className="min-h-svh bg-[#f2f2f2]">
         <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="mx-auto max-w-6xl px-6 grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-4">
             {/* Left: Logo apenas */}
@@ -87,13 +87,11 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
         {/* Header da página junto do card */}
         <main className="mx-auto max-w-6xl px-6 py-6">
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-6 flex items-center justify-between">
             <h1 className="text-lg font-semibold tracking-tight">Resumo</h1>
             <div className="flex items-center gap-2"></div>
           </div>
-          <div className="rounded-xl border bg-card p-6 shadow-sm md:p-8">
-            {children}
-          </div>
+          {children}
         </main>
       </div>
     </>
