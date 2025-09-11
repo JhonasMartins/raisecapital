@@ -15,25 +15,8 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '**.vercel-storage.com',
       },
-      // MinIO/domínio do bucket ou CDN
-      {
-        protocol: 'https',
-        hostname: '**.traefik.me',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.codnodo.com',
-      },
-      {
-        protocol: 'http',
-        hostname: '**.traefik.me',
-      },
-      // MinIO console/endpoint com porta 9000 (path-style)
-      {
-        protocol: 'http',
-        hostname: '**.traefik.me',
-        port: '9000',
-      },
+      // Como os arquivos agora são servidos via rota local (/api/u/[id]),
+      // não precisamos de padrões remotos adicionais.
     ],
   },
 }
