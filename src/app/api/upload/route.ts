@@ -99,69 +99,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // 2) Fallback S3/MinIO (se configurado)
-    if (
-      process.env.S3_BUCKET &&
-      process.env.S3_ACCESS_KEY_ID &&
-      process.env.S3_SECRET_ACCESS_KEY &&
-      (process.env.S3_ENDPOINT || process.env.AWS_S3_ENDPOINT)
-    ) {
-      try {
-        const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3')
-        const endpoint = (process.env.S3_ENDPOINT || process.env.AWS_S3_ENDPOINT) as string
-        const region = process.env.S3_REGION || 'us-east-1'
-        const forcePathStyle = String(process.env.S3_FORCE_PATH_STYLE || '').toLowerCase() === 'true'
-        const bucket = process.env.S3_BUCKET as string
-
-        const client = new S3Client({
-          region,
-          endpoint,
-          credentials: {
-            accessKeyId: process.env.S3_ACCESS_KEY_ID as string,
-            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY as string,
-          },
-          forcePathStyle,
-        })
-
-        const key = `uploads/${filename}`
-
-        // Determinar se devemos enviar ACL. Em MinIO isso costuma falhar (NotImplemented).
-        const endpointHost = (() => {
-          try { return new URL(endpoint).hostname } catch { return '' }
-        })()
-        const isAws = /amazonaws\.com$/i.test(endpointHost)
-        const useACL = isAws && String(process.env.S3_USE_ACL || 'true').toLowerCase() !== 'false'
-
-        const putParams: import('@aws-sdk/client-s3').PutObjectCommandInput = {
-          Bucket: bucket,
-          Key: key,
-          Body: outBuffer,
-          ContentType: mime || 'application/octet-stream',
-        }
-        if (useACL) {
-          putParams.ACL = 'public-read'
-        }
-
-        await client.send(new PutObjectCommand(putParams))
-
-        const publicBase = process.env.S3_PUBLIC_BASE_URL
-        let url: string
-        if (publicBase) {
-          url = `${publicBase.replace(/\/$/, '')}/${key}`
-        } else if (forcePathStyle) {
-          url = `${endpoint.replace(/\/$/, '')}/${bucket}/${key}`
-        } else {
-          // virtual-hosted-style
-          const host = endpoint.replace(/^https?:\/\//, '').replace(/\/$/, '')
-          url = `https://${bucket}.${host}/${key}`
-        }
-        return NextResponse.json({ url, filename })
-      } catch (e) {
-        if (DEBUG) console.warn('Upload: envio ao S3/MinIO falhou, tentando próximo fallback...', (e as Error).message)
-      }
-    }
-
-    // 3) Fallback Vercel Blob (se configurado e sem DB/S3)
+    // 2) Fallback Vercel Blob (se configurado e sem DB)
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       try {
         const { put } = await import('@vercel/blob')
@@ -175,7 +113,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // 4) Fallback local: salva em public/uploads (útil em dev)
+    // 3) Fallback local: salva em public/uploads (útil em dev)
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
     await fs.mkdir(uploadsDir, { recursive: true })
     const filePath = path.join(uploadsDir, filename)
