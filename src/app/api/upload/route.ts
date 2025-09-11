@@ -6,6 +6,45 @@ import { query } from '@/lib/db'
 export const runtime = 'nodejs'
 
 const DEBUG = process.env.UPLOAD_DEBUG === 'true'
+const STRICT_LOSSLESS = process.env.UPLOAD_IMAGE_STRICT_LOSSLESS === 'true'
+const JPEG_QUALITY = Number(process.env.UPLOAD_IMAGE_JPEG_QUALITY || 85)
+const WEBP_QUALITY = Number(process.env.UPLOAD_IMAGE_WEBP_QUALITY || 85)
+const AVIF_QUALITY = Number(process.env.UPLOAD_IMAGE_AVIF_QUALITY || 45)
+
+// Adiciona compressão para imagens (lossless para PNG; opcionalmente visualmente sem perda para JPEG/WebP/AVIF)
+async function compressImage(input: Buffer, mime: string): Promise<Buffer> {
+  const sharp = (await import('sharp')).default
+  const img = sharp(input, { limitInputPixels: false }).rotate()
+
+  try {
+    // PNG: sempre lossless
+    if (mime === 'image/png') {
+      const out = await img.png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer()
+      return out.length < input.length ? out : input
+    }
+
+    // Se modo estritamente lossless estiver ativo, não reencodar formatos com perdas
+    if (STRICT_LOSSLESS) return input
+
+    if (mime === 'image/jpeg' || mime === 'image/jpg') {
+      const out = await img.jpeg({ mozjpeg: true, quality: JPEG_QUALITY, progressive: true }).toBuffer()
+      return out.length < input.length ? out : input
+    }
+    if (mime === 'image/webp') {
+      // Para WebP podemos usar lossless se desejado (mas tende a aumentar tamanho em fotos);
+      // aqui priorizamos tamanho mantendo qualidade visual.
+      const out = await img.webp({ quality: WEBP_QUALITY }).toBuffer()
+      return out.length < input.length ? out : input
+    }
+    if (mime === 'image/avif') {
+      const out = await img.avif({ quality: AVIF_QUALITY }).toBuffer()
+      return out.length < input.length ? out : input
+    }
+  } catch (e) {
+    if (DEBUG) console.warn('compressImage falhou, usando original:', (e as Error).message)
+  }
+  return input
+}
 
 export async function POST(req: Request) {
   try {
@@ -39,12 +78,17 @@ export async function POST(req: Request) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
+    // Compressão condicional para imagens
+    const isImage = !!mime && mime.startsWith('image/')
+    const outBuffer = isImage ? await compressImage(buffer, mime) : buffer
+    if (DEBUG && isImage) console.log(`compress: ${originalName} ${buffer.length} -> ${outBuffer.length} bytes | mime=${mime} | strict=${STRICT_LOSSLESS}`)
+
     // 1) Preferir armazenar no Postgres
     if (process.env.DATABASE_URL) {
-      const size = buffer.length
+      const size = outBuffer.length
       const insert = await query<{ id: string }>(
         `INSERT INTO files (filename, mime, size, data) VALUES ($1, $2, $3, $4) RETURNING id`,
-        [filename, mime || null, size, buffer]
+        [filename, mime || null, size, outBuffer]
       )
       const id = insert.rows[0].id
       const url = `/api/u/${id}`
@@ -54,7 +98,7 @@ export async function POST(req: Request) {
     // 2) Fallback Vercel Blob (se configurado e sem DB)
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       const { put } = await import('@vercel/blob')
-      const blob = await put(`uploads/${filename}`, new Blob([buffer], { type: mime || 'application/octet-stream' }), {
+      const blob = await put(`uploads/${filename}`, new Blob([outBuffer], { type: mime || 'application/octet-stream' }), {
         access: 'public',
         token: process.env.BLOB_READ_WRITE_TOKEN,
       })
@@ -66,7 +110,7 @@ export async function POST(req: Request) {
     await fs.mkdir(uploadsDir, { recursive: true })
     const filePath = path.join(uploadsDir, filename)
 
-    await fs.writeFile(filePath, buffer)
+    await fs.writeFile(filePath, outBuffer)
 
     const url = `/uploads/${filename}`
     return NextResponse.json({ url, filename })
