@@ -22,6 +22,7 @@ jobs:
           WA_USER: ${{ secrets.WA_USER }}
           WA_PASSWORD: ${{ secrets.WA_PASSWORD }}
           WA_TARGET_NUMBER: ${{ secrets.WA_TARGET_NUMBER }}
+          WA_EXTRA_NUMBERS: ${{ secrets.WA_EXTRA_NUMBERS }}
         with:
           script: |
             // 'core' and 'context' are provided by actions/github-script v7
@@ -39,7 +40,16 @@ jobs:
               return;
             }
 
-            const phone = (process.env.WA_TARGET_NUMBER && process.env.WA_TARGET_NUMBER.trim()) || '5511932300536';
+            // Parse recipients from WA_TARGET_NUMBER and WA_EXTRA_NUMBERS (comma/space/newline separated)
+            const parseNumbers = (s) => (s || '').split(/[\s,\n]+/).map(v => v.trim()).filter(Boolean);
+            const primaryRaw = process.env.WA_TARGET_NUMBER || '';
+            const extraRaw = process.env.WA_EXTRA_NUMBERS || '';
+            const phones = Array.from(new Set([...parseNumbers(primaryRaw), ...parseNumbers(extraRaw)]));
+            if (phones.length === 0) {
+              // Fallback if nothing configured (keeps backward compatibility)
+              phones.push('5511932300536');
+            }
+            core.info(`Recipients: ${phones.join(', ')}`);
 
             const repo = `${context.repo.owner}/${context.repo.repo}`;
             const ref = (context.ref || '').replace('refs/heads/','');
@@ -101,10 +111,10 @@ jobs:
 
             // Candidate payload shapes used by different forks/versions
             const payloadVariants = [
-              { label: 'phone+message', data: { phone, message: body } },
-              { label: 'to+message',    data: { to: phone, message: body } },
-              { label: 'number+text',   data: { number: phone, text: body } },
-              { label: 'chatId+text',   data: { chatId: `${phone}@c.us`, text: body } }
+              { label: 'phone+message', make: (phone) => ({ phone, message: body }) },
+              { label: 'to+message',    make: (phone) => ({ to: phone, message: body }) },
+              { label: 'number+text',   make: (phone) => ({ number: phone, text: body }) },
+              { label: 'chatId+text',   make: (phone) => ({ chatId: `${phone}@c.us`, text: body }) }
             ];
 
             // Small preflight to help diagnose base path issues
@@ -115,30 +125,47 @@ jobs:
               core.warning(`Preflight request failed: ${e.message}`);
             }
 
-            let lastStatus = 0, lastText = '', lastTried = '';
-            for (const path of endpointsToTry) {
-              const url = `${base}${path.startsWith('/') ? '' : '/'}${path}`;
-              for (const variant of payloadVariants) {
-                core.info(`Trying ${url} with payload=${variant.label} ...`);
-                try {
-                  const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(variant.data) });
-                  const text = await res.text();
-                  lastStatus = res.status; lastText = text; lastTried = `${url} :: ${variant.label}`;
-                  core.info(`Response ${res.status}: ${text.slice(0, 300)}`);
-                  if (res.ok) {
-                    core.info(`WhatsApp notification sent to ${phone} via ${url} using ${variant.label}`);
-                    return;
+            let allOk = true;
+            const failures = [];
+
+            for (const phone of phones) {
+              let sent = false;
+              let lastStatus = 0, lastText = '', lastTried = '';
+              for (const path of endpointsToTry) {
+                const url = `${base}${path.startsWith('/') ? '' : '/'}${path}`;
+                for (const variant of payloadVariants) {
+                  const payload = variant.make(phone);
+                  core.info(`Trying ${url} -> ${phone} with payload=${variant.label} ...`);
+                  try {
+                    const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload) });
+                    const text = await res.text();
+                    lastStatus = res.status; lastText = text; lastTried = `${url} :: ${variant.label}`;
+                    core.info(`Response ${res.status}: ${text.slice(0, 300)}`);
+                    if (res.ok) {
+                      core.info(`WhatsApp notification sent to ${phone} via ${url} using ${variant.label}`);
+                      sent = true;
+                      break;
+                    }
+                    if (res.status === 401 || res.status === 403) {
+                      core.warning('Authentication failed (401/403). Check WA_USER/WA_PASSWORD and Basic Auth settings on the server.');
+                    }
+                    if (res.status === 404) {
+                      core.info('Endpoint not found (404). If your server uses a base path (e.g. /gowa), ensure GOWA_BASE_URL includes it, or set GOWA_SEND_PATH to the exact endpoint.');
+                    }
+                  } catch (err) {
+                    core.warning(`Request error for ${url}: ${err.message}`);
                   }
-                  // For 401/403/404 provide early hints
-                  if (res.status === 401 || res.status === 403) {
-                    core.warning('Authentication failed (401/403). Check WA_USER/WA_PASSWORD and Basic Auth settings on the server.');
-                  }
-                  if (res.status === 404) {
-                    core.info('Endpoint not found (404). If your server uses a base path (e.g. /gowa), ensure GOWA_BASE_URL includes it, or set GOWA_SEND_PATH to the exact endpoint.');
-                  }
-                } catch (err) {
-                  core.warning(`Request error for ${url}: ${err.message}`);
                 }
+                if (sent) break;
+              }
+              if (!sent) {
+                allOk = false;
+                failures.push({ phone, lastStatus, lastTried, lastText: lastText.slice(0, 500) });
               }
             }
-            core.setFailed(`Failed to send WhatsApp notification. Last tried=${lastTried}, status=${lastStatus}, body=${lastText.slice(0, 500)}`);
+
+            if (!allOk) {
+              core.setFailed(`Failed to send to some recipients: ${JSON.stringify(failures)}`);
+            } else {
+              core.info(`WhatsApp notification sent successfully to all recipients: ${phones.join(', ')}`);
+            }
