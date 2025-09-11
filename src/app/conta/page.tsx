@@ -19,16 +19,19 @@ export default function ContaDashboardPage() {
   ] as const
   const totalDistribuicao = distribuicao.reduce((acc, i) => acc + i.value, 0)
 
+  // Mock para KPI de aportes pendentes (fluxo via Asaas)
+  const aportesPendentesValor = 2500
+
   return (
     <div className="grid w-full gap-6 md:grid-cols-3">
       {/* Saldo e posição */}
-      <Card className="md:col-span-2">
+      <Card className="md:col-span-3">
         <CardHeader>
           <CardTitle className="text-base font-semibold">Minha carteira</CardTitle>
           <CardDescription>Saldo disponível, posição consolidada e próximos passos</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
             {/* KPI: Saldo disponível */}
             <div className="rounded-xl border bg-card p-4 shadow-sm">
               <div className="flex items-start justify-between">
@@ -62,6 +65,18 @@ export default function ContaDashboardPage() {
                 </div>
                 <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
                   <TrendingUp className="h-5 w-5" />
+                </div>
+              </div>
+            </div>
+            {/* KPI: Aportes pendentes (PIX/Asaas) */}
+            <div className="rounded-xl border bg-card p-4 shadow-sm">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Aportes pendentes</div>
+                  <div className="mt-1 text-3xl font-semibold text-foreground tabular-nums">{formatBRL(aportesPendentesValor)}</div>
+                </div>
+                <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
+                  <Banknote className="h-5 w-5" />
                 </div>
               </div>
             </div>
@@ -151,11 +166,11 @@ export default function ContaDashboardPage() {
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <Banknote className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Deposite via PIX para investir</span>
+                  <span className="font-medium">Escolha uma oferta e pague via PIX</span>
                 </div>
-                <Link href="/conta/pagamentos" className="text-primary hover:underline">Ver instruções</Link>
+                <Link href="/conta/investimentos" className="text-primary hover:underline">Ir para Meus investimentos</Link>
               </div>
-              <Progress value={0} className="mt-2 h-1" aria-label="Progresso do depósito" />
+              <Progress value={0} className="mt-2 h-1" aria-label="Progresso do pagamento" />
             </li>
           </ul>
         </CardContent>
