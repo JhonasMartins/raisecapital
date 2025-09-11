@@ -18,3 +18,7 @@ export function slugify(input: string) {
 export function onlyDigits(input: string) {
   return (input || '').replace(/\D/g, '')
 }
+
+export function formatBRL(value: number) {
+  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+}

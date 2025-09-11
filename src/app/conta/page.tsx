@@ -5,7 +5,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { Wallet, PieChart, TrendingUp, IdCard, ClipboardList, Banknote } from "lucide-react"
+import { Wallet, PieChart, TrendingUp, IdCard, ClipboardList, Banknote, Building2, Wheat, Factory } from "lucide-react"
+import { formatBRL } from "@/lib/utils"
 
 export default function ContaDashboardPage() {
   return (
@@ -18,26 +19,41 @@ export default function ContaDashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-lg border p-4 bg-blue-50 border-blue-200">
-              <div className="flex items-center gap-2 text-sm text-blue-700">
-                <Wallet className="h-4 w-4 text-blue-600" />
-                <span>Saldo disponível</span>
+            {/* KPI: Saldo disponível */}
+            <div className="rounded-xl border bg-card p-4 shadow-sm">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Saldo disponível</div>
+                  <div className="mt-1 text-3xl font-semibold text-foreground">{formatBRL(12450)}</div>
+                </div>
+                <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
+                  <Wallet className="h-5 w-5" />
+                </div>
               </div>
-              <div className="mt-1 text-2xl font-semibold text-blue-900">R$ 12.450,00</div>
             </div>
-            <div className="rounded-lg border p-4 bg-violet-50 border-violet-200">
-              <div className="flex items-center gap-2 text-sm text-violet-700">
-                <PieChart className="h-4 w-4 text-violet-600" />
-                <span>Posição investida</span>
+            {/* KPI: Posição investida */}
+            <div className="rounded-xl border bg-card p-4 shadow-sm">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Posição investida</div>
+                  <div className="mt-1 text-3xl font-semibold text-foreground">{formatBRL(38000)}</div>
+                </div>
+                <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
+                  <PieChart className="h-5 w-5" />
+                </div>
               </div>
-              <div className="mt-1 text-2xl font-semibold text-violet-900">R$ 38.000,00</div>
             </div>
-            <div className="rounded-lg border p-4 bg-emerald-50 border-emerald-200">
-              <div className="flex items-center gap-2 text-sm text-emerald-700">
-                <TrendingUp className="h-4 w-4 text-emerald-600" />
-                <span>Rentabilidade acumulada</span>
+            {/* KPI: Rentabilidade */}
+            <div className="rounded-xl border bg-card p-4 shadow-sm">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Rentabilidade acumulada</div>
+                  <div className="mt-1 text-3xl font-semibold text-foreground">+8,2%</div>
+                </div>
+                <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
+                  <TrendingUp className="h-5 w-5" />
+                </div>
               </div>
-              <div className="mt-1 text-2xl font-semibold text-emerald-900">+8,2%</div>
             </div>
           </div>
           <Separator className="my-6" />
@@ -64,7 +80,7 @@ export default function ContaDashboardPage() {
         </CardHeader>
         <CardContent>
           <ul className="space-y-3 text-sm">
-            <li className="rounded border p-4">
+            <li className="rounded-md border p-4 hover:bg-muted/30 transition-colors">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <IdCard className="h-4 w-4 text-muted-foreground" />
@@ -72,9 +88,9 @@ export default function ContaDashboardPage() {
                 </div>
                 <Link href="/conta/documentos" className="text-primary hover:underline">Enviar documentos</Link>
               </div>
-              <Progress value={60} className="mt-2" aria-label="Progresso do KYC" />
+              <Progress value={60} className="mt-2 h-1" aria-label="Progresso do KYC" />
             </li>
-            <li className="rounded border p-4">
+            <li className="rounded-md border p-4 hover:bg-muted/30 transition-colors">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <ClipboardList className="h-4 w-4 text-muted-foreground" />
@@ -82,9 +98,9 @@ export default function ContaDashboardPage() {
                 </div>
                 <Link href="/conta/suitability" className="text-primary hover:underline">Responder</Link>
               </div>
-              <Progress value={0} className="mt-2" aria-label="Progresso do suitability" />
+              <Progress value={0} className="mt-2 h-1" aria-label="Progresso do suitability" />
             </li>
-            <li className="rounded border p-4">
+            <li className="rounded-md border p-4 hover:bg-muted/30 transition-colors">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <Banknote className="h-4 w-4 text-muted-foreground" />
@@ -92,7 +108,7 @@ export default function ContaDashboardPage() {
                 </div>
                 <Link href="/conta/pagamentos" className="text-primary hover:underline">Ver instruções</Link>
               </div>
-              <Progress value={0} className="mt-2" aria-label="Progresso do depósito" />
+              <Progress value={0} className="mt-2 h-1" aria-label="Progresso do depósito" />
             </li>
           </ul>
         </CardContent>
@@ -120,33 +136,54 @@ export default function ContaDashboardPage() {
             <TabsContent value="investimentos">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Oferta</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Aporte</TableHead>
-                    <TableHead className="text-right">Rentab.</TableHead>
-                    <TableHead className="text-right">Atualização</TableHead>
+                  <TableRow className="bg-muted/40">
+                    <TableHead className="text-[11px] uppercase tracking-wide text-muted-foreground">Oferta</TableHead>
+                    <TableHead className="text-[11px] uppercase tracking-wide text-muted-foreground">Status</TableHead>
+                    <TableHead className="text-right text-[11px] uppercase tracking-wide text-muted-foreground">Aporte</TableHead>
+                    <TableHead className="text-right text-[11px] uppercase tracking-wide text-muted-foreground">Rentab.</TableHead>
+                    <TableHead className="text-right text-[11px] uppercase tracking-wide text-muted-foreground">Atualização</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>Imobiliário Alpha</TableCell>
-                    <TableCell><Badge variant="secondary">Aportado</Badge></TableCell>
-                    <TableCell className="text-right">R$ 10.000,00</TableCell>
+                  <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Building2 className="h-5 w-5 text-muted-foreground" />
+                        <span>Imobiliário Alpha</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" />Aportado</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">{formatBRL(10000)}</TableCell>
                     <TableCell className="text-right">+7,3%</TableCell>
                     <TableCell className="text-right">há 2 dias</TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell>Crédito Agro Beta</TableCell>
-                    <TableCell><Badge>Em análise</Badge></TableCell>
-                    <TableCell className="text-right">R$ 5.000,00</TableCell>
+                  <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Wheat className="h-5 w-5 text-muted-foreground" />
+                        <span>Crédito Agro Beta</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-amber-500" />Em análise</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">{formatBRL(5000)}</TableCell>
                     <TableCell className="text-right">—</TableCell>
                     <TableCell className="text-right">há 1 dia</TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell>Infra Gamma</TableCell>
-                    <TableCell><Badge className="bg-emerald-100 text-emerald-900 hover:bg-emerald-100">Liquidado</Badge></TableCell>
-                    <TableCell className="text-right">R$ 23.000,00</TableCell>
+                  <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Factory className="h-5 w-5 text-muted-foreground" />
+                        <span>Infra Gamma</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />Liquidado</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">{formatBRL(23000)}</TableCell>
                     <TableCell className="text-right">+9,1%</TableCell>
                     <TableCell className="text-right">há 1 semana</TableCell>
                   </TableRow>
