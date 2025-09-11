@@ -83,29 +83,99 @@ export async function POST(req: Request) {
     const outBuffer = isImage ? await compressImage(buffer, mime) : buffer
     if (DEBUG && isImage) console.log(`compress: ${originalName} ${buffer.length} -> ${outBuffer.length} bytes | mime=${mime} | strict=${STRICT_LOSSLESS}`)
 
-    // 1) Preferir armazenar no Postgres
+    // 1) Preferir armazenar no Postgres (com fallback se falhar)
     if (process.env.DATABASE_URL) {
-      const size = outBuffer.length
-      const insert = await query<{ id: string }>(
-        `INSERT INTO files (filename, mime, size, data) VALUES ($1, $2, $3, $4) RETURNING id`,
-        [filename, mime || null, size, outBuffer]
-      )
-      const id = insert.rows[0].id
-      const url = `/api/u/${id}`
-      return NextResponse.json({ url, filename, id })
+      try {
+        const size = outBuffer.length
+        const insert = await query<{ id: string }>(
+          `INSERT INTO files (filename, mime, size, data) VALUES ($1, $2, $3, $4) RETURNING id`,
+          [filename, mime || null, size, outBuffer]
+        )
+        const id = insert.rows[0].id
+        const url = `/api/u/${id}`
+        return NextResponse.json({ url, filename, id })
+      } catch (e) {
+        if (DEBUG) console.warn('Upload: insert no Postgres falhou, tentando fallback...', (e as Error).message)
+      }
     }
 
-    // 2) Fallback Vercel Blob (se configurado e sem DB)
+    // 2) Fallback S3/MinIO (se configurado)
+    if (
+      process.env.S3_BUCKET &&
+      process.env.S3_ACCESS_KEY_ID &&
+      process.env.S3_SECRET_ACCESS_KEY &&
+      (process.env.S3_ENDPOINT || process.env.AWS_S3_ENDPOINT)
+    ) {
+      try {
+        const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3')
+        const endpoint = (process.env.S3_ENDPOINT || process.env.AWS_S3_ENDPOINT) as string
+        const region = process.env.S3_REGION || 'us-east-1'
+        const forcePathStyle = String(process.env.S3_FORCE_PATH_STYLE || '').toLowerCase() === 'true'
+        const bucket = process.env.S3_BUCKET as string
+
+        const client = new S3Client({
+          region,
+          endpoint,
+          credentials: {
+            accessKeyId: process.env.S3_ACCESS_KEY_ID as string,
+            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY as string,
+          },
+          forcePathStyle,
+        })
+
+        const key = `uploads/${filename}`
+
+        // Determinar se devemos enviar ACL. Em MinIO isso costuma falhar (NotImplemented).
+        const endpointHost = (() => {
+          try { return new URL(endpoint).hostname } catch { return '' }
+        })()
+        const isAws = /amazonaws\.com$/i.test(endpointHost)
+        const useACL = isAws && String(process.env.S3_USE_ACL || 'true').toLowerCase() !== 'false'
+
+        const putParams: import('@aws-sdk/client-s3').PutObjectCommandInput = {
+          Bucket: bucket,
+          Key: key,
+          Body: outBuffer,
+          ContentType: mime || 'application/octet-stream',
+        }
+        if (useACL) {
+          putParams.ACL = 'public-read'
+        }
+
+        await client.send(new PutObjectCommand(putParams))
+
+        const publicBase = process.env.S3_PUBLIC_BASE_URL
+        let url: string
+        if (publicBase) {
+          url = `${publicBase.replace(/\/$/, '')}/${key}`
+        } else if (forcePathStyle) {
+          url = `${endpoint.replace(/\/$/, '')}/${bucket}/${key}`
+        } else {
+          // virtual-hosted-style
+          const host = endpoint.replace(/^https?:\/\//, '').replace(/\/$/, '')
+          url = `https://${bucket}.${host}/${key}`
+        }
+        return NextResponse.json({ url, filename })
+      } catch (e) {
+        if (DEBUG) console.warn('Upload: envio ao S3/MinIO falhou, tentando próximo fallback...', (e as Error).message)
+      }
+    }
+
+    // 3) Fallback Vercel Blob (se configurado e sem DB/S3)
     if (process.env.BLOB_READ_WRITE_TOKEN) {
-      const { put } = await import('@vercel/blob')
-      const blob = await put(`uploads/${filename}`, new Blob([outBuffer], { type: mime || 'application/octet-stream' }), {
-        access: 'public',
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-      })
-      return NextResponse.json({ url: blob.url, filename })
+      try {
+        const { put } = await import('@vercel/blob')
+        const blob = await put(`uploads/${filename}`, new Blob([outBuffer], { type: mime || 'application/octet-stream' }), {
+          access: 'public',
+          token: process.env.BLOB_READ_WRITE_TOKEN,
+        })
+        return NextResponse.json({ url: blob.url, filename })
+      } catch (e) {
+        if (DEBUG) console.warn('Upload: envio ao Vercel Blob falhou, tentando filesystem...', (e as Error).message)
+      }
     }
 
-    // 3) Fallback local: salva em public/uploads (útil em dev)
+    // 4) Fallback local: salva em public/uploads (útil em dev)
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
     await fs.mkdir(uploadsDir, { recursive: true })
     const filePath = path.join(uploadsDir, filename)

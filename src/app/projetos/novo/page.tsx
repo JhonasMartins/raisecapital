@@ -124,13 +124,16 @@ type NewOffer = {
       const fd = new FormData()
       fd.append('file', file)
       const res = await fetch('/api/upload', { method: 'POST', body: fd })
-      if (!res.ok) throw new Error('Falha no upload')
+      if (!res.ok) {
+        const err = (await res.json().catch(() => ({}))) as { error?: string; detail?: string }
+        throw new Error(err?.error || err?.detail || 'Falha no upload')
+      }
       const data = (await res.json()) as { url: string }
       setForm((f: NewOffer) => ({ ...f, cover: data.url }))
       setMessage('Imagem enviada com sucesso!')
     } catch (e) {
       console.error(e)
-      setError('Não foi possível enviar a imagem. Tente novamente.')
+      setError(e instanceof Error ? e.message : 'Não foi possível enviar a imagem. Tente novamente.')
     }
   }
 
@@ -179,13 +182,16 @@ type NewOffer = {
       const fd = new FormData()
       fd.append('file', file)
       const res = await fetch('/api/upload', { method: 'POST', body: fd })
-      if (!res.ok) throw new Error('Falha no upload do resumo')
+      if (!res.ok) {
+        const err = (await res.json().catch(() => ({}))) as { error?: string; detail?: string }
+        throw new Error(err?.error || err?.detail || 'Falha no upload do resumo')
+      }
       const data = (await res.json()) as { url: string }
       setForm((f: NewOffer) => ({ ...f, summaryPdf: data.url }))
       setMessage('Resumo enviado com sucesso!')
     } catch (e) {
       console.error(e)
-      setError('Não foi possível enviar o resumo. Tente novamente.')
+      setError(e instanceof Error ? e.message : 'Não foi possível enviar o resumo. Tente novamente.')
     }
   }
 
@@ -195,13 +201,16 @@ type NewOffer = {
       const fd = new FormData()
       fd.append('file', file)
       const res = await fetch('/api/upload', { method: 'POST', body: fd })
-      if (!res.ok) throw new Error('Falha no upload do documento')
+      if (!res.ok) {
+        const err = (await res.json().catch(() => ({}))) as { error?: string; detail?: string }
+        throw new Error(err?.error || err?.detail || 'Falha no upload do documento')
+      }
       const data = (await res.json()) as { url: string }
       updateArrayItem('documents', index, 'url', data.url)
       setMessage('Documento enviado com sucesso!')
     } catch (e) {
       console.error(e)
-      setError('Não foi possível enviar o documento. Tente novamente.')
+      setError(e instanceof Error ? e.message : 'Não foi possível enviar o documento. Tente novamente.')
     }
   }
 
