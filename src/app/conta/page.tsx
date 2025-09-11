@@ -54,21 +54,21 @@ export default function ContaDashboardPage() {
         </CardHeader>
         <CardContent>
           <ul className="space-y-3 text-sm">
-            <li className="rounded border p-3">
+            <li className="rounded border p-4">
               <div className="flex items-center justify-between gap-3">
                 <span className="font-medium">Finalize seu KYC</span>
                 <Link href="/conta/documentos" className="text-primary hover:underline">Enviar documentos</Link>
               </div>
               <Progress value={60} className="mt-2" aria-label="Progresso do KYC" />
             </li>
-            <li className="rounded border p-3">
+            <li className="rounded border p-4">
               <div className="flex items-center justify-between gap-3">
                 <span className="font-medium">Responda o suitability</span>
                 <Link href="/conta/suitability" className="text-primary hover:underline">Responder</Link>
               </div>
               <Progress value={0} className="mt-2" aria-label="Progresso do suitability" />
             </li>
-            <li className="rounded border p-3">
+            <li className="rounded border p-4">
               <div className="flex items-center justify-between gap-3">
                 <span className="font-medium">Deposite via PIX para investir</span>
                 <Link href="/conta/pagamentos" className="text-primary hover:underline">Ver instruções</Link>
