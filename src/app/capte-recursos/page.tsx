@@ -98,7 +98,7 @@ export default function CapteRecursosPage() {
                 <Link href="/auth/criar-conta">Cadastre-se agora</Link>
               </Button>
               <Button variant="outline" asChild className="bg-transparent border-white/40 text-white hover:bg-white/10">
-                <Link href="/#sobre">Falar com um especialista</Link>
+                <Link href="https://wa.me/5511976511371" target="_blank" rel="noopener noreferrer">Falar com um especialista</Link>
               </Button>
             </div>
             <div className="mt-6 flex items-center gap-4 text-xs text-white/70">
