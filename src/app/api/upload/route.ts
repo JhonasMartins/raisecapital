@@ -78,10 +78,10 @@ export async function POST(req: Request) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Compressão condicional para imagens
+    // Compressão desativada a pedido: usar o buffer original sempre
     const isImage = !!mime && mime.startsWith('image/')
-    const outBuffer = isImage ? await compressImage(buffer, mime) : buffer
-    if (DEBUG && isImage) console.log(`compress: ${originalName} ${buffer.length} -> ${outBuffer.length} bytes | mime=${mime} | strict=${STRICT_LOSSLESS}`)
+    const outBuffer = buffer
+    if (DEBUG && isImage) console.log(`compress: SKIPPED (disabled) ${originalName} ${buffer.length} bytes | mime=${mime}`)
 
     // 1) Preferir armazenar no Postgres (com fallback se falhar)
     if (process.env.DATABASE_URL) {
