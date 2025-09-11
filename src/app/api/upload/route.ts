@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import fs from 'fs/promises'
 import path from 'path'
+import { query } from '@/lib/db'
 
 export const runtime = 'nodejs'
 
@@ -32,20 +33,33 @@ export async function POST(req: Request) {
     const ext = extFromName || (mime && mime.includes('/') ? `.${mime.split('/')[1]}` : '.bin')
     const filename = `${Date.now()}_${safeBase}${ext}`
 
-    // Em produção (Vercel), use Vercel Blob; em dev/local, persiste no filesystem.
+    // Lemos os bytes uma única vez para reutilizar
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+
+    // 1) Preferir armazenar no Postgres
+    if (process.env.DATABASE_URL) {
+      const size = buffer.length
+      const insert = await query<{ id: string }>(
+        `INSERT INTO files (filename, mime, size, data) VALUES ($1, $2, $3, $4) RETURNING id`,
+        [filename, mime || null, size, buffer]
+      )
+      const id = insert.rows[0].id
+      const url = `/api/u/${id}`
+      return NextResponse.json({ url, filename, id })
+    }
+
+    // 2) Fallback Vercel Blob (se configurado e sem DB)
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       const { put } = await import('@vercel/blob')
-      const blob = await put(`uploads/${filename}`, file, {
+      const blob = await put(`uploads/${filename}`, new Blob([buffer], { type: mime || 'application/octet-stream' }), {
         access: 'public',
         token: process.env.BLOB_READ_WRITE_TOKEN,
       })
       return NextResponse.json({ url: blob.url, filename })
     }
 
-    // Fallback local: salva em public/uploads (útil em dev)
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-
+    // 3) Fallback local: salva em public/uploads (útil em dev)
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
     await fs.mkdir(uploadsDir, { recursive: true })
     const filePath = path.join(uploadsDir, filename)

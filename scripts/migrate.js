@@ -128,6 +128,20 @@ async function main() {
       CREATE UNIQUE INDEX IF NOT EXISTS newsletter_email_unique_idx
         ON newsletter_subscriptions ((lower(email)));
     `)
+
+    // Arquivos binários diretamente no Postgres
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS files (
+        id BIGSERIAL PRIMARY KEY,
+        filename TEXT NOT NULL,
+        mime TEXT,
+        size BIGINT NOT NULL,
+        data BYTEA NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS files_created_at_idx ON files (created_at);
+    `)
+
     await client.query('COMMIT')
     console.log('Database setup successful: tables ofertas, blog and blog_comments are ready.')
   } catch (err) {
