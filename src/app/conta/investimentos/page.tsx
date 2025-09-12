@@ -45,10 +45,10 @@ export default function MeusInvestimentosPage() {
 
       {/* KPIs 2x2 */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi title="Aportado" value={formatBRL(17000)} icon={<CheckCircle2 className="h-5 w-5" />} />
-        <Kpi title="Em análise" value={formatBRL(5000)} icon={<Hourglass className="h-5 w-5" />} />
-        <Kpi title="Rentabilidade" value={"+7,3%"} icon={<TrendingUp className="h-5 w-5" />} />
-        <Kpi title="Pendentes" value={formatBRL(2500)} icon={<QrCode className="h-5 w-5" />} />
+        <Kpi title="Aportado" value={formatBRL(17000)} icon={<CheckCircle2 className="size-5 text-primary" />} />
+        <Kpi title="Em análise" value={formatBRL(5000)} icon={<Hourglass className="size-5 text-primary" />} />
+        <Kpi title="Rentabilidade" value={"+7,3%"} icon={<TrendingUp className="size-5 text-primary" />} />
+        <Kpi title="Pendentes" value={formatBRL(2500)} icon={<QrCode className="size-5 text-primary" />} />
       </div>
 
       <Card>
@@ -124,9 +124,9 @@ function Kpi({ title, value, icon }: { title: string; value: string; icon: React
       <div className="flex items-start justify-between">
         <div>
           <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{title}</div>
-          <div className="mt-1 text-3xl font-semibold text-foreground tabular-nums">{value}</div>
+          <div className="mt-1 text-2xl sm:text-3xl font-semibold text-foreground tabular-nums">{value}</div>
         </div>
-        <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
+        <div className="grid size-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
           {icon}
         </div>
       </div>

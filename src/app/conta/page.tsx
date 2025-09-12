@@ -37,10 +37,10 @@ export default function ContaDashboardPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Saldo disponível</div>
-                  <div className="mt-1 text-3xl font-semibold text-foreground tabular-nums">{formatBRL(12450)}</div>
+                  <div className="mt-1 text-xl sm:text-2xl font-semibold text-foreground tabular-nums">{formatBRL(12450)}</div>
                 </div>
-                <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
-                  <Wallet className="h-5 w-5" />
+                <div className="inline-grid size-9 sm:size-10 shrink-0 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
+                  <Wallet className="size-4 text-primary" />
                 </div>
               </div>
             </div>
@@ -49,10 +49,10 @@ export default function ContaDashboardPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Posição investida</div>
-                  <div className="mt-1 text-3xl font-semibold text-foreground tabular-nums">{formatBRL(38000)}</div>
+                  <div className="mt-1 text-xl sm:text-2xl font-semibold text-foreground tabular-nums">{formatBRL(38000)}</div>
                 </div>
-                <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
-                  <PieChart className="h-5 w-5" />
+                <div className="inline-grid size-9 sm:size-10 shrink-0 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
+                  <PieChart className="size-4 text-primary" />
                 </div>
               </div>
             </div>
@@ -61,10 +61,10 @@ export default function ContaDashboardPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Rentabilidade acumulada</div>
-                  <div className="mt-1 text-3xl font-semibold text-foreground tabular-nums">+8,2%</div>
+                  <div className="mt-1 text-xl sm:text-2xl font-semibold text-foreground tabular-nums">+8,2%</div>
                 </div>
-                <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
-                  <TrendingUp className="h-5 w-5" />
+                <div className="inline-grid size-9 sm:size-10 shrink-0 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
+                  <TrendingUp className="size-4 text-primary" />
                 </div>
               </div>
             </div>
@@ -73,10 +73,10 @@ export default function ContaDashboardPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Aportes pendentes</div>
-                  <div className="mt-1 text-3xl font-semibold text-foreground tabular-nums">{formatBRL(aportesPendentesValor)}</div>
+                  <div className="mt-1 text-xl sm:text-2xl font-semibold text-foreground tabular-nums">{formatBRL(aportesPendentesValor)}</div>
                 </div>
-                <div className="grid h-10 w-10 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
-                  <Banknote className="h-5 w-5" />
+                <div className="inline-grid size-9 sm:size-10 shrink-0 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
+                  <Banknote className="size-4 text-primary" />
                 </div>
               </div>
             </div>

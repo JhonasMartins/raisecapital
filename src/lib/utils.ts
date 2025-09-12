@@ -19,6 +19,8 @@ export function onlyDigits(input: string) {
   return (input || '').replace(/\D/g, '')
 }
 
-export function formatBRL(value: number) {
-  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+export function formatBRL(value?: number | null) {
+  const n = typeof value === "number" ? value : Number(value)
+  if (value == null || Number.isNaN(n)) return (0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+  return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
 }
