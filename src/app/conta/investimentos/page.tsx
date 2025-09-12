@@ -198,18 +198,34 @@ export default function MeusInvestimentosPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pendentesFiltrados.map((p) => (
-                    <RowPendente
-                      key={p.ofertaId}
-                      icon={p.icon}
-                      nome={p.nome}
-                      ofertaId={p.ofertaId}
-                      valor={p.valor}
-                      categoria={p.categoria}
-                      onPagar={handlePagar}
-                      isLoading={isLoading}
-                    />
-                  ))}
+                  {pendentesFiltrados.length ? (
+                    pendentesFiltrados.map((p) => (
+                      <RowPendente
+                        key={p.ofertaId}
+                        icon={p.icon}
+                        nome={p.nome}
+                        ofertaId={p.ofertaId}
+                        valor={p.valor}
+                        categoria={p.categoria}
+                        onPagar={handlePagar}
+                        isLoading={isLoading}
+                      />
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-56 text-center">
+                        <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
+                          <img
+                            src="/assets/62d95badcd68f3228ea7ba5d_no-records-found-illustration-dashboardly-webflow-ecommerce-template.png"
+                            alt="Sem registros"
+                            className="h-24 w-auto opacity-80"
+                          />
+                          <div className="text-sm text-muted-foreground">Nenhuma oferta pendente encontrada</div>
+                          <div className="text-xs text-muted-foreground">Ajuste os filtros ou tente outra busca.</div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </TabsContent>
@@ -224,19 +240,35 @@ export default function MeusInvestimentosPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {ativosFiltrados.map((a, idx) => (
-                    <TableRow key={`${a.nome}-${idx}`} className="odd:bg-muted/20">
-                      <TableCell className="pl-0 py-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          {a.icon}
-                          <span>{a.nome}</span>
+                  {ativosFiltrados.length ? (
+                    ativosFiltrados.map((a, idx) => (
+                      <TableRow key={`${a.nome}-${idx}`} className="odd:bg-muted/20">
+                        <TableCell className="pl-0 py-2 text-sm">
+                          <div className="flex items-center gap-2">
+                            {a.icon}
+                            <span>{a.nome}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-2 text-sm">{a.categoria}</TableCell>
+                        <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(a.aportado)}</TableCell>
+                        <TableCell className="py-2 text-right text-sm tabular-nums">+{a.rentab}%</TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-56 text-center">
+                        <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
+                          <img
+                            src="/assets/62d95badcd68f3a013a7ba5c_no-records-available-illustration-dashboardly-webflow-ecommerce-template.png"
+                            alt="Sem registros"
+                            className="h-24 w-auto opacity-80"
+                          />
+                          <div className="text-sm text-muted-foreground">Nenhum ativo encontrado</div>
+                          <div className="text-xs text-muted-foreground">Experimente alterar a categoria ou termo de busca.</div>
                         </div>
                       </TableCell>
-                      <TableCell className="py-2 text-sm">{a.categoria}</TableCell>
-                      <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(a.aportado)}</TableCell>
-                      <TableCell className="py-2 text-right text-sm tabular-nums">+{a.rentab}%</TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </TabsContent>
