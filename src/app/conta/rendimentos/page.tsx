@@ -3,8 +3,12 @@
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { formatBRL } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CalendarDays, TrendingUp, PiggyBank, Download } from "lucide-react";
 
 // KPIs mockados: total de proventos no mês, total YTD, yield médio
 const KPIS = {
@@ -26,31 +30,31 @@ function MesesSidebar({ month, setMonth }: { month: number; setMonth: (m: number
     "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez",
   ];
   return (
-    <aside className="sticky top-20 h-fit rounded-md border bg-card p-2 text-sm">
-      <div className="px-2 pb-2 pt-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        Mês de referência
+    <div className="flex items-center gap-2">
+      <div className="hidden sm:flex items-center gap-2 rounded-md border bg-card px-2 py-1.5 text-sm">
+        <CalendarDays className="h-4 w-4 text-muted-foreground" aria-hidden />
+        <span className="text-xs text-muted-foreground">Mês de referência</span>
       </div>
-      <div className="grid grid-cols-3 gap-1">
-        {meses.map((m, i) => (
-          <button
-            key={m}
-            onClick={() => setMonth(i)}
-            className={
-              "rounded-md px-2 py-1 outline-none ring-offset-background transition-colors focus-visible:ring-2 focus-visible:ring-primary/40 " +
-              (month === i ? "bg-primary/10 text-foreground ring-1 ring-primary/20" : "hover:bg-muted/60")
-            }
-            aria-pressed={month === i}
-          >
-            {m}
-          </button>
-        ))}
-      </div>
-    </aside>
+      <Select value={String(month)} onValueChange={(v) => setMonth(Number(v))}>
+        <SelectTrigger className="w-[140px]">
+          <SelectValue placeholder="Mês" />
+        </SelectTrigger>
+        <SelectContent>
+          {meses.map((m, i) => (
+            <SelectItem key={m} value={String(i)}>{m}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Button variant="outline" size="sm" className="ml-1">
+        <Download className="mr-2 h-4 w-4" /> Exportar CSV
+      </Button>
+    </div>
   );
 }
 
 export default function ContaRendimentosPage() {
   const [month, setMonth] = useState(new Date().getMonth());
+  const [filter, setFilter] = useState<"todos" | "Imobiliário" | "Agro" | "Infra" | "Crédito">("todos");
 
   // Para o mock, variamos um pouco o total do mês conforme o mês escolhido
   const kpis = useMemo(() => {
@@ -62,93 +66,107 @@ export default function ContaRendimentosPage() {
     };
   }, [month]);
 
-  const totalMes = ativos.reduce((acc, a) => acc + a.totalMes, 0);
+  const ativosFiltrados = useMemo(() => {
+    if (filter === "todos") return ativos;
+    return ativos.filter((a) => a.setor === filter);
+  }, [filter]);
+
+  const totalMes = ativosFiltrados.reduce((acc, a) => acc + a.totalMes, 0);
 
   return (
-    <div className="grid w-full gap-6 md:grid-cols-[220px_1fr]">
-      {/* Lateral: calendário de meses */}
-      <MesesSidebar month={month} setMonth={setMonth} />
-
-      <div className="space-y-4">
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Rendimentos</h1>
-          <p className="text-sm text-muted-foreground">KPIs e histórico de proventos por ativo</p>
+          <h1 className="text-2xl font-semibold">Proventos</h1>
+          <p className="text-sm text-muted-foreground">Acompanhe KPIs e histórico de rendimentos</p>
         </div>
+        <MesesSidebar month={month} setMonth={setMonth} />
+      </div>
 
-        {/* KPIs */}
-        <div className="grid gap-4 sm:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm font-medium">Total no mês</CardTitle>
-              <CardDescription>Baseado no mês selecionado</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xl font-semibold tabular-nums">{formatBRL(kpis.mesAtual)}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm font-medium">Total no ano</CardTitle>
-              <CardDescription>Acumulado YTD</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xl font-semibold tabular-nums">{formatBRL(kpis.anoAtual)}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm font-medium">Yield médio</CardTitle>
-              <CardDescription>No mês selecionado</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xl font-semibold tabular-nums">{(kpis.yieldMedio).toFixed(2)}%</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Tabela por ativo */}
+      {/* KPIs */}
+      <div className="grid gap-4 sm:grid-cols-3">
         <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Proventos por ativo</CardTitle>
-            <CardDescription>Totais por mês e acumulado no ano</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total no mês</CardTitle>
+            <PiggyBank className="h-4 w-4 text-muted-foreground" aria-hidden />
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-[1fr_auto_auto_auto]">
-              <div className="hidden text-xs uppercase tracking-wide text-muted-foreground sm:block">Ativo</div>
-              <div className="hidden text-right text-xs uppercase tracking-wide text-muted-foreground sm:block">Setor</div>
-              <div className="hidden text-right text-xs uppercase tracking-wide text-muted-foreground sm:block">Total mês</div>
-              <div className="hidden text-right text-xs uppercase tracking-wide text-muted-foreground sm:block">Total YTD</div>
-
-              {ativos.map((a) => (
-                <div key={a.ticker} className="contents">
-                  <div className="rounded-md border bg-card p-3 sm:col-start-1 sm:col-end-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="font-medium text-foreground">{a.nome}</div>
-                      <Badge variant="outline">{a.ticker}</Badge>
-                    </div>
-                    <div className="mt-0.5 text-xs text-muted-foreground">{a.setor}</div>
-                  </div>
-                  <div className="rounded-md border bg-card p-3 text-right tabular-nums sm:col-start-2 sm:col-end-3">
-                    {a.setor}
-                  </div>
-                  <div className="rounded-md border bg-card p-3 text-right tabular-nums sm:col-start-3 sm:col-end-4">
-                    {formatBRL(a.totalMes)}
-                  </div>
-                  <div className="rounded-md border bg-card p-3 text-right tabular-nums sm:col-start-4 sm:col-end-5">
-                    {formatBRL(a.totalYTD)}
-                  </div>
-                </div>
-              ))}
-
-              <Separator className="my-2 sm:col-span-4" />
-              <div className="sm:col-start-1 sm:col-end-5 flex items-center justify-between">
-                <div className="text-xs text-muted-foreground">{ativos.length} ativos</div>
-                <div className="text-sm font-medium">Total no mês: {formatBRL(totalMes)}</div>
-              </div>
-            </div>
+            <div className="text-xl font-semibold tabular-nums">{formatBRL(kpis.mesAtual)}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total no ano</CardTitle>
+            <CalendarDays className="h-4 w-4 text-muted-foreground" aria-hidden />
+          </CardHeader>
+          <CardContent>
+            <div className="text-xl font-semibold tabular-nums">{formatBRL(kpis.anoAtual)}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Yield médio</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" aria-hidden />
+          </CardHeader>
+          <CardContent>
+            <div className="text-xl font-semibold tabular-nums">{(kpis.yieldMedio).toFixed(2)}%</div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Filtro por setor */}
+      <Tabs value={filter === "todos" ? "todos" : filter} onValueChange={(v) => setFilter(v as any)}>
+        <div className="flex items-center justify-between">
+          <TabsList>
+            <TabsTrigger value="todos">Todos</TabsTrigger>
+            <TabsTrigger value="Imobiliário">Imobiliário</TabsTrigger>
+            <TabsTrigger value="Agro">Agro</TabsTrigger>
+            <TabsTrigger value="Infra">Infra</TabsTrigger>
+            <TabsTrigger value="Crédito">Crédito</TabsTrigger>
+          </TabsList>
+          <div className="text-sm text-muted-foreground">Total no mês: <span className="font-medium text-foreground">{formatBRL(totalMes)}</span></div>
+        </div>
+        <TabsContent value={filter === "todos" ? "todos" : filter}>
+          <Card className="mt-3">
+            <CardHeader>
+              <CardTitle className="text-base">Proventos por ativo</CardTitle>
+              <CardDescription>Totais por mês e acumulado no ano</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Ativo</TableHead>
+                      <TableHead className="text-right">Setor</TableHead>
+                      <TableHead className="text-right">Total mês</TableHead>
+                      <TableHead className="text-right">Total YTD</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {ativosFiltrados.map((a) => (
+                      <TableRow key={a.ticker}>
+                        <TableCell>
+                          <div className="flex items-center justify-between gap-2">
+                            <div>
+                              <div className="font-medium text-foreground">{a.nome}</div>
+                              <div className="mt-0.5 text-xs text-muted-foreground">{a.ticker}</div>
+                            </div>
+                            <Badge variant="outline">{a.ticker}</Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">{a.setor}</TableCell>
+                        <TableCell className="text-right tabular-nums">{formatBRL(a.totalMes)}</TableCell>
+                        <TableCell className="text-right tabular-nums">{formatBRL(a.totalYTD)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

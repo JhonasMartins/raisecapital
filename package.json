@@ -47,6 +47,7 @@
     "next": "15.5.2",
     "nodemailer": "^7.0.6",
     "pg": "^8.16.3",
+    "radix-ui": "^1.4.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-markdown": "^9.0.1",

@@ -1,13 +1,104 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import type { ReactNode } from "react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardToolbar } from "@/components/ui/card"
 import Link from "next/link"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { Wallet, PieChart, TrendingUp, IdCard, ClipboardList, Banknote, Building2, Wheat, Factory } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  TrendingUp,
+  IdCard,
+  ClipboardList,
+  Banknote,
+  Building2,
+  Wheat,
+  Factory,
+  MoreHorizontal,
+  Settings,
+  TriangleAlert,
+  Pin,
+  Share2,
+  Trash,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react"
 import { formatBRL } from "@/lib/utils"
 import PortfolioDistributionChart from "@/components/portfolio-distribution-chart"
+
+// Card inspirado no ReUI StatisticCard1, com delta e comparativo opcionais
+const KpiStatCard = ({
+  title,
+  value,
+  delta,
+  positive,
+  lastLabel,
+  lastValue,
+}: {
+  title: string
+  value: ReactNode
+  delta?: number
+  positive?: boolean
+  lastLabel?: string
+  lastValue?: ReactNode
+}) => (
+  <Card>
+    <CardHeader className="border-0">
+      <CardTitle className="text-muted-foreground text-sm font-medium">{title}</CardTitle>
+      <CardToolbar>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="dim" size="sm" mode="icon" className="-me-1.5">
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" side="bottom">
+            <DropdownMenuItem>
+              <Settings /> Configurações
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <TriangleAlert /> Adicionar alerta
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Pin /> Fixar no dashboard
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Share2 /> Compartilhar
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive">
+              <Trash /> Remover
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </CardToolbar>
+    </CardHeader>
+    <CardContent className="space-y-2.5">
+      <div className="flex items-center gap-2.5">
+        <span className="text-2xl font-medium text-foreground tracking-tight">{value}</span>
+        {typeof delta === "number" && (
+          <Badge variant={positive ? "success" : "destructive"} appearance="light">
+            {delta >= 0 ? <ArrowUp /> : <ArrowDown />}
+            {Math.abs(delta)}%
+          </Badge>
+        )}
+      </div>
+      {lastValue !== undefined && (
+        <div className="text-xs text-muted-foreground mt-2 border-t pt-2.5">
+          {lastLabel ?? "Comparativo"}: <span className="font-medium text-foreground">{lastValue}</span>
+        </div>
+      )}
+    </CardContent>
+  </Card>
+)
 
 export default function ContaDashboardPage() {
   const distribuicao = [
@@ -32,54 +123,10 @@ export default function ContaDashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-            {/* KPI: Saldo disponível */}
-            <div className="rounded-xl border bg-card p-4 shadow-sm">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Saldo disponível</div>
-                  <div className="mt-1 text-xl sm:text-2xl font-semibold text-foreground tabular-nums">{formatBRL(12450)}</div>
-                </div>
-                <div className="inline-grid size-9 sm:size-10 shrink-0 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
-                  <Wallet className="size-4 text-primary" />
-                </div>
-              </div>
-            </div>
-            {/* KPI: Posição investida */}
-            <div className="rounded-xl border bg-card p-4 shadow-sm">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Posição investida</div>
-                  <div className="mt-1 text-xl sm:text-2xl font-semibold text-foreground tabular-nums">{formatBRL(38000)}</div>
-                </div>
-                <div className="inline-grid size-9 sm:size-10 shrink-0 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
-                  <PieChart className="size-4 text-primary" />
-                </div>
-              </div>
-            </div>
-            {/* KPI: Rentabilidade */}
-            <div className="rounded-xl border bg-card p-4 shadow-sm">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Rentabilidade acumulada</div>
-                  <div className="mt-1 text-xl sm:text-2xl font-semibold text-foreground tabular-nums">+8,2%</div>
-                </div>
-                <div className="inline-grid size-9 sm:size-10 shrink-0 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
-                  <TrendingUp className="size-4 text-primary" />
-                </div>
-              </div>
-            </div>
-            {/* KPI: Aportes pendentes (PIX/Asaas) */}
-            <div className="rounded-xl border bg-card p-4 shadow-sm">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Aportes pendentes</div>
-                  <div className="mt-1 text-xl sm:text-2xl font-semibold text-foreground tabular-nums">{formatBRL(aportesPendentesValor)}</div>
-                </div>
-                <div className="inline-grid size-9 sm:size-10 shrink-0 place-items-center rounded-md border bg-muted/30 text-muted-foreground">
-                  <Banknote className="size-4 text-primary" />
-                </div>
-              </div>
-            </div>
+            <KpiStatCard title="Saldo disponível" value={formatBRL(12450)} />
+            <KpiStatCard title="Posição investida" value={formatBRL(38000)} />
+            <KpiStatCard title="Rentabilidade acumulada" value={"+8,2%"} delta={8.2} positive />
+            <KpiStatCard title="Aportes pendentes" value={formatBRL(aportesPendentesValor)} />
           </div>
           <Separator className="my-6" />
           <Tabs defaultValue="consolidado" className="w-full">

@@ -1,23 +1,79 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { formatBRL } from "@/lib/utils"
-import { Building2, Wheat, Factory, QrCode, TrendingUp, CheckCircle2, Hourglass } from "lucide-react"
+import { Building2, Wheat, Factory, QrCode, TrendingUp, CheckCircle2, Hourglass, Download } from "lucide-react"
+import PortfolioDistributionChart from "@/components/portfolio-distribution-chart"
 
 export default function MeusInvestimentosPage() {
   const [qrCode, setQrCode] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [query, setQuery] = useState("")
+  const [categoria, setCategoria] = useState<string>("todas")
+  const [tab, setTab] = useState<"pendentes" | "ativos">("pendentes")
+
+  // Dados mockados
+  const pendentesItems = useMemo(
+    () => [
+      { icon: <Building2 className="h-5 w-5 text-muted-foreground" />, nome: "Imobiliário Alpha", ofertaId: "offer-alpha", valor: 1000, categoria: "Imobiliário" },
+      { icon: <Wheat className="h-5 w-5 text-muted-foreground" />, nome: "Crédito Agro Beta", ofertaId: "offer-beta", valor: 1500, categoria: "Agro" },
+    ],
+    []
+  )
+
+  const ativosItems = useMemo(
+    () => [
+      { icon: <Factory className="h-5 w-5 text-muted-foreground" />, nome: "Infra Gamma", aportado: 7000, rentab: 2.1, categoria: "Infra" },
+      { icon: <Building2 className="h-5 w-5 text-muted-foreground" />, nome: "Real Estate Delta", aportado: 10000, rentab: 4.3, categoria: "Imobiliário" },
+      { icon: <Wheat className="h-5 w-5 text-muted-foreground" />, nome: "Agro Omega", aportado: 3000, rentab: 1.2, categoria: "Agro" },
+    ],
+    []
+  )
+
+  const categorias = ["todas", "Imobiliário", "Agro", "Infra"] as const
+
+  const pendentesFiltrados = useMemo(() => {
+    return pendentesItems.filter((i) =>
+      (categoria === "todas" || i.categoria === categoria) && i.nome.toLowerCase().includes(query.toLowerCase())
+    )
+  }, [pendentesItems, categoria, query])
+
+  const ativosFiltrados = useMemo(() => {
+    return ativosItems.filter((i) =>
+      (categoria === "todas" || i.categoria === categoria) && i.nome.toLowerCase().includes(query.toLowerCase())
+    )
+  }, [ativosItems, categoria, query])
+
+  const totalAportado = useMemo(() => ativosItems.reduce((acc, i) => acc + i.aportado, 0), [ativosItems])
+  const totalPendentes = useMemo(() => pendentesItems.reduce((acc, i) => acc + i.valor, 0), [pendentesItems])
+
+  const distData = useMemo(() => {
+    const byCat: Record<string, number> = {}
+    for (const i of ativosItems) byCat[i.categoria] = (byCat[i.categoria] || 0) + i.aportado
+    const palette: Record<string, string> = {
+      "Imobiliário": "#60a5fa",
+      "Agro": "#34d399",
+      "Infra": "#f59e0b",
+    }
+    return Object.entries(byCat).map(([label, value], idx) => ({
+      key: label.toLowerCase(),
+      label,
+      value,
+      color: palette[label] || ["#60a5fa", "#34d399", "#f59e0b", "#a78bfa"][idx % 4],
+    }))
+  }, [ativosItems])
 
   async function handlePagar(ofertaId: string, valor: number) {
     try {
       setIsLoading(true)
       setQrCode(null)
-      // Chama API interna para criar pagamento PIX via Asaas e obter QRCode
       const res = await fetch("/api/asaas/create-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -34,30 +90,99 @@ export default function MeusInvestimentosPage() {
     }
   }
 
+  function exportCSV() {
+    const rows: string[] = []
+    if (tab === "pendentes") {
+      rows.push(["Oferta", "Categoria", "Valor"].join(","))
+      pendentesFiltrados.forEach((i) => rows.push([i.nome, i.categoria, String(i.valor)].join(",")))
+    } else {
+      rows.push(["Oferta", "Categoria", "Aportado", "Rentab.%"].join(","))
+      ativosFiltrados.forEach((i) => rows.push([i.nome, i.categoria, String(i.aportado), String(i.rentab)].join(",")))
+    }
+    const blob = new Blob(["\uFEFF" + rows.join("\n")], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = tab === "pendentes" ? "pendencias.csv" : "posicoes.csv"
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Meus investimentos</h1>
-          <p className="text-sm text-muted-foreground">Acompanhe seus aportes e invista pagando via PIX</p>
+          <p className="text-sm text-muted-foreground">Acompanhe seus aportes, gere PIX e visualize sua distribuição</p>
         </div>
+      </div>
+
+      {/* Toolbar */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-1 items-center gap-2">
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Buscar ofertas"
+            className="w-full sm:max-w-xs"
+            aria-label="Buscar ofertas"
+          />
+          <Select value={categoria} onValueChange={(v) => setCategoria(v)}>
+            <SelectTrigger className="w-[160px]"><SelectValue placeholder="Categoria" /></SelectTrigger>
+            <SelectContent>
+              {categorias.map((c) => (
+                <SelectItem key={c} value={c}>{c === "todas" ? "Todas categorias" : c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Button variant="outline" size="sm" onClick={exportCSV} className="shrink-0">
+          <Download className="mr-2 h-4 w-4" /> Exportar CSV
+        </Button>
       </div>
 
       {/* KPIs 2x2 */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi title="Aportado" value={formatBRL(17000)} icon={<CheckCircle2 className="size-5 text-primary" />} />
+        <Kpi title="Aportado" value={formatBRL(totalAportado)} icon={<CheckCircle2 className="size-5 text-primary" />} />
         <Kpi title="Em análise" value={formatBRL(5000)} icon={<Hourglass className="size-5 text-primary" />} />
         <Kpi title="Rentabilidade" value={"+7,3%"} icon={<TrendingUp className="size-5 text-primary" />} />
-        <Kpi title="Pendentes" value={formatBRL(2500)} icon={<QrCode className="size-5 text-primary" />} />
+        <Kpi title="Pendentes" value={formatBRL(totalPendentes)} icon={<QrCode className="size-5 text-primary" />} />
       </div>
 
+      {/* Distribuição por categoria */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base font-semibold">Distribuição por categoria</CardTitle>
+          <CardDescription>Composição da sua carteira atual</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 sm:grid-cols-[1fr_240px]">
+            <div className="rounded-md border p-2">
+              <PortfolioDistributionChart data={distData} />
+            </div>
+            <div className="space-y-2 text-sm">
+              {distData.map((d) => (
+                <div key={d.key} className="flex items-center justify-between rounded-md border bg-card px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block h-3 w-3 rounded-sm" style={{ backgroundColor: d.color }} aria-hidden />
+                    <span>{d.label}</span>
+                  </div>
+                  <span className="tabular-nums">{formatBRL(d.value)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Ofertas / Posições */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-semibold">Ofertas</CardTitle>
           <CardDescription>Selecione uma oferta, informe o valor e pague via PIX</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="pendentes">
+          <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
             <TabsList>
               <TabsTrigger value="pendentes">Pendentes</TabsTrigger>
               <TabsTrigger value="ativos">Ativos</TabsTrigger>
@@ -67,13 +192,24 @@ export default function MeusInvestimentosPage() {
                 <TableHeader>
                   <TableRow className="bg-muted/40">
                     <TableHead className="pl-0 py-2 text-[11px] uppercase tracking-wide text-foreground">Oferta</TableHead>
-                    <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground">Aporte</TableHead>
+                    <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground">Categoria</TableHead>
+                    <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Aporte</TableHead>
                     <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Ação</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <RowPendente icon={<Building2 className="h-5 w-5 text-muted-foreground" />} nome="Imobiliário Alpha" ofertaId="offer-alpha" valor={1000} onPagar={handlePagar} isLoading={isLoading} />
-                  <RowPendente icon={<Wheat className="h-5 w-5 text-muted-foreground" />} nome="Crédito Agro Beta" ofertaId="offer-beta" valor={1500} onPagar={handlePagar} isLoading={isLoading} />
+                  {pendentesFiltrados.map((p) => (
+                    <RowPendente
+                      key={p.ofertaId}
+                      icon={p.icon}
+                      nome={p.nome}
+                      ofertaId={p.ofertaId}
+                      valor={p.valor}
+                      categoria={p.categoria}
+                      onPagar={handlePagar}
+                      isLoading={isLoading}
+                    />
+                  ))}
                 </TableBody>
               </Table>
             </TabsContent>
@@ -82,21 +218,25 @@ export default function MeusInvestimentosPage() {
                 <TableHeader>
                   <TableRow className="bg-muted/40">
                     <TableHead className="pl-0 py-2 text-[11px] uppercase tracking-wide text-foreground">Oferta</TableHead>
-                    <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground">Aportado</TableHead>
+                    <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground">Categoria</TableHead>
+                    <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Aportado</TableHead>
                     <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Rentab.</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow className="odd:bg-muted/20">
-                    <TableCell className="pl-0 py-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Factory className="h-5 w-5 text-muted-foreground" />
-                        <span>Infra Gamma</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2 text-sm tabular-nums">{formatBRL(7000)}</TableCell>
-                    <TableCell className="py-2 text-right text-sm tabular-nums">+2,1%</TableCell>
-                  </TableRow>
+                  {ativosFiltrados.map((a, idx) => (
+                    <TableRow key={`${a.nome}-${idx}`} className="odd:bg-muted/20">
+                      <TableCell className="pl-0 py-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          {a.icon}
+                          <span>{a.nome}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-2 text-sm">{a.categoria}</TableCell>
+                      <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(a.aportado)}</TableCell>
+                      <TableCell className="py-2 text-right text-sm tabular-nums">+{a.rentab}%</TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </TabsContent>
@@ -134,7 +274,7 @@ function Kpi({ title, value, icon }: { title: string; value: string; icon: React
   )
 }
 
-function RowPendente({ icon, nome, ofertaId, valor, onPagar, isLoading }: { icon: React.ReactNode; nome: string; ofertaId: string; valor: number; onPagar: (ofertaId: string, valor: number) => void; isLoading: boolean }) {
+function RowPendente({ icon, nome, ofertaId, valor, categoria, onPagar, isLoading }: { icon: React.ReactNode; nome: string; ofertaId: string; valor: number; categoria: string; onPagar: (ofertaId: string, valor: number) => void; isLoading: boolean }) {
   return (
     <TableRow className="odd:bg-muted/20">
       <TableCell className="pl-0 py-2 text-sm">
@@ -143,9 +283,10 @@ function RowPendente({ icon, nome, ofertaId, valor, onPagar, isLoading }: { icon
           <span>{nome}</span>
         </div>
       </TableCell>
-      <TableCell className="py-2 text-sm tabular-nums">{formatBRL(valor)}</TableCell>
+      <TableCell className="py-2 text-sm">{categoria}</TableCell>
+      <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(valor)}</TableCell>
       <TableCell className="py-2 text-right text-sm">
-        <Button size="sm" onClick={() => onPagar(ofertaId, valor)} disabled={isLoading}>
+        <Button size="sm" onClick={() => onPagar(ofertaId, valor)} disabled={isLoading} aria-label={`Gerar QRCode para ${nome}`}>
           <QrCode className="mr-2 h-4 w-4" /> {isLoading ? "Gerando..." : "Gerar QRCode"}
         </Button>
       </TableCell>
