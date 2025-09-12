@@ -156,11 +156,11 @@ export default function MeusInvestimentosPage() {
           <CardDescription>Composição da sua carteira atual</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 sm:grid-cols-[1fr_240px]">
+          <div className="grid gap-4">
             <div className="rounded-md border p-2">
               <PortfolioDistributionChart data={distData} />
             </div>
-            <div className="space-y-2 text-sm">
+            <div className="grid gap-2 text-sm sm:grid-cols-3">
               {distData.map((d) => (
                 <div key={d.key} className="flex items-center justify-between rounded-md border bg-card px-3 py-2">
                   <div className="flex items-center gap-2">

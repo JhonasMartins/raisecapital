@@ -149,15 +149,15 @@ export default function ContaDashboardPage() {
           <CardDescription>Percentual por segmento com valores em BRL</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-6 sm:grid-cols-3">
-            <div className="sm:col-span-2">
+          <div className="grid gap-4">
+            <div className="rounded-md border p-2">
               <PortfolioDistributionChart data={distribuicao} />
             </div>
-            <div className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-3">
               {distribuicao.map((s) => {
                 const pct = Math.round((s.value / totalDistribuicao) * 1000) / 10
                 return (
-                  <div key={s.key} className="flex items-center justify-between gap-3 text-sm">
+                  <div key={s.key} className="flex items-center justify-between gap-3 text-sm rounded-md border bg-card px-3 py-2">
                     <div className="flex items-center gap-2">
                       <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: s.color }} />
                       <span>{s.label}</span>
@@ -169,11 +169,10 @@ export default function ContaDashboardPage() {
                   </div>
                 )
               })}
-              <Separator />
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>Total</span>
-                <span className="tabular-nums">{formatBRL(totalDistribuicao)}</span>
-              </div>
+            </div>
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>Total</span>
+              <span className="tabular-nums">{formatBRL(totalDistribuicao)}</span>
             </div>
           </div>
         </CardContent>
