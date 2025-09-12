@@ -21,7 +21,7 @@ export type AsaasRequestOptions = {
 }
 
 function buildUrl(path: string, query?: AsaasRequestOptions["query"]) {
-  const url = new URL(path.replace(/^\/+/, ""), BASE_URL.endsWith("/") ? BASE_URL : BASE_URL + "/")
+  const url = new URL(path.replace(/^\/+/ , ""), BASE_URL.endsWith("/") ? BASE_URL : BASE_URL + "/")
   if (query) {
     for (const [k, v] of Object.entries(query)) {
       if (v === undefined) continue
@@ -59,7 +59,47 @@ export async function asaasFetch<T = any>(opts: AsaasRequestOptions): Promise<T>
   try { return JSON.parse(text) as T } catch { return text as unknown as T }
 }
 
-// Exemplos de helpers (podemos expandir conforme o uso)
+// ===== Tipagens e helpers para meios de pagamento =====
+export type AsaasBillingType = "PIX" | "BOLETO" | "CREDIT_CARD"
+
+export type CreatePaymentBase = {
+  customer: string
+  value: number
+  billingType: AsaasBillingType
+  description?: string
+  dueDate?: string // YYYY-MM-DD
+  externalReference?: string
+}
+
+export type CreatePixPayment = CreatePaymentBase & { billingType: "PIX" }
+export type CreateBoletoPayment = CreatePaymentBase & { billingType: "BOLETO" }
+
+// Para cartão, o Asaas aceita creditCardToken OU o objeto creditCard + creditCardHolderInfo
+export type CreateCreditCardPayment = CreatePaymentBase & {
+  billingType: "CREDIT_CARD"
+  creditCardToken?: string
+  creditCard?: {
+    holderName: string
+    number: string
+    expiryMonth: string
+    expiryYear: string
+    ccv: string
+  }
+  creditCardHolderInfo?: {
+    name: string
+    email?: string
+    cpfCnpj?: string
+    mobilePhone?: string
+    postalCode?: string
+    addressNumber?: string
+    addressComplement?: string
+  }
+}
+
+export async function createPayment(payload: CreatePixPayment | CreateBoletoPayment | CreateCreditCardPayment) {
+  return asaasFetch<any>({ method: "POST", path: "/payments", body: payload })
+}
+
 export const asaas = {
   // Busca cliente por CPF/CNPJ
   async getCustomerByCpfCnpj(cpfCnpj: string) {
