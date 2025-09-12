@@ -10,9 +10,11 @@ export default function PortfolioDistributionChart({ data }: { data: ReadonlyArr
     data.map((i) => [i.key, { label: i.label, color: i.color }])
   )
   return (
-    <ChartContainer config={chartConfig} className="aspect-[4/3]">
+    // Neutraliza o aspect-ratio padrão e força um tamanho mais "encorpado" ao donut
+    <ChartContainer config={chartConfig} className="aspect-auto min-h-[260px] w-full">
       <RPieChart>
-        <Pie data={data as Item[]} dataKey="value" nameKey="label" innerRadius={60} outerRadius={100} paddingAngle={2}>
+        {/* Usa raios em % para ocupar melhor o container, evitando donut pequeno em telas largas */}
+        <Pie data={data as Item[]} dataKey="value" nameKey="label" innerRadius="62%" outerRadius="82%" paddingAngle={2}>
           {data.map((entry) => (
             <Cell key={entry.key} fill={entry.color} />
           ))}
