@@ -201,7 +201,7 @@ export default function Home() {
         </section>
 
         {/* Mercado em tempo real */}
-        <section id="mercado" className="py-16 border-t">
+        <section id="mercado" className="py-16 border-t scroll-mt-24">
           <div className="mx-auto max-w-6xl px-6">
             <div className="flex items-end justify-between gap-4">
               <h2 className="text-2xl font-semibold">Mercado em tempo real</h2>
@@ -249,7 +249,7 @@ export default function Home() {
         </section>
 
         {/* Ofertas / Projetos */}
-        <section id="projetos" className="py-16 border-t">
+        <section id="projetos" className="py-16 border-t scroll-mt-24">
           <div className="mx-auto max-w-6xl px-6">
             <div className="flex items-end justify-between gap-4">
               <h2 className="text-2xl font-semibold">Ofertas em destaque</h2>
@@ -316,7 +316,7 @@ export default function Home() {
         </section>
 
         {/* Features */}
-        <section id="sobre" className="py-16 border-t">
+        <section id="sobre" className="py-16 border-t scroll-mt-24">
           <div className="mx-auto max-w-6xl px-6">
             <h2 className="text-2xl font-semibold">Por que a Raise Capital?</h2>
             <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -358,7 +358,7 @@ export default function Home() {
         </section>
 
         {/* Para Investidores */}
-        <section id="investidores" className="py-16 border-t bg-[#f2f2f2]">
+        <section id="investidores" className="py-16 border-t bg-[#f2f2f2] scroll-mt-24">
           <div className="mx-auto max-w-6xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-2xl font-semibold">Para Investidores</h2>
@@ -464,7 +464,7 @@ export default function Home() {
         </section>
 
         {/* Para Empreendedores */}
-        <section id="empreendedores" className="py-16 border-t">
+        <section id="empreendedores" className="py-16 border-t scroll-mt-24">
           <div className="mx-auto max-w-6xl px-6">
             <div className="max-w-3xl">
               <h2 className="text-2xl font-semibold">Para Empreendedores</h2>
@@ -555,7 +555,7 @@ export default function Home() {
         </section>
 
         {/* Blog: Aprenda sobre o mercado */}
-        <section id="blog" className="py-16 border-t">
+        <section id="blog" className="py-16 border-t scroll-mt-24">
           <div className="mx-auto max-w-6xl px-6">
             <div className="flex items-end justify-between gap-4">
               <div>
@@ -599,7 +599,7 @@ export default function Home() {
         </section>
         
           {/* Nossa Equipe */}
-          <section id="equipe" className="py-16 border-t">
+          <section id="equipe" className="py-16 border-t scroll-mt-24">
             <div className="mx-auto max-w-6xl px-6">
               <div className="max-w-3xl">
                 <h2 className="text-2xl font-semibold">Nossa Equipe</h2>
@@ -661,7 +661,7 @@ export default function Home() {
           </section>
         
           {/* Conselho Consultivo */}
-           <section id="conselho" className="py-16 border-t bg-[#0f172a] text-white">
+           <section id="conselho" className="py-16 border-t bg-[#0f172a] text-white scroll-mt-24">
              <div className="mx-auto max-w-6xl px-6">
                <div className="max-w-3xl">
                  <h2 className="text-2xl font-semibold">Conselho Consultivo</h2>
@@ -734,7 +734,7 @@ export default function Home() {
          </section>
         
           {/* FAQ */}
-          <section id="faq" className="py-16 border-t">
+          <section id="faq" className="py-16 border-t scroll-mt-24">
             <div className="mx-auto max-w-6xl px-6">
               <div className="max-w-3xl">
                 <h2 className="text-2xl font-semibold">Perguntas frequentes</h2>
