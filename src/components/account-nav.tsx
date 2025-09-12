@@ -12,6 +12,7 @@ const items = [
   { href: "/conta/suitability", label: "Suitability", match: (p: string) => p.startsWith("/conta/suitability") },
   { href: "/conta/assinaturas", label: "Assinaturas", match: (p: string) => p.startsWith("/conta/assinaturas") },
   { href: "/conta/pagamentos", label: "Pagamentos", match: (p: string) => p.startsWith("/conta/pagamentos") },
+  { href: "/conta/perfil", label: "Perfil", match: (p: string) => p.startsWith("/conta/perfil") },
 ];
 
 export default function AccountNav() {
