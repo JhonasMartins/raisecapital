@@ -304,7 +304,7 @@ import { slugify } from '@/lib/utils'
                    className="absolute inset-0 z-10"
                    aria-label={`Ver detalhes da oferta ${o.name}`}
                  />
-                 <CardHeader className="pb-2">
+                 <CardHeader className="pt-3 pb-2">
                    <div className="flex items-center gap-2">
                      <Badge variant="secondary">{o.modality}</Badge>
                      <Badge className={`${o.status === 'Em captação'
