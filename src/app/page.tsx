@@ -254,7 +254,7 @@ export default function Home() {
             <div className="flex items-end justify-between gap-4">
               <h2 className="text-2xl font-semibold">Ofertas em destaque</h2>
               <div className="flex items-center gap-2">
-                <Button variant="outline" asChild>
+                <Button variant="outline" className="text-foreground" asChild>
                   <Link href="/ofertas">Ver todas as ofertas</Link>
                 </Button>
                 {/* Removido: botão Adicionar projeto */}
@@ -562,7 +562,7 @@ export default function Home() {
                 <h2 className="text-2xl font-semibold">Aprenda sobre o mercado</h2>
                 <p className="mt-2 text-muted-foreground">Conteúdos e insights para investir melhor</p>
               </div>
-              <Button variant="outline" asChild>
+              <Button variant="outline" className="text-foreground" asChild>
                 <Link href="/blog">Ver todos os artigos</Link>
               </Button>
             </div>
