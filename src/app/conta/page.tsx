@@ -33,6 +33,7 @@ import {
 } from "lucide-react"
 import { formatBRL } from "@/lib/utils"
 import PortfolioDistributionChart from "@/components/portfolio-distribution-chart"
+import StatisticCard13 from "@/components/statistic-card-13"
 
 // Card inspirado no ReUI StatisticCard1, com delta e comparativo opcionais
 const KpiStatCard = ({
@@ -220,6 +221,11 @@ export default function ContaDashboardPage() {
               <Progress value={0} className="mt-2 h-1" aria-label="Progresso do pagamento" />
             </li>
           </ul>
+
+          {/* Card de compliance (statistic-card-13) */}
+          <div className="mt-4">
+            <StatisticCard13 className="max-w-sm" />
+          </div>
         </CardContent>
       </Card>
 
