@@ -1,9 +1,7 @@
 import type { ReactNode } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardToolbar } from "@/components/ui/card"
-import Link from "next/link"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
@@ -18,7 +16,6 @@ import {
   TrendingUp,
   IdCard,
   ClipboardList,
-  Banknote,
   Building2,
   Wheat,
   Factory,
@@ -189,41 +186,27 @@ export default function ContaDashboardPage() {
           <CardDescription>Itens que pedem sua atenção</CardDescription>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-3 text-sm">
-            <li className="rounded-md border p-4 hover:bg-muted/30 transition-colors">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <IdCard className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Finalize seu KYC</span>
-                </div>
-                <Link href="/conta/documentos" className="text-primary hover:underline">Enviar documentos</Link>
-              </div>
-              <Progress value={60} className="mt-2 h-1" aria-label="Progresso do KYC" />
-            </li>
-            <li className="rounded-md border p-4 hover:bg-muted/30 transition-colors">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <ClipboardList className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Responda o suitability</span>
-                </div>
-                <Link href="/conta/suitability" className="text-primary hover:underline">Responder</Link>
-              </div>
-              <Progress value={0} className="mt-2 h-1" aria-label="Progresso do suitability" />
-            </li>
-            <li className="rounded-md border p-4 hover:bg-muted/30 transition-colors">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <Banknote className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Escolha uma oferta e pague via PIX</span>
-                </div>
-                <Link href="/conta/investimentos" className="text-primary hover:underline">Ir para Meus investimentos</Link>
-              </div>
-              <Progress value={0} className="mt-2 h-1" aria-label="Progresso do pagamento" />
-            </li>
-          </ul>
-
-          {/* Card de compliance (statistic-card-13) */}
-          <div className="mt-4">
+          <div className="space-y-3">
+            <StatisticCard13
+              className="max-w-sm"
+              title="Finalize seu KYC"
+              icon={<IdCard className="w-5 h-5 text-primary" />}
+              total={10}
+              passing={6}
+              leftTotal={10}
+              leftSuffix="documentos"
+              rightSuffix="concluído"
+            />
+            <StatisticCard13
+              className="max-w-sm"
+              title="Suitability"
+              icon={<ClipboardList className="w-5 h-5 text-primary" />}
+              total={10}
+              passing={0}
+              leftTotal={10}
+              leftSuffix="perguntas respondidas"
+              rightSuffix="concluído"
+            />
             <StatisticCard13 className="max-w-sm" />
           </div>
         </CardContent>
