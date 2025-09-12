@@ -720,7 +720,7 @@ export default function Home() {
                        priority={i === 0}
                      />
                    </div>
-                   <CardHeader className="pb-2">
+                   <CardHeader className="pb-2 border-b-0">
                     <CardTitle className="text-base text-white">{m.name}</CardTitle>
                     <p className="text-xs text-white/80">{m.role}</p>
                   </CardHeader>
