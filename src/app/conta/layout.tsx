@@ -13,7 +13,7 @@ export const metadata = {
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <div className="min-h-svh bg-[#f2f2f2]">
+      <div className="min-h-svh bg-[#f7f9fc]">
         <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="mx-auto max-w-6xl px-6 grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-4">
             {/* Left: Logo apenas */}
