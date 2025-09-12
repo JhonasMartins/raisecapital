@@ -7,7 +7,10 @@ type Item = { key: string; label: string; value: number; color: string }
 
 // Dotted background pattern generator based on chart config colors
 function DottedBackgroundPattern({ config }: { config: ChartConfig }) {
-  const items = Object.fromEntries(Object.entries(config).map(([key, value]) => [key, value.color])) as Record<string, string>
+  const items = Object.fromEntries(
+    Object.entries(config).map(([key, value]) => [key, (value as any).color])
+  ) as Record<string, string>
+
   return (
     <>
       {Object.entries(items).map(([key, value]) => (
@@ -27,7 +30,7 @@ function DottedBackgroundPattern({ config }: { config: ChartConfig }) {
   )
 }
 
-export default function PortfolioDistributionChart({ data }: { data: ReadonlyArray<Item> }) {
+export default function PortfolioDistributionChart({ data, height = 260 }: { data: ReadonlyArray<Item>; height?: number }) {
   // Transformar dados de distribuição em dados temporais fictícios
   const lineData = data
     .flatMap((item) => {
@@ -39,11 +42,11 @@ export default function PortfolioDistributionChart({ data }: { data: ReadonlyArr
       }))
     })
     .reduce((acc, curr) => {
-      const existing = acc.find((a) => a.month === curr.month)
+      const existing = acc.find((a) => (a as any).month === (curr as any).month) as any
       if (existing) {
         Object.assign(existing, curr)
       } else {
-        acc.push(curr)
+        acc.push(curr as any)
       }
       return acc
     }, [] as any[])
@@ -53,7 +56,7 @@ export default function PortfolioDistributionChart({ data }: { data: ReadonlyArr
   )
 
   return (
-    <ChartContainer config={chartConfig} className="w-full">
+    <ChartContainer config={chartConfig} className="w-full" style={{ height }}>
       <AreaChart data={lineData} accessibilityLayer>
         <CartesianGrid vertical={false} strokeDasharray="3 3" />
         <XAxis
@@ -76,7 +79,7 @@ export default function PortfolioDistributionChart({ data }: { data: ReadonlyArr
             <ChartTooltipContent
               formatter={(value, name) => [
                 `R$ ${Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
-                chartConfig[name as string]?.label || (name as string),
+                (chartConfig as any)[name as string]?.label || (name as string),
               ]}
             />
           }

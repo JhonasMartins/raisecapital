@@ -158,7 +158,7 @@ export default function MeusInvestimentosPage() {
         <CardContent>
           <div className="grid gap-4">
             <div className="rounded-md border p-2">
-              <PortfolioDistributionChart data={distData} />
+              <PortfolioDistributionChart data={distData} height={240} />
             </div>
             <div className="grid gap-2 text-sm sm:grid-cols-3">
               {distData.map((d) => (

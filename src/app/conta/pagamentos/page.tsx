@@ -161,29 +161,45 @@ export default function ContaPagamentosPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {[...requests, ...HISTORY].map((m) => (
-                <TableRow key={m.id}>
-                  <TableCell>{formatDate(m.date)}</TableCell>
-                  <TableCell>{m.type}</TableCell>
-                  <TableCell>{formatCurrency(m.amount)}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={m.status === "Confirmado" ? "border-emerald-300 text-emerald-700" : m.status === "Pendente" ? "border-amber-300 text-amber-700" : "border-rose-300 text-rose-700"}>
-                      {m.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {m.receiptUrl ? (
-                      <Button asChild size="sm" variant="outline">
-                        <a href={m.receiptUrl} target="_blank" rel="noopener noreferrer">Comprovante</a>
-                      </Button>
-                    ) : (
-                      <Button size="sm" variant="outline" disabled>
-                        —
-                      </Button>
-                    )}
+              {[...requests, ...HISTORY].length ? (
+                [...requests, ...HISTORY].map((m) => (
+                  <TableRow key={m.id}>
+                    <TableCell>{formatDate(m.date)}</TableCell>
+                    <TableCell>{m.type}</TableCell>
+                    <TableCell>{formatCurrency(m.amount)}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={m.status === "Confirmado" ? "border-emerald-300 text-emerald-700" : m.status === "Pendente" ? "border-amber-300 text-amber-700" : "border-rose-300 text-rose-700"}>
+                        {m.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {m.receiptUrl ? (
+                        <Button asChild size="sm" variant="outline">
+                          <a href={m.receiptUrl} target="_blank" rel="noopener noreferrer">Comprovante</a>
+                        </Button>
+                      ) : (
+                        <Button size="sm" variant="outline" disabled>
+                          —
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-56 text-center">
+                    <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
+                      <img
+                        src="/assets/62d95badcd68f3228ea7ba5d_no-records-found-illustration-dashboardly-webflow-ecommerce-template.png"
+                        alt="Sem registros"
+                        className="h-24 w-auto opacity-80"
+                      />
+                      <div className="text-sm text-muted-foreground">Nenhuma movimentação encontrada</div>
+                      <div className="text-xs text-muted-foreground">As operações realizadas aparecerão aqui.</div>
+                    </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </CardContent>

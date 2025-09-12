@@ -289,7 +289,33 @@ export default function ContaDashboardPage() {
               </Table>
             </TabsContent>
             <TabsContent value="movs">
-              <div className="text-sm text-muted-foreground">Sem movimentações recentes.</div>
+              <div className="rounded-md border bg-card">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Data</TableHead>
+                      <TableHead>Operação</TableHead>
+                      <TableHead className="text-right">Valor</TableHead>
+                      <TableHead className="text-right">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-56 text-center">
+                        <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
+                          <img
+                            src="/assets/62d95badcd68f3228ea7ba5d_no-records-found-illustration-dashboardly-webflow-ecommerce-template.png"
+                            alt="Sem registros"
+                            className="h-24 w-auto opacity-80"
+                          />
+                          <div className="text-sm text-muted-foreground">Sem movimentações recentes</div>
+                          <div className="text-xs text-muted-foreground">As movimentações aparecerão aqui quando houver.</div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
             </TabsContent>
           </Tabs>
         </CardContent>

@@ -61,29 +61,45 @@ export default function ContaAssinaturasPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {DOCS.map((d) => (
-                <TableRow key={d.id}>
-                  <TableCell>{d.name}</TableCell>
-                  <TableCell>{d.type}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={d.status === "Assinado" ? "border-emerald-300 text-emerald-700" : d.status === "Pendente" ? "border-amber-300 text-amber-700" : "border-rose-300 text-rose-700"}>
-                      {d.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{formatDate(d.signedAt)}</TableCell>
-                  <TableCell>
-                    {d.url ? (
-                      <Button asChild size="sm" variant="outline">
-                        <a href={d.url} target="_blank" rel="noopener noreferrer">Baixar</a>
-                      </Button>
-                    ) : (
-                      <Button size="sm" variant="outline" disabled>
-                        Indisponível
-                      </Button>
-                    )}
+              {DOCS.length ? (
+                DOCS.map((d) => (
+                  <TableRow key={d.id}>
+                    <TableCell>{d.name}</TableCell>
+                    <TableCell>{d.type}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={d.status === "Assinado" ? "border-emerald-300 text-emerald-700" : d.status === "Pendente" ? "border-amber-300 text-amber-700" : "border-rose-300 text-rose-700"}>
+                        {d.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{formatDate(d.signedAt)}</TableCell>
+                    <TableCell>
+                      {d.url ? (
+                        <Button asChild size="sm" variant="outline">
+                          <a href={d.url} target="_blank" rel="noopener noreferrer">Baixar</a>
+                        </Button>
+                      ) : (
+                        <Button size="sm" variant="outline" disabled>
+                          Indisponível
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-56 text-center">
+                    <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
+                      <img
+                        src="/assets/62d95badcd68f3228ea7ba5d_no-records-found-illustration-dashboardly-webflow-ecommerce-template.png"
+                        alt="Sem registros"
+                        className="h-24 w-auto opacity-80"
+                      />
+                      <div className="text-sm text-muted-foreground">Nenhum documento encontrado</div>
+                      <div className="text-xs text-muted-foreground">Quando houver documentos, eles aparecerão aqui.</div>
+                    </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </CardContent>

@@ -144,22 +144,38 @@ export default function ContaRendimentosPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {ativosFiltrados.map((a) => (
-                      <TableRow key={a.ticker}>
-                        <TableCell>
-                          <div className="flex items-center justify-between gap-2">
-                            <div>
-                              <div className="font-medium text-foreground">{a.nome}</div>
-                              <div className="mt-0.5 text-xs text-muted-foreground">{a.ticker}</div>
+                    {ativosFiltrados.length ? (
+                      ativosFiltrados.map((a) => (
+                        <TableRow key={a.ticker}>
+                          <TableCell>
+                            <div className="flex items-center justify-between gap-2">
+                              <div>
+                                <div className="font-medium text-foreground">{a.nome}</div>
+                                <div className="mt-0.5 text-xs text-muted-foreground">{a.ticker}</div>
+                              </div>
+                              <Badge variant="outline">{a.ticker}</Badge>
                             </div>
-                            <Badge variant="outline">{a.ticker}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right">{a.setor}</TableCell>
+                          <TableCell className="text-right tabular-nums">{formatBRL(a.totalMes)}</TableCell>
+                          <TableCell className="text-right tabular-nums">{formatBRL(a.totalYTD)}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={4} className="h-56 text-center">
+                          <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
+                            <img
+                              src="/assets/62d95badcd68f3a013a7ba5c_no-records-available-illustration-dashboardly-webflow-ecommerce-template.png"
+                              alt="Sem registros"
+                              className="h-24 w-auto opacity-80"
+                            />
+                            <div className="text-sm text-muted-foreground">Nenhum provento para os filtros selecionados</div>
+                            <div className="text-xs text-muted-foreground">Altere o mês ou o setor para ver resultados.</div>
                           </div>
                         </TableCell>
-                        <TableCell className="text-right">{a.setor}</TableCell>
-                        <TableCell className="text-right tabular-nums">{formatBRL(a.totalMes)}</TableCell>
-                        <TableCell className="text-right tabular-nums">{formatBRL(a.totalYTD)}</TableCell>
                       </TableRow>
-                    ))}
+                    )}
                   </TableBody>
                 </Table>
               </div>
