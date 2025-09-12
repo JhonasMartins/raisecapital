@@ -11,11 +11,11 @@ import PortfolioDistributionChart from "@/components/portfolio-distribution-char
 
 export default function ContaDashboardPage() {
   const distribuicao = [
-    { key: "imobiliario", label: "Imobiliário", value: 23000, color: "#64748b" },
-    { key: "agro", label: "Agro", value: 12000, color: "#94a3b8" },
-    { key: "infra", label: "Infra", value: 7000, color: "#cbd5e1" },
-    { key: "credito", label: "Crédito", value: 6000, color: "#475569" },
-    { key: "outros", label: "Outros", value: 2000, color: "#e2e8f0" },
+    { key: "imobiliario", label: "Imobiliário", value: 23000, color: "var(--chart-1)" },
+    { key: "agro", label: "Agro", value: 12000, color: "var(--chart-2)" },
+    { key: "infra", label: "Infra", value: 7000, color: "var(--chart-3)" },
+    { key: "credito", label: "Crédito", value: 6000, color: "var(--chart-4)" },
+    { key: "outros", label: "Outros", value: 2000, color: "var(--chart-5)" },
   ] as const
   const totalDistribuicao = distribuicao.reduce((acc, i) => acc + i.value, 0)
 
