@@ -30,7 +30,7 @@ export default function PortfolioDistributionChart({ data }: { data: ReadonlyArr
   )
 
   return (
-    <ChartContainer config={chartConfig} className="aspect-auto min-h-[260px] w-full">
+    <ChartContainer config={chartConfig} className="w-full">
       <LineChart data={lineData}>
         <XAxis 
           dataKey="month" 
