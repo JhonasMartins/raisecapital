@@ -493,8 +493,7 @@ export default function Home() {
                 <Button asChild>
                   <Link href="/auth/criar-conta">Submeter projeto</Link>
                 </Button>
--                <Button variant="outline" asChild>
-+                <Button variant="outline" asChild className="text-foreground">
+                <Button variant="outline" asChild className="text-foreground">
                   <a href="https://wa.me/5511976511371" target="_blank" rel="noopener noreferrer">Falar com especialista</a>
                 </Button>
               </div>
