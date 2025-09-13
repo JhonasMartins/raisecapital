@@ -128,7 +128,7 @@ export default function ContaDashboardPage() {
           </div>
           <Separator className="my-6" />
           <Tabs defaultValue="consolidado" className="w-full">
-            <TabsList>
+            <TabsList className="max-w-full overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <TabsTrigger value="consolidado">Consolidado</TabsTrigger>
               <TabsTrigger value="30d">Últimos 30 dias</TabsTrigger>
             </TabsList>
@@ -227,76 +227,78 @@ export default function ContaDashboardPage() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="investimentos">
-            <TabsList>
+            <TabsList className="max-w-full overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <TabsTrigger value="investimentos">Investimentos</TabsTrigger>
               <TabsTrigger value="movs">Movimentações</TabsTrigger>
             </TabsList>
             <TabsContent value="investimentos">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/40">
-                    <TableHead className="pl-0 py-2 text-[11px] uppercase tracking-wide text-foreground">Oferta</TableHead>
-                    <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground">Status</TableHead>
-                    <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Aporte</TableHead>
-                    <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Rentab.</TableHead>
-                    <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Atualização</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
-                    <TableCell className="pl-0 py-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Building2 className="h-5 w-5 text-muted-foreground" />
-                        <span>Imobiliário Alpha</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2 text-sm">
-                      <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" />Aportado</Badge>
-                    </TableCell>
-                    <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(10000)}</TableCell>
-                    <TableCell className="py-2 text-right text-sm tabular-nums">+7,3%</TableCell>
-                    <TableCell className="py-2 text-right text-sm">há 2 dias</TableCell>
-                  </TableRow>
-                  <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
-                    <TableCell className="pl-0 py-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Wheat className="h-5 w-5 text-muted-foreground" />
-                        <span>Crédito Agro Beta</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2 text-sm">
-                      <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-amber-500" />Em análise</Badge>
-                    </TableCell>
-                    <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(5000)}</TableCell>
-                    <TableCell className="py-2 text-right text-sm tabular-nums">—</TableCell>
-                    <TableCell className="py-2 text-right text-sm">há 1 dia</TableCell>
-                  </TableRow>
-                  <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
-                    <TableCell className="pl-0 py-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Factory className="h-5 w-5 text-muted-foreground" />
-                        <span>Infra Gamma</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2 text-sm">
-                      <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-green-600" />Liquidado</Badge>
-                    </TableCell>
-                    <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(7000)}</TableCell>
-                    <TableCell className="py-2 text-right text-sm tabular-nums">+2,1%</TableCell>
-                    <TableCell className="py-2 text-right text-sm">há 3 dias</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+              <div className="-mx-4 sm:mx-0 overflow-x-auto">
+                <Table className="min-w-[640px] sm:min-w-0">
+                  <TableHeader>
+                    <TableRow className="bg-muted/40">
+                      <TableHead className="pl-0 py-2 text-[11px] uppercase tracking-wide text-foreground">Oferta</TableHead>
+                      <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground">Status</TableHead>
+                      <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Aporte</TableHead>
+                      <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground hidden sm:table-cell">Rentab.</TableHead>
+                      <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground hidden sm:table-cell">Atualização</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
+                      <TableCell className="pl-0 py-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Building2 className="h-5 w-5 text-muted-foreground" />
+                          <span>Imobiliário Alpha</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-2 text-sm">
+                        <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" />Aportado</Badge>
+                      </TableCell>
+                      <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(10000)}</TableCell>
+                      <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell">+7,3%</TableCell>
+                      <TableCell className="py-2 text-right text-sm hidden sm:table-cell">há 2 dias</TableCell>
+                    </TableRow>
+                    <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
+                      <TableCell className="pl-0 py-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Wheat className="h-5 w-5 text-muted-foreground" />
+                          <span>Crédito Agro Beta</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-2 text-sm">
+                        <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-amber-500" />Em análise</Badge>
+                      </TableCell>
+                      <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(5000)}</TableCell>
+                      <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell">—</TableCell>
+                      <TableCell className="py-2 text-right text-sm hidden sm:table-cell">há 1 dia</TableCell>
+                    </TableRow>
+                    <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
+                      <TableCell className="pl-0 py-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Factory className="h-5 w-5 text-muted-foreground" />
+                          <span>Infra Gamma</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-2 text-sm">
+                        <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-green-600" />Liquidado</Badge>
+                      </TableCell>
+                      <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(7000)}</TableCell>
+                      <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell">+2,1%</TableCell>
+                      <TableCell className="py-2 text-right text-sm hidden sm:table-cell">há 3 dias</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
             </TabsContent>
             <TabsContent value="movs">
-              <div className="rounded-md border bg-card">
-                <Table>
+              <div className="rounded-md border bg-card overflow-x-auto">
+                <Table className="min-w-[560px] sm:min-w-0">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Data</TableHead>
                       <TableHead>Operação</TableHead>
                       <TableHead className="text-right">Valor</TableHead>
-                      <TableHead className="text-right">Status</TableHead>
+                      <TableHead className="text-right hidden sm:table-cell">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

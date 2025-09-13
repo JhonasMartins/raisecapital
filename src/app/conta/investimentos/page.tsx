@@ -128,7 +128,7 @@ export default function MeusInvestimentosPage() {
             aria-label="Buscar ofertas"
           />
           <Select value={categoria} onValueChange={(v) => setCategoria(v)}>
-            <SelectTrigger className="w-[160px]"><SelectValue placeholder="Categoria" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Categoria" /></SelectTrigger>
             <SelectContent>
               {categorias.map((c) => (
                 <SelectItem key={c} value={c}>{c === "todas" ? "Todas categorias" : c}</SelectItem>
@@ -183,94 +183,98 @@ export default function MeusInvestimentosPage() {
         </CardHeader>
         <CardContent>
           <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
-            <TabsList>
+            <TabsList className="max-w-full overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <TabsTrigger value="pendentes">Pendentes</TabsTrigger>
               <TabsTrigger value="ativos">Ativos</TabsTrigger>
             </TabsList>
             <TabsContent value="pendentes">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/40">
-                    <TableHead className="pl-0 py-2 text-[11px] uppercase tracking-wide text-foreground">Oferta</TableHead>
-                    <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground">Categoria</TableHead>
-                    <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Aporte</TableHead>
-                    <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Ação</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pendentesFiltrados.length ? (
-                    pendentesFiltrados.map((p) => (
-                      <RowPendente
-                        key={p.ofertaId}
-                        icon={p.icon}
-                        nome={p.nome}
-                        ofertaId={p.ofertaId}
-                        valor={p.valor}
-                        categoria={p.categoria}
-                        onPagar={handlePagar}
-                        isLoading={isLoading}
-                      />
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={4} className="h-56 text-center">
-                        <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
-                          <img
-                            src="/assets/62d95badcd68f3228ea7ba5d_no-records-found-illustration-dashboardly-webflow-ecommerce-template.png"
-                            alt="Sem registros"
-                            className="h-24 w-auto opacity-80"
-                          />
-                          <div className="text-sm text-muted-foreground">Nenhuma oferta pendente encontrada</div>
-                          <div className="text-xs text-muted-foreground">Ajuste os filtros ou tente outra busca.</div>
-                        </div>
-                      </TableCell>
+              <div className="-mx-4 sm:mx-0 overflow-x-auto">
+                <Table className="min-w-[640px] sm:min-w-0">
+                  <TableHeader>
+                    <TableRow className="bg-muted/40">
+                      <TableHead className="pl-0 py-2 text-[11px] uppercase tracking-wide text-foreground">Oferta</TableHead>
+                      <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground hidden xs:table-cell sm:table-cell">Categoria</TableHead>
+                      <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Aporte</TableHead>
+                      <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Ação</TableHead>
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TabsContent>
-            <TabsContent value="ativos">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/40">
-                    <TableHead className="pl-0 py-2 text-[11px] uppercase tracking-wide text-foreground">Oferta</TableHead>
-                    <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground">Categoria</TableHead>
-                    <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Aportado</TableHead>
-                    <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Rentab.</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {ativosFiltrados.length ? (
-                    ativosFiltrados.map((a, idx) => (
-                      <TableRow key={`${a.nome}-${idx}`} className="odd:bg-muted/20">
-                        <TableCell className="pl-0 py-2 text-sm">
-                          <div className="flex items-center gap-2">
-                            {a.icon}
-                            <span>{a.nome}</span>
+                  </TableHeader>
+                  <TableBody>
+                    {pendentesFiltrados.length ? (
+                      pendentesFiltrados.map((p) => (
+                        <RowPendente
+                          key={p.ofertaId}
+                          icon={p.icon}
+                          nome={p.nome}
+                          ofertaId={p.ofertaId}
+                          valor={p.valor}
+                          categoria={p.categoria}
+                          onPagar={handlePagar}
+                          isLoading={isLoading}
+                        />
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={4} className="h-56 text-center">
+                          <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
+                            <img
+                              src="/assets/62d95badcd68f3228ea7ba5d_no-records-found-illustration-dashboardly-webflow-ecommerce-template.png"
+                              alt="Sem registros"
+                              className="h-24 w-auto opacity-80"
+                            />
+                            <div className="text-sm text-muted-foreground">Nenhuma oferta pendente encontrada</div>
+                            <div className="text-xs text-muted-foreground">Ajuste os filtros ou tente outra busca.</div>
                           </div>
                         </TableCell>
-                        <TableCell className="py-2 text-sm">{a.categoria}</TableCell>
-                        <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(a.aportado)}</TableCell>
-                        <TableCell className="py-2 text-right text-sm tabular-nums">+{a.rentab}%</TableCell>
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={4} className="h-56 text-center">
-                        <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
-                          <img
-                            src="/assets/62d95badcd68f3a013a7ba5c_no-records-available-illustration-dashboardly-webflow-ecommerce-template.png"
-                            alt="Sem registros"
-                            className="h-24 w-auto opacity-80"
-                          />
-                          <div className="text-sm text-muted-foreground">Nenhum ativo encontrado</div>
-                          <div className="text-xs text-muted-foreground">Experimente alterar a categoria ou termo de busca.</div>
-                        </div>
-                      </TableCell>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+            <TabsContent value="ativos">
+              <div className="-mx-4 sm:mx-0 overflow-x-auto">
+                <Table className="min-w-[640px] sm:min-w-0">
+                  <TableHeader>
+                    <TableRow className="bg-muted/40">
+                      <TableHead className="pl-0 py-2 text-[11px] uppercase tracking-wide text-foreground">Oferta</TableHead>
+                      <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground hidden sm:table-cell">Categoria</TableHead>
+                      <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Aportado</TableHead>
+                      <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground hidden sm:table-cell">Rentab.</TableHead>
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {ativosFiltrados.length ? (
+                      ativosFiltrados.map((a, idx) => (
+                        <TableRow key={`${a.nome}-${idx}`} className="odd:bg-muted/20">
+                          <TableCell className="pl-0 py-2 text-sm">
+                            <div className="flex items-center gap-2">
+                              {a.icon}
+                              <span>{a.nome}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-2 text-sm hidden sm:table-cell">{a.categoria}</TableCell>
+                          <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(a.aportado)}</TableCell>
+                          <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell">+{a.rentab}%</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={4} className="h-56 text-center">
+                          <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
+                            <img
+                              src="/assets/62d95badcd68f3a013a7ba5c_no-records-available-illustration-dashboardly-webflow-ecommerce-template.png"
+                              alt="Sem registros"
+                              className="h-24 w-auto opacity-80"
+                            />
+                            <div className="text-sm text-muted-foreground">Nenhum ativo encontrado</div>
+                            <div className="text-xs text-muted-foreground">Experimente alterar a categoria ou termo de busca.</div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
             </TabsContent>
           </Tabs>
           <Separator className="my-4" />
@@ -315,7 +319,7 @@ function RowPendente({ icon, nome, ofertaId, valor, categoria, onPagar, isLoadin
           <span>{nome}</span>
         </div>
       </TableCell>
-      <TableCell className="py-2 text-sm">{categoria}</TableCell>
+      <TableCell className="py-2 text-sm hidden xs:table-cell sm:table-cell">{categoria}</TableCell>
       <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(valor)}</TableCell>
       <TableCell className="py-2 text-right text-sm">
         <Button size="sm" onClick={() => onPagar(ofertaId, valor)} disabled={isLoading} aria-label={`Gerar QRCode para ${nome}`}>
