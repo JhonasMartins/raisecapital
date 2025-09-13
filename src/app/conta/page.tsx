@@ -81,7 +81,7 @@ const KpiStatCard = ({
     </CardHeader>
     <CardContent className="space-y-2.5">
       <div className="flex items-center gap-2.5">
-        <span className="text-2xl font-medium text-foreground tracking-tight">{value}</span>
+        <span className="text-xl sm:text-2xl font-medium text-foreground tracking-tight">{value}</span>
         {typeof delta === "number" && (
           <Badge variant={positive ? "success" : "destructive"} appearance="light">
             {delta >= 0 ? <ArrowUp /> : <ArrowDown />}
@@ -112,15 +112,15 @@ export default function ContaDashboardPage() {
   const aportesPendentesValor = 2500
 
   return (
-    <div className="grid w-full gap-6 md:grid-cols-3">
+    <div className="grid w-full gap-4 md:gap-6 md:grid-cols-3">
       {/* Saldo e posição */}
       <Card className="md:col-span-3">
-        <CardHeader>
+        <CardHeader className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base font-semibold">Minha carteira</CardTitle>
           <CardDescription>Saldo disponível, posição consolidada e próximos passos</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             <KpiStatCard title="Saldo disponível" value={formatBRL(12450)} />
             <KpiStatCard title="Posição investida" value={formatBRL(38000)} />
             <KpiStatCard title="Rentabilidade acumulada" value={"+8,2%"} delta={8.2} positive />
@@ -150,7 +150,11 @@ export default function ContaDashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            <div className="rounded-md border p-2">
+            {/* Gráfico mais baixo no mobile para reduzir scroll */}
+            <div className="rounded-md border p-2 sm:hidden">
+              <PortfolioDistributionChart data={distribuicao} height={200} />
+            </div>
+            <div className="hidden rounded-md border p-2 sm:block">
               <PortfolioDistributionChart data={distribuicao} />
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -187,7 +191,6 @@ export default function ContaDashboardPage() {
         <CardContent>
           <div className="space-y-3">
             <StatisticCard13
-              className="max-w-sm"
               title="Finalize seu KYC"
               icon={<IdCard className="w-5 h-5 text-primary" />}
               total={10}
@@ -197,7 +200,6 @@ export default function ContaDashboardPage() {
               rightSuffix="concluído"
             />
             <StatisticCard13
-              className="max-w-sm"
               title="Suitability"
               icon={<ClipboardList className="w-5 h-5 text-primary" />}
               total={10}
@@ -206,7 +208,7 @@ export default function ContaDashboardPage() {
               leftSuffix="perguntas respondidas"
               rightSuffix="concluído"
             />
-            <StatisticCard13 className="max-w-sm" />
+            <StatisticCard13 />
           </div>
         </CardContent>
       </Card>
