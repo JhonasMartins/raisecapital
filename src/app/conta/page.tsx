@@ -232,7 +232,7 @@ export default function ContaDashboardPage() {
               <TabsTrigger value="movs">Movimentações</TabsTrigger>
             </TabsList>
             <TabsContent value="investimentos">
-              <div className="-mx-4 sm:mx-0 overflow-x-auto">
+              <div className="-mx-6 sm:mx-0 overflow-x-auto">
                 <Table className="min-w-[640px] sm:min-w-0">
                   <TableHeader>
                     <TableRow className="bg-muted/40">
@@ -291,7 +291,7 @@ export default function ContaDashboardPage() {
               </div>
             </TabsContent>
             <TabsContent value="movs">
-              <div className="rounded-md border bg-card overflow-x-auto">
+              <div className="rounded-md border bg-card overflow-x-auto -mx-6 sm:mx-0">
                 <Table className="min-w-[560px] sm:min-w-0">
                   <TableHeader>
                     <TableRow>
