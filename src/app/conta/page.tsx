@@ -49,7 +49,7 @@ const KpiStatCard = ({
   lastValue?: ReactNode
 }) => (
   <Card>
-    <CardHeader className="border-0">
+    <CardHeader className="border-0 px-4 sm:px-5 min-h-12 sm:min-h-14">
       <CardTitle className="text-muted-foreground text-sm font-medium">{title}</CardTitle>
       <CardToolbar>
         <DropdownMenu>
@@ -79,7 +79,7 @@ const KpiStatCard = ({
         </DropdownMenu>
       </CardToolbar>
     </CardHeader>
-    <CardContent className="space-y-2.5">
+    <CardContent className="space-y-2.5 p-4 sm:p-5">
       <div className="flex items-center gap-2.5">
         <span className="text-xl sm:text-2xl font-medium text-foreground tracking-tight">{value}</span>
         {typeof delta === "number" && (
@@ -115,18 +115,18 @@ export default function ContaDashboardPage() {
     <div className="grid w-full gap-4 md:gap-6 md:grid-cols-3">
       {/* Saldo e posição */}
       <Card className="md:col-span-3">
-        <CardHeader className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <CardHeader className="flex flex-col items-start gap-1 px-4 sm:px-5 min-h-12 sm:min-h-14 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base font-semibold">Minha carteira</CardTitle>
           <CardDescription>Saldo disponível, posição consolidada e próximos passos</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-5">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             <KpiStatCard title="Saldo disponível" value={formatBRL(12450)} />
             <KpiStatCard title="Posição investida" value={formatBRL(38000)} />
             <KpiStatCard title="Rentabilidade acumulada" value={"+8,2%"} delta={8.2} positive />
             <KpiStatCard title="Aportes pendentes" value={formatBRL(aportesPendentesValor)} />
           </div>
-          <Separator className="my-6" />
+          <Separator className="my-4 sm:my-6" />
           <Tabs defaultValue="consolidado" className="w-full">
             <TabsList className="max-w-full overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <TabsTrigger value="consolidado">Consolidado</TabsTrigger>
@@ -144,11 +144,11 @@ export default function ContaDashboardPage() {
 
       {/* Distribuição da carteira */}
       <Card className="md:col-span-2">
-        <CardHeader>
+        <CardHeader className="flex flex-col items-start gap-1 px-4 sm:px-5 min-h-12 sm:min-h-14 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base font-semibold">Distribuição da carteira</CardTitle>
           <CardDescription>Percentual por segmento com valores em BRL</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-5">
           <div className="grid gap-4">
             {/* Gráfico mais baixo no mobile para reduzir scroll */}
             <div className="rounded-md border p-2 sm:hidden">
@@ -184,11 +184,11 @@ export default function ContaDashboardPage() {
 
       {/* Próximos passos */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-col items-start gap-1 px-4 sm:px-5 min-h-12 sm:min-h-14 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base font-semibold">Próximos passos</CardTitle>
           <CardDescription>Itens que pedem sua atenção</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-5">
           <div className="space-y-3">
             <StatisticCard13
               title="Finalize seu KYC"
@@ -215,7 +215,7 @@ export default function ContaDashboardPage() {
 
       {/* Investimentos em andamento */}
       <Card className="md:col-span-3">
-        <CardHeader>
+        <CardHeader className="items-start px-4 sm:px-5 min-h-12 sm:min-h-14">
           <div className="flex items-center justify-between gap-4">
             <div>
               <CardTitle className="flex items-center gap-2 text-base font-semibold">
@@ -227,7 +227,7 @@ export default function ContaDashboardPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-5">
           <Tabs defaultValue="investimentos">
             <TabsList className="max-w-full overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <TabsTrigger value="investimentos">Investimentos</TabsTrigger>
@@ -293,7 +293,7 @@ export default function ContaDashboardPage() {
               </div>
             </TabsContent>
             <TabsContent value="movs">
-              <div className="rounded-md border bg-card overflow-x-auto -mx-6 sm:mx-0">
+              <div className="rounded-md border bg-card overflow-x-auto -mx-4 sm:mx-0">
                 <Table className="min-w-[560px] sm:min-w-0">
                   <TableHeader>
                     <TableRow>
