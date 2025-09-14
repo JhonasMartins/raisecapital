@@ -52,13 +52,13 @@ export default function PortfolioDistributionChart({ data, height = 260 }: { dat
     }, [] as any[])
 
   const chartConfig: ChartConfig = Object.fromEntries(
-    data.map((i) => [i.key, { label: i.label, color: i.color }])
+    data.map((i) => [i.key, { label: i.label, color: `hsl(${i.color})` }])
   )
 
   return (
     <div className="w-full overflow-hidden" style={{ height }}>
-      <ChartContainer config={chartConfig} className="w-full h-full [&>div]:!aspect-auto [&>div]:!h-full">
-      <AreaChart data={lineData} accessibilityLayer>
+      <ChartContainer config={chartConfig} className="w-full h-full min-w-0 [&>div]:!aspect-auto [&>div]:!h-full">
+      <AreaChart data={lineData} accessibilityLayer margin={{ left: 12, right: 12 }}>
         <CartesianGrid vertical={false} strokeDasharray="3 3" />
         <XAxis
           dataKey="month"
@@ -87,15 +87,29 @@ export default function PortfolioDistributionChart({ data, height = 260 }: { dat
         />
         <defs>
           <DottedBackgroundPattern config={chartConfig} />
+          {data.map((item) => (
+            <linearGradient key={item.key} id={`fill${item.key.charAt(0).toUpperCase() + item.key.slice(1)}`} x1="0" y1="0" x2="0" y2="1">
+              <stop
+                offset="5%"
+                stopColor={`var(--color-${item.key})`}
+                stopOpacity={0.8}
+              />
+              <stop
+                offset="95%"
+                stopColor={`var(--color-${item.key})`}
+                stopOpacity={0.1}
+              />
+            </linearGradient>
+          ))}
         </defs>
         {data.map((item) => (
           <Area
             key={item.key}
             type="natural"
             dataKey={item.key}
-            fill={`url(#dotted-background-pattern-${item.key})`}
-            fillOpacity={0.35}
-            stroke={item.color}
+            fill={`url(#fill${item.key.charAt(0).toUpperCase() + item.key.slice(1)})`}
+            fillOpacity={0.4}
+            stroke={`var(--color-${item.key})`}
             strokeWidth={1}
             stackId="a"
           />
