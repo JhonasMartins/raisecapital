@@ -11,12 +11,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Pencil } from "lucide-react"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 export default function PerfilPage() {
   const [avatarSrc, setAvatarSrc] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [tipoPessoa, setTipoPessoa] = useState<"pf" | "pj">("pf")
 
   function handlePickAvatar() {
     fileInputRef.current?.click()
@@ -108,107 +110,190 @@ export default function PerfilPage() {
 
               {/* Pessoais */}
               <TabsContent value="pessoais" className="mt-4 sm:mt-6">
-                <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2">
+                <div className="grid gap-3 sm:gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="nome" className="text-sm">Nome *</Label>
-                    <Input id="nome" name="nome" placeholder="Seu nome" required className="h-10 sm:h-11" />
+                    <Label className="text-sm">Tipo de cadastro</Label>
+                    <ToggleGroup
+                      type="single"
+                      value={tipoPessoa}
+                      onValueChange={(v) => v && setTipoPessoa(v as "pf" | "pj")}
+                      className="w-full sm:w-auto"
+                      variant="outline"
+                    >
+                      <ToggleGroupItem value="pf" className="px-3 py-2 text-sm">Pessoa Física</ToggleGroupItem>
+                      <ToggleGroupItem value="pj" className="px-3 py-2 text-sm">Pessoa Jurídica</ToggleGroupItem>
+                    </ToggleGroup>
                   </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="sobrenome" className="text-sm">Sobrenome *</Label>
-                    <Input id="sobrenome" name="sobrenome" placeholder="Seu sobrenome" required className="h-10 sm:h-11" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="nascimento" className="text-sm">Data de nascimento *</Label>
-                    <Input id="nascimento" name="nascimento" type="date" required className="h-10 sm:h-11" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label className="text-sm">Nacionalidade *</Label>
-                    <Select defaultValue="brasileiro">
-                      <SelectTrigger className="w-full h-10 sm:h-11">
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="brasileiro">Brasileiro Nato</SelectItem>
-                        <SelectItem value="naturalizado">Brasileiro Naturalizado</SelectItem>
-                        <SelectItem value="estrangeiro">Estrangeiro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label className="text-sm">Gênero *</Label>
-                    <Select>
-                      <SelectTrigger className="w-full h-10 sm:h-11">
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="masculino">Masculino</SelectItem>
-                        <SelectItem value="feminino">Feminino</SelectItem>
-                        <SelectItem value="outro">Outro</SelectItem>
-                        <SelectItem value="prefiro_nao_dizer">Prefiro não dizer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label className="text-sm">Estado civil *</Label>
-                    <Select>
-                      <SelectTrigger className="w-full h-10 sm:h-11">
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="solteiro">Solteiro(a)</SelectItem>
-                        <SelectItem value="casado">Casado(a)</SelectItem>
-                        <SelectItem value="divorciado">Divorciado(a)</SelectItem>
-                        <SelectItem value="viuvo">Viúvo(a)</SelectItem>
-                        <SelectItem value="uniao">União estável</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="cpf" className="text-sm">CPF *</Label>
-                    <Input id="cpf" name="cpf" placeholder="000.000.000-00" required className="h-10 sm:h-11" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="rg" className="text-sm">RG *</Label>
-                    <Input id="rg" name="rg" placeholder="Seu RG" required className="h-10 sm:h-11" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="orgao" className="text-sm">Órgão Exp *</Label>
-                    <Input id="orgao" name="orgao" placeholder="Ex.: SSP" required className="h-10 sm:h-11" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="orgao_uf" className="text-sm">UF *</Label>
-                    <Select>
-                      <SelectTrigger className="w-full h-10 sm:h-11">
-                        <SelectValue placeholder="UF" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map((uf) => (
-                          <SelectItem key={uf} value={uf}>{uf}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-2 sm:col-span-2">
-                    <Label className="text-sm">Como você conheceu a Bloxs? *</Label>
-                    <Select>
-                      <SelectTrigger className="w-full h-10 sm:h-11">
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="indicacao">Indicação</SelectItem>
-                        <SelectItem value="redes">Redes sociais</SelectItem>
-                        <SelectItem value="pesquisa">Pesquisa no Google</SelectItem>
-                        <SelectItem value="outro">Outro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex items-center gap-2 sm:col-span-2 pt-2">
-                    <Checkbox id="ppe" />
-                    <Label htmlFor="ppe" className="!m-0 text-sm">Sou uma pessoa politicamente exposta</Label>
-                  </div>
+
+                  {tipoPessoa === "pf" ? (
+                    <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2">
+                      <div className="grid gap-2">
+                        <Label htmlFor="nome" className="text-sm">Nome *</Label>
+                        <Input id="nome" name="nome" placeholder="Seu nome" required className="h-10 sm:h-11" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="sobrenome" className="text-sm">Sobrenome *</Label>
+                        <Input id="sobrenome" name="sobrenome" placeholder="Seu sobrenome" required className="h-10 sm:h-11" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="nascimento" className="text-sm">Data de nascimento *</Label>
+                        <Input id="nascimento" name="nascimento" type="date" required className="h-10 sm:h-11" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label className="text-sm">Nacionalidade *</Label>
+                        <Select defaultValue="brasileiro">
+                          <SelectTrigger className="w-full h-10 sm:h-11">
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="brasileiro">Brasileiro Nato</SelectItem>
+                            <SelectItem value="naturalizado">Brasileiro Naturalizado</SelectItem>
+                            <SelectItem value="estrangeiro">Estrangeiro</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid gap-2">
+                        <Label className="text-sm">Gênero *</Label>
+                        <Select>
+                          <SelectTrigger className="w-full h-10 sm:h-11">
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="masculino">Masculino</SelectItem>
+                            <SelectItem value="feminino">Feminino</SelectItem>
+                            <SelectItem value="outro">Outro</SelectItem>
+                            <SelectItem value="prefiro_nao_dizer">Prefiro não dizer</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid gap-2">
+                        <Label className="text-sm">Estado civil *</Label>
+                        <Select>
+                          <SelectTrigger className="w-full h-10 sm:h-11">
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="solteiro">Solteiro(a)</SelectItem>
+                            <SelectItem value="casado">Casado(a)</SelectItem>
+                            <SelectItem value="divorciado">Divorciado(a)</SelectItem>
+                            <SelectItem value="viuvo">Viúvo(a)</SelectItem>
+                            <SelectItem value="uniao">União estável</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="cpf" className="text-sm">CPF *</Label>
+                        <Input id="cpf" name="cpf" placeholder="000.000.000-00" required className="h-10 sm:h-11" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="rg" className="text-sm">RG *</Label>
+                        <Input id="rg" name="rg" placeholder="Seu RG" required className="h-10 sm:h-11" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="orgao" className="text-sm">Órgão Exp *</Label>
+                        <Input id="orgao" name="orgao" placeholder="Ex.: SSP" required className="h-10 sm:h-11" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="orgao_uf" className="text-sm">UF *</Label>
+                        <Select>
+                          <SelectTrigger className="w-full h-10 sm:h-11">
+                            <SelectValue placeholder="UF" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map((uf) => (
+                              <SelectItem key={uf} value={uf}>{uf}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid gap-2 sm:col-span-2">
+                        <Label className="text-sm">Como você conheceu a Raise Capital? *</Label>
+                        <Select>
+                          <SelectTrigger className="w-full h-10 sm:h-11">
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="indicacao">Indicação</SelectItem>
+                            <SelectItem value="redes">Redes sociais</SelectItem>
+                            <SelectItem value="pesquisa">Pesquisa no Google</SelectItem>
+                            <SelectItem value="outro">Outro</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex items-center gap-2 sm:col-span-2 pt-2">
+                        <Checkbox id="ppe" />
+                        <Label htmlFor="ppe" className="!m-0 text-sm">Sou uma pessoa politicamente exposta</Label>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2">
+                      <div className="grid gap-2">
+                        <Label htmlFor="razao" className="text-sm">Razão Social *</Label>
+                        <Input id="razao" name="razao" placeholder="Nome da empresa (Razão Social)" required className="h-10 sm:h-11" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="fantasia" className="text-sm">Nome Fantasia</Label>
+                        <Input id="fantasia" name="fantasia" placeholder="Como a empresa é conhecida" className="h-10 sm:h-11" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="cnpj" className="text-sm">CNPJ *</Label>
+                        <Input id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" required className="h-10 sm:h-11" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="abertura" className="text-sm">Data de abertura *</Label>
+                        <Input id="abertura" name="abertura" type="date" required className="h-10 sm:h-11" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="inscricao_est" className="text-sm">Inscrição Estadual</Label>
+                        <Input id="inscricao_est" name="inscricao_est" placeholder="Opcional" className="h-10 sm:h-11" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="inscricao_mun" className="text-sm">Inscrição Municipal</Label>
+                        <Input id="inscricao_mun" name="inscricao_mun" placeholder="Opcional" className="h-10 sm:h-11" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label className="text-sm">Natureza jurídica *</Label>
+                        <Select>
+                          <SelectTrigger className="w-full h-10 sm:h-11">
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ltda">LTDA</SelectItem>
+                            <SelectItem value="sa">S.A.</SelectItem>
+                            <SelectItem value="mei">MEI</SelectItem>
+                            <SelectItem value="eireli">EIRELI</SelectItem>
+                            <SelectItem value="ong">Associação / ONG</SelectItem>
+                            <SelectItem value="outro">Outro</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="cnae" className="text-sm">CNAE principal</Label>
+                        <Input id="cnae" name="cnae" placeholder="00.00-0/00" className="h-10 sm:h-11" />
+                      </div>
+
+                      <div className="sm:col-span-2 pt-1">
+                        <Separator className="my-2" />
+                        <div className="text-sm font-medium mb-2">Representante legal</div>
+                        <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2">
+                          <div className="grid gap-2">
+                            <Label htmlFor="rep_nome" className="text-sm">Nome *</Label>
+                            <Input id="rep_nome" name="rep_nome" placeholder="Nome completo" required className="h-10 sm:h-11" />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="rep_cpf" className="text-sm">CPF *</Label>
+                            <Input id="rep_cpf" name="rep_cpf" placeholder="000.000.000-00" required className="h-10 sm:h-11" />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="rep_cargo" className="text-sm">Cargo *</Label>
+                            <Input id="rep_cargo" name="rep_cargo" placeholder="Ex.: Sócio-administrador" required className="h-10 sm:h-11" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </TabsContent>
-
               {/* Contato */}
               <TabsContent value="contato" className="mt-4 sm:mt-6">
                 <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2">
