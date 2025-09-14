@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import MobileMenu from "@/components/mobile-menu";
+import { Bell, Mail, TrendingUp, CheckCircle2 } from "lucide-react";
 
 export const metadata = {
   title: {
@@ -52,30 +53,67 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
               {/* Bell (desktop) */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="relative hidden rounded-full p-2 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/40 sm:block" aria-label="Notificações" aria-haspopup="menu">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-                      <path d="M12 2a6 6 0 00-6 6v3.586l-1.707 1.707A1 1 0 005 15h14a1 1 0 00.707-1.707L18 11.586V8a6 6 0 00-6-6z" />
-                      <path d="M8 16a4 4 0 008 0H8z" />
-                    </svg>
+                  <button
+                    className="relative hidden rounded-full p-2 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/40 sm:block"
+                    aria-label="Notificações"
+                    aria-haspopup="menu"
+                  >
+                    <Bell className="h-5 w-5" />
                     <span className="absolute -right-0.5 -top-0.5 inline-flex h-2.5 w-2.5 items-center justify-center rounded-full bg-primary ring-2 ring-background"></span>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" side="bottom" className="w-72">
-                  <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Notificações</div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/conta/notificacoes">3 novas mensagens da Raise Capital</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/conta/notificacoes">Atualização em um investimento</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/conta/notificacoes">Seus proventos foram creditados</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/conta/notificacoes" className="font-medium">Ver todas</Link>
-                  </DropdownMenuItem>
+                <DropdownMenuContent align="end" side="bottom" className="w-[420px] p-0">
+                  {/* Cabeçalho */}
+                  <div className="flex items-center justify-between px-3 py-2">
+                    <span className="text-xs font-medium text-muted-foreground">Notificações</span>
+                    <button type="button" className="text-xs text-primary hover:underline">Marcar todas como lidas</button>
+                  </div>
+                  <DropdownMenuSeparator className="my-0" />
+
+                  {/* Lista */}
+                  <div className="max-h-80 overflow-auto p-1.5">
+                    <Link href="/conta/notificacoes" className="group flex items-start gap-3 rounded-md p-2 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                      <div className="relative">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/10 text-blue-600">
+                          <Mail className="h-4 w-4" />
+                        </div>
+                        <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-primary"></span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm text-foreground">3 novas mensagens da Raise Capital</div>
+                        <div className="text-xs text-muted-foreground">Há 2h</div>
+                      </div>
+                    </Link>
+
+                    <Link href="/conta/notificacoes" className="group mt-1.5 flex items-start gap-3 rounded-md p-2 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600">
+                        <TrendingUp className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm text-foreground">Atualização em um investimento</div>
+                        <div className="text-xs text-muted-foreground">Ontem</div>
+                      </div>
+                    </Link>
+
+                    <Link href="/conta/notificacoes" className="group mt-1.5 flex items-start gap-3 rounded-md p-2 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-600">
+                        <CheckCircle2 className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm text-foreground">Seus proventos foram creditados</div>
+                        <div className="text-xs text-muted-foreground">Há 3 dias</div>
+                      </div>
+                    </Link>
+                  </div>
+
+                  <DropdownMenuSeparator className="my-0" />
+
+                  {/* Rodapé */}
+                  <div className="px-3 py-2">
+                    <Link href="/conta/notificacoes" className="block text-center text-sm font-medium text-primary hover:underline">
+                      Ver todas
+                    </Link>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
 
