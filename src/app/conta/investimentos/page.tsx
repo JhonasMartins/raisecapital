@@ -58,15 +58,15 @@ export default function MeusInvestimentosPage() {
     const byCat: Record<string, number> = {}
     for (const i of ativosItems) byCat[i.categoria] = (byCat[i.categoria] || 0) + i.aportado
     const palette: Record<string, string> = {
-      "Imobiliário": "#60a5fa",
-      "Agro": "#34d399",
-      "Infra": "#f59e0b",
+      "Imobiliário": "var(--chart-1)",
+      "Agro": "var(--chart-2)",
+      "Infra": "var(--chart-3)",
     }
     return Object.entries(byCat).map(([label, value], idx) => ({
       key: label.toLowerCase(),
       label,
       value,
-      color: palette[label] || ["#60a5fa", "#34d399", "#f59e0b", "#a78bfa"][idx % 4],
+      color: palette[label] || ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)"][idx % 4],
     }))
   }, [ativosItems])
 

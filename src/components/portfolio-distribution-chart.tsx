@@ -52,7 +52,7 @@ export default function PortfolioDistributionChart({ data, height = 260 }: { dat
     }, [] as any[])
 
   const chartConfig: ChartConfig = Object.fromEntries(
-    data.map((i) => [i.key, { label: i.label, color: `hsl(${i.color})` }])
+    data.map((i) => [i.key, { label: i.label, color: i.color }])
   )
 
   return (

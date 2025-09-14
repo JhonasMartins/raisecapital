@@ -55,7 +55,7 @@ export function GradientBarMultipleChart() {
         <CardDescription>Janeiro - Junho 2025</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={chartConfig} className="h-56 sm:h-64 w-full !aspect-auto">
           <BarChart accessibilityLayer data={chartData}>
             <XAxis
               dataKey="month"
@@ -71,12 +71,12 @@ export function GradientBarMultipleChart() {
             <Bar
               dataKey="aportes"
               shape={<CustomGradientBar />}
-              fill="var(--color-aportes)"
+              fill="var(--chart-1)"
             />
             <Bar
               dataKey="rendimentos"
               shape={<CustomGradientBar />}
-              fill="var(--color-rendimentos)"
+              fill="var(--chart-2)"
             />
           </BarChart>
         </ChartContainer>
@@ -88,31 +88,17 @@ export function GradientBarMultipleChart() {
 const CustomGradientBar = (
   props: React.SVGProps<SVGRectElement> & { dataKey?: string }
 ) => {
-  const { fill, x, y, width, height, dataKey } = props;
+  const { fill, x, y, width, height } = props;
 
   return (
-    <>
-      <rect
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-        stroke="none"
-        fill={`url(#gradient-multiple-bar-pattern-${dataKey})`}
-      />
-      <rect x={x} y={y} width={width} height={2} stroke="none" fill={fill} />
-      <defs>
-        <linearGradient
-          id={`gradient-multiple-bar-pattern-${dataKey}`}
-          x1="0"
-          y1="0"
-          x2="0"
-          y2="1"
-        >
-          <stop offset="0%" stopColor={fill} stopOpacity={0.5} />
-          <stop offset="100%" stopColor={fill} stopOpacity={0} />
-        </linearGradient>
-      </defs>
-    </>
+    <rect
+      x={x}
+      y={y}
+      width={width}
+      height={height}
+      stroke="none"
+      fill={fill}
+      rx={2}
+    />
   );
 };
