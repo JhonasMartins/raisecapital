@@ -49,8 +49,8 @@ const KpiStatCard = ({
   lastValue?: ReactNode
 }) => (
   <Card>
-    <CardHeader className="border-0 px-4 sm:px-5 min-h-12 sm:min-h-14">
-      <CardTitle className="text-muted-foreground text-sm font-medium">{title}</CardTitle>
+    <CardHeader className="border-0 px-3 sm:px-4 min-h-10 sm:min-h-12">
+      <CardTitle className="text-muted-foreground text-xs sm:text-sm font-medium">{title}</CardTitle>
       <CardToolbar>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -79,18 +79,18 @@ const KpiStatCard = ({
         </DropdownMenu>
       </CardToolbar>
     </CardHeader>
-    <CardContent className="space-y-2.5 p-4 sm:p-5">
-      <div className="flex items-center gap-2.5">
-        <span className="text-xl sm:text-2xl font-medium text-foreground tracking-tight">{value}</span>
+    <CardContent className="space-y-2 p-3 sm:p-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2.5">
+        <span className="text-lg sm:text-xl font-medium text-foreground tracking-tight">{value}</span>
         {typeof delta === "number" && (
-          <Badge variant={positive ? "success" : "destructive"} appearance="light">
-            {delta >= 0 ? <ArrowUp /> : <ArrowDown />}
+          <Badge variant={positive ? "success" : "destructive"} appearance="light" className="self-start sm:self-auto">
+            {delta >= 0 ? <ArrowUp className="h-3 w-3 sm:h-4 sm:w-4" /> : <ArrowDown className="h-3 w-3 sm:h-4 sm:w-4" />}
             {Math.abs(delta)}%
           </Badge>
         )}
       </div>
       {lastValue !== undefined && (
-        <div className="text-xs text-muted-foreground mt-2 border-t pt-2.5">
+        <div className="text-xs text-muted-foreground mt-2 border-t pt-2">
           {lastLabel ?? "Comparativo"}: <span className="font-medium text-foreground">{lastValue}</span>
         </div>
       )}
@@ -112,30 +112,30 @@ export default function ContaDashboardPage() {
   const aportesPendentesValor = 2500
 
   return (
-    <div className="grid w-full gap-4 md:gap-6 md:grid-cols-3">
+    <div className="w-full space-y-4 sm:space-y-6">
       {/* Saldo e posição */}
-      <Card className="md:col-span-3">
-        <CardHeader className="flex flex-col items-start gap-1 px-4 sm:px-5 min-h-12 sm:min-h-14 sm:flex-row sm:items-center sm:justify-between">
+      <Card>
+        <CardHeader className="flex flex-col items-start gap-1 px-4 sm:px-6 min-h-12 sm:min-h-14 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base font-semibold">Minha carteira</CardTitle>
-          <CardDescription>Saldo disponível, posição consolidada e próximos passos</CardDescription>
+          <CardDescription className="text-sm">Saldo disponível, posição consolidada e próximos passos</CardDescription>
         </CardHeader>
-        <CardContent className="p-4 sm:p-5">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+        <CardContent className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 gap-3 xs:grid-cols-2 lg:grid-cols-4 sm:gap-4">
             <KpiStatCard title="Saldo disponível" value={formatBRL(12450)} />
             <KpiStatCard title="Posição investida" value={formatBRL(38000)} />
-            <KpiStatCard title="Rentabilidade acumulada" value={"+8,2%"} delta={8.2} positive />
+            <KpiStatCard title="Rentabilidade acumulada" value="+8,2%" delta={8.2} positive />
             <KpiStatCard title="Aportes pendentes" value={formatBRL(aportesPendentesValor)} />
           </div>
           <Separator className="my-4 sm:my-6" />
           <Tabs defaultValue="consolidado" className="w-full">
-            <TabsList className="max-w-full overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              <TabsTrigger value="consolidado">Consolidado</TabsTrigger>
-              <TabsTrigger value="30d">Últimos 30 dias</TabsTrigger>
+            <TabsList className="w-full justify-start overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <TabsTrigger value="consolidado" className="flex-shrink-0">Consolidado</TabsTrigger>
+              <TabsTrigger value="30d" className="flex-shrink-0">Últimos 30 dias</TabsTrigger>
             </TabsList>
-            <TabsContent value="consolidado">
+            <TabsContent value="consolidado" className="mt-4">
               <p className="text-sm text-muted-foreground">Resumo consolidado dos seus ativos e saldo.</p>
             </TabsContent>
-            <TabsContent value="30d">
+            <TabsContent value="30d" className="mt-4">
               <p className="text-sm text-muted-foreground">Variação e movimentações dos últimos 30 dias.</p>
             </TabsContent>
           </Tabs>
@@ -143,12 +143,12 @@ export default function ContaDashboardPage() {
       </Card>
 
       {/* Distribuição da carteira */}
-      <Card className="md:col-span-2">
-        <CardHeader className="flex flex-col items-start gap-1 px-4 sm:px-5 min-h-12 sm:min-h-14 sm:flex-row sm:items-center sm:justify-between">
+      <Card>
+        <CardHeader className="flex flex-col items-start gap-1 px-4 sm:px-6 min-h-12 sm:min-h-14 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base font-semibold">Distribuição da carteira</CardTitle>
-          <CardDescription>Percentual por segmento com valores em BRL</CardDescription>
+          <CardDescription className="text-sm">Percentual por segmento com valores em BRL</CardDescription>
         </CardHeader>
-        <CardContent className="p-4 sm:p-5">
+        <CardContent className="p-4 sm:p-6">
           <div className="grid gap-4">
             {/* Gráfico mais baixo no mobile para reduzir scroll */}
             <div className="rounded-md border p-2 sm:hidden">
@@ -214,111 +214,115 @@ export default function ContaDashboardPage() {
       </Card>
 
       {/* Investimentos em andamento */}
-      <Card className="md:col-span-3">
-        <CardHeader className="items-start px-4 sm:px-5 min-h-12 sm:min-h-14">
+      <Card>
+        <CardHeader className="items-start px-4 sm:px-6 min-h-12 sm:min-h-14">
           <div className="flex items-center justify-between gap-4">
             <div>
               <CardTitle className="flex items-center gap-2 text-base font-semibold">
                 <TrendingUp className="h-5 w-5 text-muted-foreground" />
                 Investimentos em andamento
               </CardTitle>
-              <CardDescription>Acompanhe o status de cada etapa</CardDescription>
+              <CardDescription className="text-sm">Acompanhe o status de cada etapa</CardDescription>
               <div className="text-xs text-muted-foreground">Última atualização há 2 dias</div>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-4 sm:p-5">
+        <CardContent className="p-4 sm:p-6">
           <Tabs defaultValue="investimentos">
-            <TabsList className="max-w-full overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              <TabsTrigger value="investimentos">Investimentos</TabsTrigger>
-              <TabsTrigger value="movs">Movimentações</TabsTrigger>
+            <TabsList className="w-full justify-start overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <TabsTrigger value="investimentos" className="flex-shrink-0">Investimentos</TabsTrigger>
+              <TabsTrigger value="movs" className="flex-shrink-0">Movimentações</TabsTrigger>
             </TabsList>
-            <TabsContent value="investimentos">
-              <div className="-mx-6 sm:mx-0 overflow-x-auto">
-                <Table className="min-w-[640px] sm:min-w-0">
-                  <TableHeader>
-                    <TableRow className="bg-muted/40">
-                      <TableHead className="pl-0 py-2 text-[11px] uppercase tracking-wide text-foreground">Oferta</TableHead>
-                      <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground">Status</TableHead>
-                      <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground">Aporte</TableHead>
-                      <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground hidden sm:table-cell">Rentab.</TableHead>
-                      <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground hidden sm:table-cell">Atualização</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
-                      <TableCell className="pl-0 py-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Building2 className="h-5 w-5 text-muted-foreground" />
-                          <span>Imobiliário Alpha</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="py-2 text-sm">
-                        <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" />Aportado</Badge>
-                      </TableCell>
-                      <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(10000)}</TableCell>
-                      <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell">+7,3%</TableCell>
-                      <TableCell className="py-2 text-right text-sm hidden sm:table-cell">há 2 dias</TableCell>
-                    </TableRow>
-                    <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
-                      <TableCell className="pl-0 py-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Wheat className="h-5 w-5 text-muted-foreground" />
-                          <span>Crédito Agro Beta</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="py-2 text-sm">
-                        <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-amber-500" />Em análise</Badge>
-                      </TableCell>
-                      <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(5000)}</TableCell>
-                      <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell">—</TableCell>
-                      <TableCell className="py-2 text-right text-sm hidden sm:table-cell">há 1 dia</TableCell>
-                    </TableRow>
-                    <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
-                      <TableCell className="pl-0 py-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Factory className="h-5 w-5 text-muted-foreground" />
-                          <span>Infra Gamma</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="py-2 text-sm">
-                        <Badge variant="outline" className="gap-1"><span className="h-1.5 w-1.5 rounded-full bg-green-600" />Liquidado</Badge>
-                      </TableCell>
-                      <TableCell className="py-2 text-right text-sm tabular-nums">{formatBRL(7000)}</TableCell>
-                      <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell">+2,1%</TableCell>
-                      <TableCell className="py-2 text-right text-sm hidden sm:table-cell">há 3 dias</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+            <TabsContent value="investimentos" className="mt-4">
+              <div className="-mx-4 sm:-mx-6 overflow-x-auto">
+                <div className="inline-block min-w-full px-4 sm:px-6">
+                  <Table className="min-w-[640px] sm:min-w-0">
+                    <TableHeader>
+                      <TableRow className="bg-muted/40">
+                        <TableHead className="pl-0 py-2 text-[11px] uppercase tracking-wide text-foreground whitespace-nowrap">Oferta</TableHead>
+                        <TableHead className="py-2 text-[11px] uppercase tracking-wide text-foreground whitespace-nowrap">Status</TableHead>
+                        <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground whitespace-nowrap">Aporte</TableHead>
+                        <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground hidden sm:table-cell whitespace-nowrap">Rentab.</TableHead>
+                        <TableHead className="py-2 text-right text-[11px] uppercase tracking-wide text-foreground hidden sm:table-cell whitespace-nowrap">Atualização</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
+                        <TableCell className="pl-0 py-2 text-sm">
+                          <div className="flex items-center gap-2 whitespace-nowrap">
+                            <Building2 className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                            <span>Imobiliário Alpha</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-2 text-sm">
+                          <Badge variant="outline" className="gap-1 whitespace-nowrap"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" />Aportado</Badge>
+                        </TableCell>
+                        <TableCell className="py-2 text-right text-sm tabular-nums whitespace-nowrap">{formatBRL(10000)}</TableCell>
+                        <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell whitespace-nowrap">+7,3%</TableCell>
+                        <TableCell className="py-2 text-right text-sm hidden sm:table-cell whitespace-nowrap">há 2 dias</TableCell>
+                      </TableRow>
+                      <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
+                        <TableCell className="pl-0 py-2 text-sm">
+                          <div className="flex items-center gap-2 whitespace-nowrap">
+                            <Wheat className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                            <span>Crédito Agro Beta</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-2 text-sm">
+                          <Badge variant="outline" className="gap-1 whitespace-nowrap"><span className="h-1.5 w-1.5 rounded-full bg-amber-500" />Em análise</Badge>
+                        </TableCell>
+                        <TableCell className="py-2 text-right text-sm tabular-nums whitespace-nowrap">{formatBRL(5000)}</TableCell>
+                        <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell whitespace-nowrap">—</TableCell>
+                        <TableCell className="py-2 text-right text-sm hidden sm:table-cell whitespace-nowrap">há 1 dia</TableCell>
+                      </TableRow>
+                      <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
+                        <TableCell className="pl-0 py-2 text-sm">
+                          <div className="flex items-center gap-2 whitespace-nowrap">
+                            <Factory className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                            <span>Infra Gamma</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-2 text-sm">
+                          <Badge variant="outline" className="gap-1 whitespace-nowrap"><span className="h-1.5 w-1.5 rounded-full bg-green-600" />Liquidado</Badge>
+                        </TableCell>
+                        <TableCell className="py-2 text-right text-sm tabular-nums whitespace-nowrap">{formatBRL(7000)}</TableCell>
+                        <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell whitespace-nowrap">+2,1%</TableCell>
+                        <TableCell className="py-2 text-right text-sm hidden sm:table-cell whitespace-nowrap">há 3 dias</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </TabsContent>
-            <TabsContent value="movs">
-              <div className="rounded-md border bg-card overflow-x-auto -mx-4 sm:mx-0">
-                <Table className="min-w-[560px] sm:min-w-0">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Data</TableHead>
-                      <TableHead>Operação</TableHead>
-                      <TableHead className="text-right">Valor</TableHead>
-                      <TableHead className="text-right hidden sm:table-cell">Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell colSpan={4} className="h-56 text-center">
-                        <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
-                          <img
-                            src="/assets/62d95badcd68f3228ea7ba5d_no-records-found-illustration-dashboardly-webflow-ecommerce-template.png"
-                            alt="Sem registros"
-                            className="h-24 w-auto opacity-80"
-                          />
-                          <div className="text-sm text-muted-foreground">Sem movimentações recentes</div>
-                          <div className="text-xs text-muted-foreground">As movimentações aparecerão aqui quando houver.</div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+            <TabsContent value="movs" className="mt-4">
+              <div className="rounded-md border bg-card overflow-x-auto -mx-4 sm:-mx-6">
+                <div className="inline-block min-w-full px-4 sm:px-6">
+                  <Table className="min-w-[560px] sm:min-w-0">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="whitespace-nowrap">Data</TableHead>
+                        <TableHead className="whitespace-nowrap">Operação</TableHead>
+                        <TableHead className="text-right whitespace-nowrap">Valor</TableHead>
+                        <TableHead className="text-right hidden sm:table-cell whitespace-nowrap">Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell colSpan={4} className="h-56 text-center">
+                          <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
+                            <img
+                              src="/assets/62d95badcd68f3228ea7ba5d_no-records-found-illustration-dashboardly-webflow-ecommerce-template.png"
+                              alt="Sem registros"
+                              className="h-24 w-auto opacity-80"
+                            />
+                            <div className="text-sm text-muted-foreground">Sem movimentações recentes</div>
+                            <div className="text-xs text-muted-foreground">As movimentações aparecerão aqui quando houver.</div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
