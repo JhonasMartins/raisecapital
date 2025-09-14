@@ -56,7 +56,8 @@ export default function PortfolioDistributionChart({ data, height = 260 }: { dat
   )
 
   return (
-    <ChartContainer config={chartConfig} className="w-full" style={{ height }}>
+    <div className="w-full overflow-hidden" style={{ height }}>
+      <ChartContainer config={chartConfig} className="w-full h-full [&>div]:!aspect-auto [&>div]:!h-full">
       <AreaChart data={lineData} accessibilityLayer>
         <CartesianGrid vertical={false} strokeDasharray="3 3" />
         <XAxis
@@ -101,5 +102,6 @@ export default function PortfolioDistributionChart({ data, height = 260 }: { dat
         ))}
       </AreaChart>
     </ChartContainer>
+    </div>
   )
 }
