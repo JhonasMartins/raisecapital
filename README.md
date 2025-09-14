@@ -310,15 +310,15 @@ CMD ["npm", "start"]
 
 Para dúvidas ou suporte técnico:
 
-- 📧 **Email**: dev@raisecapital.com.br
-- 💬 **Slack**: #dev-team
+- 📧 **Email**: contato@codnodo.com
+- 💬 **Slack**: #codnodo
 - 📋 **Issues**: Use o sistema de issues do GitHub
 
 ---
 
 ## 📄 Licença
 
-**Todos os direitos reservados © 2024 Raise Capital**
+**Todos os direitos reservados © 2025 Codnodo Studio**
 
 Este projeto é proprietário e confidencial. O uso, distribuição ou modificação sem autorização expressa é estritamente proibido.
 
