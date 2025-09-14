@@ -10,8 +10,9 @@ import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Pencil } from "lucide-react"
+import { Pencil, Shield, Key, Smartphone, Copy, Check } from "lucide-react"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { Badge } from "@/components/ui/badge"
 
 export default function PerfilPage() {
   const [avatarSrc, setAvatarSrc] = useState<string | null>(null)
@@ -19,6 +20,21 @@ export default function PerfilPage() {
   const [saved, setSaved] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [tipoPessoa, setTipoPessoa] = useState<"pf" | "pj">("pf")
+  
+  // Estados para 2FA
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false)
+  const [showQRCode, setShowQRCode] = useState(false)
+  const [totpCode, setTotpCode] = useState("")
+  const [backupCodes, setBackupCodes] = useState<string[]>([])
+  const [showBackupCodes, setShowBackupCodes] = useState(false)
+  const [qrCodeSecret, setQrCodeSecret] = useState("")
+  const [copied, setCopied] = useState(false)
+  
+  // Estados para troca de senha
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [passwordChanging, setPasswordChanging] = useState(false)
 
   function handlePickAvatar() {
     fileInputRef.current?.click()
@@ -41,6 +57,112 @@ export default function PerfilPage() {
     setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 2500)
+  }
+
+  // Funções para 2FA
+  async function handleEnable2FA() {
+    try {
+      // Simulação da chamada para /two-factor/enable
+      const response = await fetch('/api/two-factor/enable', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      const data = await response.json()
+      
+      if (data.success) {
+        setQrCodeSecret(data.secret)
+        setShowQRCode(true)
+      }
+    } catch (error) {
+      console.error('Erro ao habilitar 2FA:', error)
+    }
+  }
+
+  async function handleVerify2FA() {
+    try {
+      // Simulação da chamada para /two-factor/verify-totp
+      const response = await fetch('/api/two-factor/verify-totp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: totpCode })
+      })
+      const data = await response.json()
+      
+      if (data.success) {
+        setTwoFactorEnabled(true)
+        setShowQRCode(false)
+        setBackupCodes(data.backupCodes || [])
+        setShowBackupCodes(true)
+        setTotpCode('')
+      }
+    } catch (error) {
+      console.error('Erro ao verificar 2FA:', error)
+    }
+  }
+
+  async function handleDisable2FA() {
+    try {
+      // Simulação da chamada para /two-factor/disable
+      const response = await fetch('/api/two-factor/disable', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      const data = await response.json()
+      
+      if (data.success) {
+        setTwoFactorEnabled(false)
+        setShowQRCode(false)
+        setBackupCodes([])
+        setShowBackupCodes(false)
+      }
+    } catch (error) {
+      console.error('Erro ao desabilitar 2FA:', error)
+    }
+  }
+
+  // Função para troca de senha
+  async function handleChangePassword(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    
+    if (newPassword !== confirmPassword) {
+      alert('As senhas não coincidem')
+      return
+    }
+    
+    setPasswordChanging(true)
+    
+    try {
+      // Simulação da chamada para mudança de senha
+      const response = await fetch('/api/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword
+        })
+      })
+      const data = await response.json()
+      
+      if (data.success) {
+        setCurrentPassword('')
+        setNewPassword('')
+        setConfirmPassword('')
+        alert('Senha alterada com sucesso!')
+      } else {
+        alert(data.message || 'Erro ao alterar senha')
+      }
+    } catch (error) {
+      console.error('Erro ao alterar senha:', error)
+      alert('Erro ao alterar senha')
+    } finally {
+      setPasswordChanging(false)
+    }
+  }
+
+  function copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   return (
@@ -99,13 +221,14 @@ export default function PerfilPage() {
         <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
           <form id="perfil-form" onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
             <Tabs defaultValue="pessoais" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-6 gap-1 h-auto p-1">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-7 gap-1 h-auto p-1">
                 <TabsTrigger value="pessoais" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Pessoais</TabsTrigger>
                 <TabsTrigger value="contato" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Contato</TabsTrigger>
                 <TabsTrigger value="endereco" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Endereço</TabsTrigger>
                 <TabsTrigger value="profissionais" className="text-xs sm:text-sm px-1 sm:px-3 py-2">Profissionais</TabsTrigger>
                 <TabsTrigger value="bancarios" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Bancários</TabsTrigger>
                 <TabsTrigger value="pix" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Pix</TabsTrigger>
+                <TabsTrigger value="seguranca" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Segurança</TabsTrigger>
               </TabsList>
 
               {/* Pessoais */}
@@ -476,6 +599,203 @@ export default function PerfilPage() {
                   <div className="grid gap-2">
                     <Label htmlFor="chave_pix" className="text-sm">Chave PIX *</Label>
                     <Input id="chave_pix" name="chave_pix" placeholder="Sua chave PIX" required className="h-10 sm:h-11" />
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Segurança */}
+              <TabsContent value="seguranca" className="mt-4 sm:mt-6">
+                <div className="space-y-6">
+                  {/* Seção 2FA */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Shield className="size-5 text-primary" />
+                      <h3 className="text-base font-medium">Autenticação de dois fatores (2FA)</h3>
+                      {twoFactorEnabled && <Badge variant="secondary" className="text-xs">Ativo</Badge>}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Adicione uma camada extra de segurança à sua conta usando um aplicativo autenticador.
+                    </p>
+
+                    {!twoFactorEnabled ? (
+                      <div className="space-y-4">
+                        {!showQRCode ? (
+                          <Button onClick={handleEnable2FA} className="w-full sm:w-auto">
+                            <Smartphone className="size-4 mr-2" />
+                            Habilitar 2FA
+                          </Button>
+                        ) : (
+                          <div className="space-y-4">
+                            <div className="p-4 border rounded-lg bg-muted/50">
+                              <h4 className="font-medium mb-2">Configure seu aplicativo autenticador</h4>
+                              <p className="text-sm text-muted-foreground mb-4">
+                                Escaneie o QR Code abaixo com seu aplicativo autenticador (Google Authenticator, Authy, etc.)
+                              </p>
+                              
+                              {/* Simulação do QR Code */}
+                              <div className="w-48 h-48 bg-white border-2 border-dashed border-muted-foreground/30 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <div className="text-center text-muted-foreground">
+                                  <Smartphone className="size-8 mx-auto mb-2" />
+                                  <p className="text-xs">QR Code</p>
+                                  <p className="text-xs">para 2FA</p>
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <Label className="text-sm">Ou digite manualmente:</Label>
+                                <div className="flex items-center gap-2">
+                                  <Input 
+                                    value={qrCodeSecret || "JBSWY3DPEHPK3PXP"} 
+                                    readOnly 
+                                    className="font-mono text-xs" 
+                                  />
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline" 
+                                    onClick={() => copyToClipboard(qrCodeSecret || "JBSWY3DPEHPK3PXP")}
+                                  >
+                                    {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="totp-code" className="text-sm">Código de verificação</Label>
+                              <div className="flex gap-2">
+                                <Input
+                                  id="totp-code"
+                                  value={totpCode}
+                                  onChange={(e) => setTotpCode(e.target.value)}
+                                  placeholder="000000"
+                                  maxLength={6}
+                                  className="font-mono"
+                                />
+                                <Button onClick={handleVerify2FA} disabled={totpCode.length !== 6}>
+                                  Verificar
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-950/20">
+                          <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
+                            <Shield className="size-4" />
+                            <span className="text-sm font-medium">2FA está ativo</span>
+                          </div>
+                          <p className="text-sm text-green-600 dark:text-green-500 mt-1">
+                            Sua conta está protegida com autenticação de dois fatores.
+                          </p>
+                        </div>
+                        
+                        {showBackupCodes && backupCodes.length > 0 && (
+                          <div className="p-4 border rounded-lg bg-amber-50 dark:bg-amber-950/20">
+                            <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-2">Códigos de backup</h4>
+                            <p className="text-sm text-amber-700 dark:text-amber-300 mb-3">
+                              Guarde estes códigos em local seguro. Você pode usá-los para acessar sua conta se perder o dispositivo.
+                            </p>
+                            <div className="grid grid-cols-2 gap-2 font-mono text-sm">
+                              {backupCodes.map((code, index) => (
+                                <div key={index} className="p-2 bg-white dark:bg-gray-800 rounded border">
+                                  {code}
+                                </div>
+                              ))}
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="mt-3"
+                              onClick={() => setShowBackupCodes(false)}
+                            >
+                              Já salvei os códigos
+                            </Button>
+                          </div>
+                        )}
+                        
+                        <Button 
+                          variant="destructive" 
+                          onClick={handleDisable2FA}
+                          className="w-full sm:w-auto"
+                        >
+                          Desabilitar 2FA
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  <Separator />
+
+                  {/* Seção Troca de Senha */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Key className="size-5 text-primary" />
+                      <h3 className="text-base font-medium">Alterar senha</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Mantenha sua conta segura alterando sua senha regularmente.
+                    </p>
+
+                    <form onSubmit={handleChangePassword} className="space-y-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="current-password" className="text-sm">Senha atual *</Label>
+                        <Input
+                          id="current-password"
+                          type="password"
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          placeholder="Digite sua senha atual"
+                          required
+                          className="h-10 sm:h-11"
+                        />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="new-password" className="text-sm">Nova senha *</Label>
+                        <Input
+                          id="new-password"
+                          type="password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          placeholder="Digite sua nova senha"
+                          required
+                          className="h-10 sm:h-11"
+                        />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="confirm-password" className="text-sm">Confirmar nova senha *</Label>
+                        <Input
+                          id="confirm-password"
+                          type="password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          placeholder="Confirme sua nova senha"
+                          required
+                          className="h-10 sm:h-11"
+                        />
+                      </div>
+                      
+                      <div className="p-3 bg-muted/50 rounded-lg">
+                        <p className="text-xs text-muted-foreground">
+                          <strong>Dicas para uma senha segura:</strong><br />
+                          • Use pelo menos 8 caracteres<br />
+                          • Combine letras maiúsculas e minúsculas<br />
+                          • Inclua números e símbolos<br />
+                          • Evite informações pessoais
+                        </p>
+                      </div>
+                      
+                      <Button 
+                        type="submit" 
+                        disabled={passwordChanging || !currentPassword || !newPassword || !confirmPassword}
+                        className="w-full sm:w-auto"
+                      >
+                        {passwordChanging ? "Alterando..." : "Alterar senha"}
+                      </Button>
+                    </form>
                   </div>
                 </div>
               </TabsContent>
