@@ -31,6 +31,7 @@ import {
 import { formatBRL } from "@/lib/utils"
 import PortfolioDistributionChart from "@/components/portfolio-distribution-chart"
 import StatisticCard13 from "@/components/statistic-card-13"
+import { GradientBarMultipleChart } from "@/components/ui/gradient-bar-multiple-chart"
 
 // Card inspirado no ReUI StatisticCard1, com delta e comparativo opcionais
 const KpiStatCard = ({
@@ -181,6 +182,9 @@ export default function ContaDashboardPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Performance mensal */}
+      <GradientBarMultipleChart />
 
       {/* Próximos passos */}
       <Card>
