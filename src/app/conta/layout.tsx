@@ -8,13 +8,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import MobileMenu from "@/components/mobile-menu";
 
 export const metadata = {
   title: {
-    default: "Área do Investidor — Raise Capital",
     template: "%s | Área do Investidor",
+    default: "Área do Investidor",
   },
-}
+  description: "Gerencie seus investimentos, acompanhe rendimentos e acesse relatórios detalhados na sua área exclusiva do investidor.",
+};
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -45,40 +47,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             {/* Right: Ações (mobile menu / desktop icons) */}
             <div className="flex items-center justify-self-end gap-2">
               {/* Mobile menu */}
-              <details className="relative group sm:hidden">
-                <summary className="appearance-none list-none inline-flex items-center justify-center rounded-md p-2 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 [&::-webkit-details-marker]:hidden [&::marker]:content-['']" aria-label="Abrir menu">
-                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="3" y1="12" x2="21" y2="12" />
-                    <line x1="3" y1="6" x2="21" y2="6" />
-                    <line x1="3" y1="18" x2="21" y2="18" />
-                  </svg>
-                </summary>
-                <div className="absolute right-0 top-full mt-2 w-64 rounded-md border bg-popover text-popover-foreground shadow-md">
-                  <nav className="flex flex-col p-2 text-sm">
-                    <Link href="/conta" className="rounded px-3 py-2 hover:bg-accent/30">Minha carteira</Link>
-                    <div className="my-1 h-px bg-border" />
-                    <span className="px-3 py-1.5 text-xs uppercase text-muted-foreground">Meus investimentos</span>
-                    <Link href="/conta/investimentos" className="rounded px-3 py-2 hover:bg-accent/30">Em andamento</Link>
-                    <Link href="/conta/investimentos?status=liquidados" className="rounded px-3 py-2 hover:bg-accent/30">Liquidados</Link>
-                    <div className="my-1 h-px bg-border" />
-                    <Link href="/conta/rendimentos" className="rounded px-3 py-2 hover:bg-accent/30">Proventos</Link>
-                    <Link href="/conta/extratos" className="rounded px-3 py-2 hover:bg-accent/30">Extrato</Link>
-                    <div className="my-1 h-px bg-border" />
-                    <span className="px-3 py-1.5 text-xs uppercase text-muted-foreground">Mais</span>
-                    <Link href="#" className="rounded px-3 py-2 hover:bg-accent/30">Falar com especialista</Link>
-                    <Link href="/conta/perfil" className="rounded px-3 py-2 hover:bg-accent/30">Dados Cadastrais</Link>
-                    <Link href="/conta/documentos" className="rounded px-3 py-2 hover:bg-accent/30">Imposto de Renda</Link>
-                    <Link href="/material-didatico" className="rounded px-3 py-2 hover:bg-accent/30">Conteúdos</Link>
-                    <Link href="/conta/assinaturas" className="rounded px-3 py-2 hover:bg-accent/30">Grupos</Link>
-                    <div className="my-2 h-px bg-border" />
-                    <Link href="/ofertas" className="rounded px-3 py-2 font-medium hover:bg-accent/30">Investir</Link>
-                    <div className="my-2 h-px bg-border" />
-                    <Link href="/conta/perfil" className="rounded px-3 py-2 hover:bg-accent/30">Perfil</Link>
-                    <a href="mailto:contato@raisecapital.com" className="rounded px-3 py-2 hover:bg-accent/30">Suporte</a>
-                    <Link href="/auth/login" className="rounded px-3 py-2 hover:bg-accent/30">Sair da conta</Link>
-                  </nav>
-                </div>
-              </details>
+              <MobileMenu />
 
               {/* Bell (desktop) */}
               <DropdownMenu>
