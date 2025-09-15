@@ -11,7 +11,9 @@ export function getMailer() {
   const pass = process.env.SMTP_PASS
 
   if (!user || !pass) {
-    throw new Error('SMTP_USER/SMTP_PASS are not set')
+    // Fallback seguro para desenvolvimento: não envia e-mail real, mas não falha
+    _transporter = nodemailer.createTransport({ jsonTransport: true })
+    return _transporter
   }
 
   _transporter = nodemailer.createTransport({
