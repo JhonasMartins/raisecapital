@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifySession } from '@/lib/auth';
 
 // Rotas que requerem autenticação
-const protectedRoutes = ['/dashboard'];
+const protectedRoutes = ['/dashboard', '/conta'];
 
 // Rotas de autenticação (redirecionam se já logado)
 const authRoutes = ['/auth/login', '/auth/criar-conta'];
@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirecionar usuários autenticados das páginas de auth
   if (authRoutes.includes(pathname) && isAuthenticated) {
-    return NextResponse.redirect(new URL('/dashboard/investidor', request.url));
+    return NextResponse.redirect(new URL('/conta', request.url));
   }
 
   return NextResponse.next();

@@ -13,11 +13,15 @@ import NavUser from '@/components/nav-user';
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: 'swap',
+  preload: true,
 });
 
 const interMono = Inter({
   variable: "--font-inter-mono",
   subsets: ["latin"],
+  display: 'swap',
+  preload: true,
 });
 
 export const metadata: Metadata = {

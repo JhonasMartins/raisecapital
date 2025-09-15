@@ -168,8 +168,8 @@ export default function CriarContaPage() {
         throw new Error(data.error || 'Erro ao criar conta')
       }
 
-      // Redirecionar para dashboard após registro bem-sucedido
-      router.push('/dashboard/investidor')
+      // Redirecionar para /conta após registro bem-sucedido
+      router.push('/conta')
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao criar conta')
