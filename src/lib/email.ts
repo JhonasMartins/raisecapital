@@ -11,7 +11,9 @@ export function getMailer() {
   const pass = process.env.SMTP_PASS
 
   if (!user || !pass) {
-    throw new Error('SMTP_USER/SMTP_PASS are not set')
+    // Fallback seguro para desenvolvimento: não envia e-mail real, mas não falha
+    _transporter = nodemailer.createTransport({ jsonTransport: true })
+    return _transporter
   }
 
   _transporter = nodemailer.createTransport({
@@ -120,7 +122,7 @@ function buildInvestorWelcomeEmail(name?: string, opts?: { baseUrl?: string; lin
   const envBase = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || defaultBase).replace(/\/$/, '')
   const assetBase = (opts?.baseUrl || envBase).replace(/\/$/, '')
   const linkBase = (opts?.linkBaseUrl || envBase).replace(/\/$/, '')
-  const dashboardUrl = `${linkBase}/dashboard/investidor`
+  const dashboardUrl = `${linkBase}/conta`
 
   const brandPrimary = '#04a2fa'
   const brandPrimaryDark = '#176d9f'
