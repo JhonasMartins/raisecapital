@@ -142,6 +142,44 @@ async function main() {
       CREATE INDEX IF NOT EXISTS files_created_at_idx ON files (created_at);
     `)
 
+    // Users profile fields to support /conta/perfil (idempotent)
+    await client.query(`
+      ALTER TABLE users
+        ADD COLUMN IF NOT EXISTS tipo_pessoa VARCHAR(10) CHECK (tipo_pessoa IN ('pf','pj')),
+        ADD COLUMN IF NOT EXISTS data_nascimento DATE,
+        ADD COLUMN IF NOT EXISTS cpf VARCHAR(14),
+        ADD COLUMN IF NOT EXISTS rg VARCHAR(20),
+        ADD COLUMN IF NOT EXISTS razao_social VARCHAR(255),
+        ADD COLUMN IF NOT EXISTS cnpj VARCHAR(18),
+        ADD COLUMN IF NOT EXISTS representante_nome VARCHAR(255),
+        ADD COLUMN IF NOT EXISTS representante_cpf VARCHAR(14),
+        ADD COLUMN IF NOT EXISTS representante_cargo VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS cep VARCHAR(10),
+        ADD COLUMN IF NOT EXISTS endereco_logradouro VARCHAR(255),
+        ADD COLUMN IF NOT EXISTS endereco_numero VARCHAR(20),
+        ADD COLUMN IF NOT EXISTS endereco_complemento VARCHAR(255),
+        ADD COLUMN IF NOT EXISTS endereco_bairro VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS endereco_cidade VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS endereco_estado VARCHAR(2),
+        ADD COLUMN IF NOT EXISTS endereco_pais VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS profissao VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS empresa_trabalho VARCHAR(255),
+        ADD COLUMN IF NOT EXISTS renda_mensal NUMERIC(15,2),
+        ADD COLUMN IF NOT EXISTS patrimonio NUMERIC(15,2),
+        ADD COLUMN IF NOT EXISTS banco VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS agencia VARCHAR(10),
+        ADD COLUMN IF NOT EXISTS conta VARCHAR(20),
+        ADD COLUMN IF NOT EXISTS tipo_conta VARCHAR(20) CHECK (tipo_conta IN ('corrente','poupanca')),
+        ADD COLUMN IF NOT EXISTS pix_type VARCHAR(20) CHECK (pix_type IN ('cpf','cnpj','email','telefone','aleatoria')),
+        ADD COLUMN IF NOT EXISTS pix_key VARCHAR(255),
+        ADD COLUMN IF NOT EXISTS two_factor_enabled BOOLEAN DEFAULT false,
+        ADD COLUMN IF NOT EXISTS two_factor_secret TEXT,
+        ADD COLUMN IF NOT EXISTS email_verified TIMESTAMP;
+
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_users_cpf_unique ON users (cpf) WHERE cpf IS NOT NULL;
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_users_cnpj_unique ON users (cnpj) WHERE cnpj IS NOT NULL;
+    `)
+
     await client.query('COMMIT')
     console.log('Database setup successful: tables ofertas, blog and blog_comments are ready.')
   } catch (err) {
