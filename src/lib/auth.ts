@@ -19,7 +19,7 @@ export const auth = betterAuth({
   
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    requireEmailVerification: process.env.NODE_ENV === 'production',
     sendResetPassword: async ({ user, url }: { user: any, url: string }) => {
       const mailer = getMailer()
       await mailer.sendMail({
