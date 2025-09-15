@@ -438,7 +438,9 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
               </CardHeader>
               <CardContent className="space-y-5">
                 {/* CTA principal */}
-                <Button size="lg" className="w-full">Investir agora</Button>
+                <Button size="lg" className="w-full" asChild>
+                  <Link href={`/investir/${slug}`}>Investir agora</Link>
+                </Button>
 
                 {/* Progresso */}
                 <div>

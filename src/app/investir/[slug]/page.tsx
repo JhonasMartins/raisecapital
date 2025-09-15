@@ -1,0 +1,12 @@
+import { redirect } from 'next/navigation'
+
+interface InvestmentFlowPageProps {
+  params: Promise<{ slug: string }>
+}
+
+export default async function InvestmentFlowPage({ params }: InvestmentFlowPageProps) {
+  const { slug } = await params
+  
+  // Redirecionar para a primeira etapa do wizard
+  redirect(`/investir/${slug}/valor`)
+}
