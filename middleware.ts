@@ -37,7 +37,7 @@ export default async function middleware(req: NextRequest) {
 
   // Se for rota protegida, SEMPRE exigir autenticação, independentemente de estar na lista pública
   if (isProtectedRoute) {
-    const sessionToken = req.cookies.get('better-auth.session-token')?.value
+    const sessionToken = req.cookies.get('session')?.value
     if (!sessionToken) {
       const loginUrl = new URL('/auth/login', req.url)
       loginUrl.searchParams.set('redirect', path)
