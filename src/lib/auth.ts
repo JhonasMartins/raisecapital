@@ -1,5 +1,4 @@
 import { betterAuth } from 'better-auth'
-import { twoFactor } from 'better-auth/plugins'
 import { Pool } from 'pg'
 import { getMailer } from './email'
 
@@ -21,7 +20,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
-    sendResetPassword: async ({ user, url }) => {
+    sendResetPassword: async ({ user, url }: { user: any, url: string }) => {
       const mailer = getMailer()
       await mailer.sendMail({
         from: process.env.SMTP_FROM || process.env.SMTP_USER || 'no-reply@raisecapital.com.br',
@@ -38,7 +37,7 @@ export const auth = betterAuth({
         `
       })
     },
-    sendVerificationEmail: async ({ user, url }) => {
+    sendVerificationEmail: async ({ user, url }: { user: any, url: string }) => {
       const mailer = getMailer()
       await mailer.sendMail({
         from: process.env.SMTP_FROM || process.env.SMTP_USER || 'no-reply@raisecapital.com.br',
@@ -57,32 +56,7 @@ export const auth = betterAuth({
     }
   },
 
-  plugins: [
-    twoFactor({
-      twoFactorTable: 'two_factor',
-      userTable: 'user', 
-      issuer: 'Raise Capital',
-      sendTwoFactorCode: async ({ user, code }) => {
-        const mailer = getMailer()
-        await mailer.sendMail({
-          from: process.env.SMTP_FROM || process.env.SMTP_USER || 'no-reply@raisecapital.com.br',
-          to: user.email,
-          subject: 'Código de verificação - Raise Capital',
-          html: `
-            <div style="max-width:600px;margin:0 auto;padding:20px;font-family:system-ui,-apple-system,sans-serif">
-              <h2>Código de verificação</h2>
-              <p>Seu código de verificação é:</p>
-              <div style="background:#f8f9fa;padding:20px;border-radius:8px;text-align:center;margin:20px 0">
-                <span style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#04a2fa">${code}</span>
-              </div>
-              <p>Este código expira em 10 minutos.</p>
-              <p>Se você não solicitou este código, ignore este e-mail.</p>
-            </div>
-          `
-        })
-      }
-    })
-  ],
+  plugins: [],
 
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
@@ -105,9 +79,8 @@ export const auth = betterAuth({
   trustedOrigins: [
     process.env.NODE_ENV === 'production' 
       ? 'https://raisecapital.com.br' 
-      : 'http://localhost:3001'
+      : 'http://localhost:3000'
   ],
 })
 
 export type Session = typeof auth.$Infer.Session
-export type User = typeof auth.$Infer.User
