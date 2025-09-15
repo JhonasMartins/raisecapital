@@ -95,7 +95,7 @@ export default function CapteRecursosPage() {
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button asChild className="bg-white text-blue-950 hover:bg-white/90">
-                <Link href="/auth/criar-conta">Cadastre-se agora</Link>
+                <Link href="/auth/criar-conta?tipo=pj">Cadastre-se agora</Link>
               </Button>
               <Button variant="outline" asChild className="bg-transparent border-white/40 text-white hover:bg-white/10">
                 <Link href="https://wa.me/5511976511371" target="_blank" rel="noopener noreferrer">Falar com um especialista</Link>
@@ -160,7 +160,7 @@ export default function CapteRecursosPage() {
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex items-end justify-between gap-4">
             <h2 className="text-2xl font-semibold">Como funciona</h2>
-            <Button asChild variant="secondary"><Link href="/auth/criar-conta">Começar agora</Link></Button>
+            <Button asChild variant="secondary"><Link href="/auth/criar-conta?tipo=pj">Começar agora</Link></Button>
           </div>
 
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
@@ -255,7 +255,7 @@ export default function CapteRecursosPage() {
             </div>
 
             <div className="mt-10 flex justify-center">
-              <Button asChild size="lg"><Link href="/auth/criar-conta">Cadastre-se gratuitamente</Link></Button>
+              <Button asChild size="lg"><Link href="/auth/criar-conta?tipo=pj">Cadastre-se gratuitamente</Link></Button>
             </div>
           </div>
         </section>

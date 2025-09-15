@@ -12,7 +12,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   const isCentered = centerPaths.has(pathname)
 
   // Gate de manutenção apenas para login e cadastro
-  const gatePaths = new Set(["/auth/login", "/auth/criar-conta"]) 
+  const gatePaths = new Set(["/auth/login", "/auth/criar-conta", "/auth/criar-conta/empresa"])
   const [showGate, setShowGate] = useState(false)
   const [devPwd, setDevPwd] = useState("")
   const [unlocking, setUnlocking] = useState(false)

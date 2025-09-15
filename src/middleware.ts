@@ -5,7 +5,7 @@ import { verifySession } from '@/lib/auth';
 const protectedRoutes = ['/conta', '/empresa'];
 
 // Rotas de autenticação (redirecionam se já logado)
-const authRoutes = ['/auth/login', '/auth/criar-conta'];
+const authRoutes = ['/auth/login', '/auth/criar-conta', '/auth/criar-conta/empresa'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

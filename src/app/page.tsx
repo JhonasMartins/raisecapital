@@ -491,7 +491,7 @@ export default function Home() {
 
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 <Button asChild>
-                  <Link href="/auth/criar-conta">Submeter projeto</Link>
+                  <Link href="/auth/criar-conta?tipo=pj">Submeter projeto</Link>
                 </Button>
                 <Button variant="outline" asChild className="text-foreground">
                   <a href="https://wa.me/5511976511371" target="_blank" rel="noopener noreferrer">Falar com especialista</a>
