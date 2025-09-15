@@ -2,27 +2,33 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { authClient, type Session } from '@/lib/auth-client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { TrendingUp, DollarSign, PieChart, Activity, Plus, Eye } from 'lucide-react'
 
+interface User {
+  id: string
+  email: string
+  name: string
+}
+
 export default function DashboardInvestidor() {
-  const [session, setSession] = useState<Session | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const result = await authClient.getSession()
-        if (result.error || !result.data) {
+        const response = await fetch('/api/auth/me')
+        if (!response.ok) {
           router.push('/auth/login')
           return
         }
-        setSession(result.data)
+        const userData = await response.json()
+        setUser(userData)
       } catch (error) {
         console.error('Erro ao verificar autenticação:', error)
         router.push('/auth/login')
@@ -36,8 +42,12 @@ export default function DashboardInvestidor() {
 
   const handleLogout = async () => {
     try {
-      await authClient.signOut()
-      router.push('/')
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      })
+      if (response.ok) {
+        router.push('/')
+      }
     } catch (error) {
       console.error('Erro ao fazer logout:', error)
     }
@@ -63,7 +73,7 @@ export default function DashboardInvestidor() {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-700">
-                Olá, {session?.user?.email}
+                Olá, {user?.email}
               </span>
               <Button variant="outline" onClick={handleLogout}>
                 Sair
