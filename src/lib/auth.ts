@@ -14,6 +14,17 @@ const dbPool = new Pool({
 export const auth = betterAuth({
   database: dbPool,
   
+  // Mapeia o core model 'user' para a tabela plural 'users' e nomes de colunas já existentes
+  user: {
+    modelName: 'users',
+    fields: {
+      image: 'avatar_url',
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+      emailVerified: 'email_verified',
+    },
+  },
+  
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: process.env.NODE_ENV === 'production',
