@@ -197,6 +197,19 @@ async function main() {
         END IF;
       END$$;
     `)
+
+    // Drop wrong/reserved table name if it exists to avoid conflicts with Better Auth
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.tables
+          WHERE table_schema = 'public' AND table_name = 'user'
+        ) THEN
+          EXECUTE 'DROP TABLE IF EXISTS "user" CASCADE';
+        END IF;
+      END$$;
+    `)
  
      await client.query('COMMIT')
      console.log('Database setup successful: tables ofertas, blog and blog_comments are ready.')
