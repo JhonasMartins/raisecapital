@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Image from "next/image";
 import Link from "next/link";
 import FooterGate from "@/components/footer-gate";
 import { Button } from "@/components/ui/button";
 import Script from "next/script";
-import NavMobile from "@/components/nav-mobile"
+import NavMobile from "@/components/nav-mobile";
+import { getCurrentUser } from '@/lib/auth';
+import NavUser from '@/components/nav-user';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const interMono = Inter({
+  variable: "--font-inter-mono",
   subsets: ["latin"],
 });
 
@@ -92,54 +94,53 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const currentUser = await getCurrentUser();
+
   return (
     <html lang="pt-BR">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${inter.variable} ${interMono.variable} antialiased`}>
 
-        {/* Navbar (oculta em /auth via FooterGate) */}
-        <FooterGate>
-          <header className="sticky top-0 inset-x-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between sm:grid sm:grid-cols-[1fr_auto_1fr] sm:justify-normal">
-              {/* Logo à esquerda */}
-              <div className="flex items-center justify-start shrink-0">
-                <Link href="/" className="flex items-center" aria-label="Ir para a página inicial">
-                  <Image src="/logo.avif" alt="Raise Capital" width={180} height={44} sizes="(max-width: 640px) 112px, 180px" className="block h-8 w-auto sm:h-10" priority />
-                </Link>
-              </div>
-
-              {/* Menu central - desktop */}
-              <nav className="hidden sm:flex items-center justify-center gap-6 text-sm text-muted-foreground">
-                <Link href="/" className="hover:text-foreground transition-colors">Início</Link>
-                <Link href="/ofertas" className="hover:text-foreground transition-colors">Investimentos</Link>
-                <Link href="/capte-recursos" className="hover:text-foreground transition-colors">Captar</Link>
-                <Link href="/#investidores" className="hover:text-foreground transition-colors">Como funcionar</Link>
-                <Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link>
-              </nav>
-
-              {/* Ações à direita */}
-              <div className="flex items-center justify-end gap-3">
-                {/* Menu mobile (apenas no mobile) */}
-                <NavMobile />
-
-                {/* Ações desktop (somente em sm+) */}
-                <div className="hidden sm:flex items-center gap-3">
-                  <Link href="/auth/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Entrar</Link>
-                  <Button asChild>
-                    <Link href="/auth/criar-conta">Criar Conta</Link>
-                  </Button>
-                </div>
-              </div>
-
+      {/* Navbar (oculta em /auth via FooterGate) */}
+      <FooterGate>
+        <header className="sticky top-0 inset-x-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between sm:grid sm:grid-cols-[1fr_auto_1fr] sm:justify-normal">
+            {/* Logo à esquerda */}
+            <div className="flex items-center justify-start shrink-0">
+              <Link href="/" className="flex items-center" aria-label="Ir para a página inicial">
+                <Image src="/logo.avif" alt="Raise Capital" width={180} height={44} sizes="(max-width: 640px) 112px, 180px" className="block h-8 w-auto sm:h-10" priority />
+              </Link>
             </div>
-          </header>
-        </FooterGate>
 
-        {children}
+            {/* Menu central - desktop */}
+            <nav className="hidden sm:flex items-center justify-center gap-6 text-sm text-muted-foreground">
+              <Link href="/" className="hover:text-foreground transition-colors">Início</Link>
+              <Link href="/ofertas" className="hover:text-foreground transition-colors">Investimentos</Link>
+              <Link href="/capte-recursos" className="hover:text-foreground transition-colors">Captar</Link>
+              <Link href="/#investidores" className="hover:text-foreground transition-colors">Como funcionar</Link>
+              <Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link>
+            </nav>
+
+            {/* Ações à direita */}
+            <div className="flex items-center justify-end gap-3">
+              {/* Menu mobile (apenas no mobile) */}
+              <NavMobile />
+
+              {/* Ações desktop (somente em sm+) */}
+              <div className="hidden sm:flex items-center gap-3">
+                <NavUser user={currentUser} />
+              </div>
+            </div>
+
+          </div>
+        </header>
+      </FooterGate>
+
+      {children}
 
         {/* JSON-LD Structured Data */}
         <Script
