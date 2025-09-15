@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import MobileMenu from "@/components/mobile-menu";
 import { Bell, Mail, TrendingUp, CheckCircle2, DollarSign } from "lucide-react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: {
@@ -19,7 +21,14 @@ export const metadata = {
   description: "Gerencie suas ofertas, acompanhe captações e acesse relatórios detalhados na sua área exclusiva da empresa.",
 };
 
-export default function EmpresaLayout({ children }: { children: React.ReactNode }) {
+export default async function EmpresaLayout({ children }: { children: React.ReactNode }) {
+  // Proteção server-side: exige sessão válida (cookie presente) para acessar qualquer rota dentro de /empresa
+  const cookieStore = await cookies();
+  const hasSession = !!cookieStore.get("better-auth.session-token")?.value;
+  if (!hasSession) {
+    redirect("/auth/login?redirect=/empresa");
+  }
+
   return (
     <>
       <div className="min-h-svh bg-[#f7f9fc]">
