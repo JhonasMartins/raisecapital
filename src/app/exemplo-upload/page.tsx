@@ -31,7 +31,7 @@ export default function ExemploUploadPage() {
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">Exemplo de Upload de Arquivos</h1>
         <p className="text-muted-foreground">
-          Demonstração do componente de upload integrado com Supabase Storage
+          Demonstração do componente de upload com armazenamento local
         </p>
       </div>
 

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import fs from 'fs/promises'
 import path from 'path'
-import { query } from '@/lib/db'
+import { query } from '@/lib/database'
 
 export const runtime = 'nodejs'
 
@@ -112,7 +112,7 @@ export async function POST(req: Request) {
       try {
         const size = outBuffer.length
         if (DEBUG) console.log('Upload: trying Postgres insert', { filename, mime, size })
-        const insert = await query<{ id: string }>(
+        const insert = await query(
           `INSERT INTO files (filename, mime, size, data) VALUES ($1, $2, $3, $4) RETURNING id`,
           [filename, mime || null, size, outBuffer]
         )
@@ -139,7 +139,7 @@ export async function POST(req: Request) {
               );
               CREATE INDEX IF NOT EXISTS files_created_at_idx ON files (created_at);
             `)
-            const retry = await query<{ id: string }>(
+            const retry = await query(
               `INSERT INTO files (filename, mime, size, data) VALUES ($1, $2, $3, $4) RETURNING id`,
               [filename, mime || null, outBuffer.length, outBuffer]
             )

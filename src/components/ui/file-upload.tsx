@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { X, Upload, File, Image, FileText } from 'lucide-react'
-import { uploadFile, getPublicUrl, deleteFile, type StorageBucket } from '@/lib/supabase'
+import { uploadFile, getPublicUrl, deleteFile, type StorageBucket } from '@/lib/storage'
 import { cn } from '@/lib/utils'
 
 interface FileUploadProps {
@@ -119,7 +119,7 @@ export function FileUpload({
   const removeUploadedFile = async (index: number) => {
     const file = uploadedFiles[index]
     try {
-      await deleteFile(bucket, file.path)
+      await deleteFile(file.path)
       setUploadedFiles(prev => prev.filter((_, i) => i !== index))
     } catch (error) {
       onUploadError?.(`Erro ao remover arquivo: ${error}`)
@@ -141,8 +141,8 @@ export function FileUpload({
         const fileName = `${timestamp}_${file.name}`
         const filePath = path ? `${path}/${fileName}` : fileName
 
-        const data = await uploadFile(bucket, filePath, file)
-        const publicUrl = getPublicUrl(bucket, data.path)
+        const data = await uploadFile(bucket, file, filePath)
+        const publicUrl = getPublicUrl(data.path)
 
         uploaded.push({
           name: file.name,

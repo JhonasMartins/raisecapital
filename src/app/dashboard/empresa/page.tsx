@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth'
+import { getCurrentUser, clearSessionCookie } from '@/lib/auth';
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -6,24 +6,19 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { ArrowUpRight, DollarSign, TrendingUp, PieChart, FileText, Users, Building2, Target } from 'lucide-react'
 import { redirect } from 'next/navigation'
-import { headers } from 'next/headers'
 
 export default async function EmpresaDashboard() {
   // Verificar autenticação no servidor
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+  const user = await getCurrentUser()
   
-  // Se não há sessão, redirecionar para login
-  if (!session) {
+  // Se não há usuário, redirecionar para login
+  if (!user) {
     redirect('/auth/login?redirect=/dashboard/empresa')
   }
 
   const handleLogout = async () => {
     'use server'
-    await auth.api.signOut({
-      headers: await headers()
-    })
+    await clearSessionCookie()
     redirect('/')
   }
 
@@ -35,7 +30,7 @@ export default async function EmpresaDashboard() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Dashboard da Empresa</h1>
             <p className="text-muted-foreground">
-              Bem-vindo de volta, {session.user.name}!
+              Bem-vindo de volta, {user.name}!
             </p>
           </div>
           <form action={handleLogout}>
