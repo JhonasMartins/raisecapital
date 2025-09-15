@@ -24,7 +24,7 @@ export const metadata = {
 export default async function EmpresaLayout({ children }: { children: React.ReactNode }) {
   // Proteção server-side: exige sessão válida (cookie presente) para acessar qualquer rota dentro de /empresa
   const cookieStore = await cookies();
-  const hasSession = !!cookieStore.get("better-auth.session-token")?.value;
+  const hasSession = !!cookieStore.get("session")?.value
   if (!hasSession) {
     redirect("/auth/login?redirect=/empresa");
   }

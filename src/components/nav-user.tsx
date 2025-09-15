@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -26,6 +26,7 @@ interface NavUserProps {
 
 export default function NavUser({ user }: NavUserProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
@@ -67,6 +68,14 @@ export default function NavUser({ user }: NavUserProps) {
     ? user.name.split(' ').map(n => n[0]).join('').toUpperCase()
     : user.email.substring(0, 2).toUpperCase();
 
+  // Heurística temporária: se o usuário está navegando dentro de /empresa,
+  // considerar contexto de empresa; caso contrário, direcionar para /conta.
+  const isEmpresaContext = (pathname || '').startsWith('/empresa');
+  const dashboardHref = isEmpresaContext ? '/empresa' : '/conta';
+  // Para configurações do investidor existe /conta/perfil; na área da empresa
+  // ainda não há rota de configurações disponível, então apontamos para /empresa por ora.
+  const settingsHref = isEmpresaContext ? '/empresa' : '/conta/perfil';
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -88,11 +97,11 @@ export default function NavUser({ user }: NavUserProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push('/conta')}>
+        <DropdownMenuItem onClick={() => router.push(dashboardHref)}>
           <User className="mr-2 h-4 w-4" />
           <span>Dashboard</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push('/conta/seguranca')}>
+        <DropdownMenuItem onClick={() => router.push(settingsHref)}>
           <Settings className="mr-2 h-4 w-4" />
           <span>Configurações</span>
         </DropdownMenuItem>
