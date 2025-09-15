@@ -1,54 +1,29 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { authClient, type Session } from '@/lib/auth-client'
+import { auth } from '@/lib/auth'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { TrendingUp, DollarSign, PieChart, Activity, Plus, Eye } from 'lucide-react'
+import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 
-export default function DashboardInvestidor() {
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
-  const router = useRouter()
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const result = await authClient.getSession()
-        if (result.error || !result.data) {
-          router.push('/auth/login')
-          return
-        }
-        setSession(result.data)
-      } catch (error) {
-        console.error('Erro ao verificar autenticação:', error)
-        router.push('/auth/login')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    checkAuth()
-  }, [])
-
-  const handleLogout = async () => {
-    try {
-      await authClient.signOut()
-      router.push('/')
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error)
-    }
+export default async function DashboardInvestidor() {
+  // Verificar autenticação no servidor
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+  
+  // Se não há sessão, redirecionar para login
+  if (!session) {
+    redirect('/auth/login?redirect=/dashboard/investidor')
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    )
+  const handleLogout = async () => {
+    'use server'
+    await auth.api.signOut({
+      headers: await headers()
+    })
+    redirect('/')
   }
 
   return (
@@ -63,11 +38,8 @@ export default function DashboardInvestidor() {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-700">
-                Olá, {session?.user?.email}
+                Olá, {session.user.email}
               </span>
-              <Button variant="outline" onClick={handleLogout}>
-                Sair
-              </Button>
             </div>
           </div>
         </div>
@@ -77,12 +49,19 @@ export default function DashboardInvestidor() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Bem-vindo ao seu Dashboard
-          </h2>
-          <p className="text-gray-600">
-            Gerencie seus investimentos e explore novas oportunidades.
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Dashboard do Investidor</h1>
+              <p className="text-muted-foreground">
+                Bem-vindo de volta, {session.user.name}!
+              </p>
+            </div>
+            <form action={handleLogout}>
+              <Button type="submit" variant="outline">
+                Sair
+              </Button>
+            </form>
+          </div>
         </div>
 
         {/* Stats Cards */}
