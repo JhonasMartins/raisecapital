@@ -23,36 +23,35 @@ const publicRoutes = [
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname
-  
-  // Verificar se é uma rota protegida
-  const isProtectedRoute = protectedRoutes.some(route => 
-    path.startsWith(route)
+
+  // Verificar se é rota protegida (evita que '/dashboardx' case com '/dashboard')
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    path === route || path.startsWith(`${route}/`)
   )
-  
-  // Verificar se é uma rota pública
-  const isPublicRoute = publicRoutes.some(route => 
-    path === route || path.startsWith(route)
-  )
-  
+
+  // Verificar se é rota pública, tratando '/' como match exato
+  const isPublicRoute = publicRoutes.some((route) => {
+    if (route === '/') return path === '/'
+    return path === route || path.startsWith(`${route}/`)
+  })
+
+  // Se for rota protegida, SEMPRE exigir autenticação, independentemente de estar na lista pública
+  if (isProtectedRoute) {
+    const sessionToken = req.cookies.get('better-auth.session-token')?.value
+    if (!sessionToken) {
+      const loginUrl = new URL('/auth/login', req.url)
+      loginUrl.searchParams.set('redirect', path)
+      return NextResponse.redirect(loginUrl)
+    }
+    return NextResponse.next()
+  }
+
   // Se é uma rota pública, permitir acesso sem verificação
   if (isPublicRoute) {
     return NextResponse.next()
   }
-  
-  // Se não é uma rota protegida nem pública, permitir acesso
-  if (!isProtectedRoute) {
-    return NextResponse.next()
-  }
-  
-  // Para rotas protegidas, verificar autenticação usando apenas cookies (Edge-safe)
-  const sessionToken = req.cookies.get('better-auth.session-token')?.value
-  if (isProtectedRoute && !sessionToken) {
-    const loginUrl = new URL('/auth/login', req.url)
-    loginUrl.searchParams.set('redirect', path)
-    return NextResponse.redirect(loginUrl)
-  }
 
-  // Usuário autenticado ou rota não exige mais verificações
+  // Se não é protegida nem explicitamente pública, permitir acesso
   return NextResponse.next()
 }
 
@@ -66,6 +65,6 @@ export const config = {
      * - _next/image (otimização de imagens)
      * - quaisquer arquivos com extensão (ex.: .png, .jpg, .svg, .ico, .xml, .txt etc.)
      */
-    '/((?!api|_next/static|_next/image|.*\\..*).*)',
+    '/((?!api|_next/static|_next/image|.*\..*).*)',
   ],
 }

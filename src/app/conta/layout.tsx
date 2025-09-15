@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import MobileMenu from "@/components/mobile-menu";
 import { Bell, Mail, TrendingUp, CheckCircle2 } from "lucide-react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: {
@@ -19,7 +21,14 @@ export const metadata = {
   description: "Gerencie seus investimentos, acompanhe rendimentos e acesse relatórios detalhados na sua área exclusiva do investidor.",
 };
 
-export default function AccountLayout({ children }: { children: React.ReactNode }) {
+export default async function AccountLayout({ children }: { children: React.ReactNode }) {
+  // Proteção server-side: exige sessão válida (cookie presente) para acessar qualquer rota dentro de /conta
+  const cookieStore = await cookies();
+  const hasSession = !!cookieStore.get("better-auth.session-token")?.value;
+  if (!hasSession) {
+    redirect("/auth/login?redirect=/conta");
+  }
+
   return (
     <>
       <div className="min-h-svh bg-[#f7f9fc]">
@@ -147,5 +156,5 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         </main>
       </div>
     </>
-  )
+  );
 }
