@@ -198,6 +198,27 @@ async function main() {
       END$$;
     `)
 
+    // Compatibility with Better Auth: use default user_type and allow NULL password_hash (auth stores password elsewhere)
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'users' AND column_name = 'user_type'
+        ) THEN
+          -- Ensure default value for user_type to avoid NOT NULL violations on insert
+          ALTER TABLE users ALTER COLUMN user_type SET DEFAULT 'investidor';
+        END IF;
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'users' AND column_name = 'password_hash'
+        ) THEN
+          -- Allow NULL password_hash because Better Auth manages password in its own tables
+          ALTER TABLE users ALTER COLUMN password_hash DROP NOT NULL;
+        END IF;
+      END$$;
+    `)
+
     // Drop wrong/reserved table name if it exists to avoid conflicts with Better Auth
     await client.query(`
       DO $$

@@ -87,6 +87,13 @@ export const auth = betterAuth({
   trustedOrigins: process.env.NODE_ENV === 'production' 
     ? ['https://raisecapital.com.br']
     : ['http://localhost:3000', 'http://localhost:3001'],
+
+  advanced: {
+    database: {
+      useNumberId: true,
+      generateId: false
+    }
+  },
 })
 
 export type Session = typeof auth.$Infer.Session
