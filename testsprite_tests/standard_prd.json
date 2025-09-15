@@ -1,0 +1,226 @@
+{
+  "meta": {
+    "project": "RaiseCapital Plataforma de Captação de Recursos",
+    "date": "2025-09-13",
+    "prepared_by": "Software Development Manager"
+  },
+  "product_overview": "RaiseCapital is a comprehensive digital platform designed to facilitate capital raising by connecting growth-stage companies with qualified investors. It features advanced analytics, interactive dashboards, a robust CRM, secure data room, and compliance automation to create an efficient and transparent investment ecosystem.",
+  "core_goals": [
+    "Facilitate the capital raising process for growing companies",
+    "Connect qualified investors with relevant investment opportunities",
+    "Provide advanced tools for financial analysis and due diligence",
+    "Automate administrative and compliance processes",
+    "Establish a transparent and efficient investment market ecosystem"
+  ],
+  "key_features": [
+    "Executive Dashboard with real-time pipeline tracking, KPIs, market analysis, and customizable reports",
+    "Intelligent Matchmaking system with advanced filters, compatibility scoring, and personalized recommendations",
+    "Virtual Data Room for secure document upload, granular access control, audit logs, and versioning",
+    "Integrated CRM for unified contact management, sales pipeline tracking, marketing automation, and multi-channel communication",
+    "Financial Analysis Tools including financial modeling, automatic valuation, risk scoring, and market benchmarking",
+    "Payment and Compliance System with multi-gateway support, automatic regulatory checks, KYC/AML verification, and smart contract generation",
+    "Complete Authentication System with email verification, password reset, and two-factor authentication",
+    "Blockchain wallet integration enabling Web3 functionalities such as balance checking and transaction history",
+    "Content Management for blogs, static pages, and educational materials",
+    "Responsive and mobile-first UI built with Next.js, React, Tailwind CSS, and comprehensive UI component libraries",
+    "RESTful API endpoints for key operations including offers, blogs, uploads, and wallet management"
+  ],
+  "user_flow_summary": [
+    "Company onboarding with guided multi-step registration, pitch deck creation, data room setup, investor search with filters, relationship management, and deal closure with digital signatures",
+    "Investor onboarding with KYC verification, profile setup, personalized opportunity discovery, due diligence via data room access, communication and negotiation tools, culminating in digital investment processes",
+    "Use of dashboards and reports for real-time performance tracking and decision making",
+    "Interaction with matchmaking tools to find compatible investment opportunities or investors",
+    "Engagement with content and educational resources to support informed investing and fund raising"
+  ],
+  "validation_criteria": [
+    "Successful user registration including authentication and verification flows",
+    "Accurate matching results reflecting filters and scoring in the matchmaking system",
+    "Secure and auditable document uploads with appropriate access controls implemented in the data room",
+    "Functioning CRM with contact management, pipeline visualization, and integrated communication channels",
+    "Reliable payment processing with transaction records and compliance checks",
+    "Responsive and accessible UI across devices with consistent performance",
+    "Robust API endpoints with expected request handling and data integrity",
+    "Compliance with security, privacy, and regulatory standards including LGPD and financial regulations",
+    "Performance metrics meeting targets for system uptime, load handling, and response times"
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "TypeScript",
+      "Next.js 15.5.2",
+      "React 19.1.0",
+      "PostgreSQL",
+      "Tailwind CSS v4",
+      "Better Auth",
+      "Prisma ORM",
+      "Node.js",
+      "Vercel"
+    ],
+    "features": [
+      {
+        "name": "Authentication System",
+        "description": "Complete authentication system with Better Auth, email verification, password reset, and two-factor authentication",
+        "files": [
+          "src/lib/auth.ts",
+          "src/app/auth/"
+        ]
+      },
+      {
+        "name": "Database Connection",
+        "description": "PostgreSQL database connection with connection pooling, query metrics, and performance monitoring",
+        "files": [
+          "src/lib/db.ts",
+          "database/migrations/001_create_all_tables.sql"
+        ]
+      },
+      {
+        "name": "Investment Offers System",
+        "description": "Complete system for managing investment offers with listing, filtering, detailed pages, and CRUD operations",
+        "files": [
+          "src/app/api/ofertas/route.ts",
+          "src/app/ofertas/[slug]/page.tsx"
+        ]
+      },
+      {
+        "name": "Blog System",
+        "description": "Blog functionality with rich text editor (TipTap), markdown support, and content management",
+        "files": [
+          "src/app/api/blog/route.ts",
+          "src/app/blog/",
+          "src/lib/blog.ts"
+        ]
+      },
+      {
+        "name": "Dashboard Interface",
+        "description": "Interactive dashboard with sidebar navigation, charts, data tables, and responsive design",
+        "files": [
+          "src/app/dashboard/page.tsx",
+          "src/components/app-sidebar.tsx",
+          "src/components/chart-area-interactive.tsx",
+          "src/components/data-table.tsx"
+        ]
+      },
+      {
+        "name": "File Upload System",
+        "description": "File upload functionality with image optimization, multiple formats support, and storage management",
+        "files": [
+          "src/app/api/upload/route.ts"
+        ]
+      },
+      {
+        "name": "Wallet Integration",
+        "description": "Blockchain wallet integration using Alchemy SDK for Web3 functionality, balance checking, and transaction history",
+        "files": [
+          "src/app/api/wallet/route.ts",
+          "src/lib/alchemy.ts"
+        ]
+      },
+      {
+        "name": "Email System",
+        "description": "Email functionality with Nodemailer for transactional emails, notifications, and user communication",
+        "files": [
+          "src/lib/email.ts"
+        ]
+      },
+      {
+        "name": "Payment Gateway",
+        "description": "Payment processing integration with Asaas gateway for handling transactions and billing",
+        "files": [
+          "src/lib/asaas.ts"
+        ]
+      },
+      {
+        "name": "UI Components Library",
+        "description": "Comprehensive UI component library using shadcn/ui, Base UI, Radix UI with Tailwind CSS styling",
+        "files": [
+          "src/components/ui/",
+          "components.json"
+        ]
+      },
+      {
+        "name": "Navigation Components",
+        "description": "Navigation system with mobile-responsive menus, user navigation, and document navigation",
+        "files": [
+          "src/components/nav-main.tsx",
+          "src/components/nav-user.tsx",
+          "src/components/nav-documents.tsx",
+          "src/components/mobile-menu.tsx"
+        ]
+      },
+      {
+        "name": "Data Visualization",
+        "description": "Interactive charts and data visualization using Recharts for portfolio distribution and analytics",
+        "files": [
+          "src/components/portfolio-distribution-chart.tsx",
+          "src/components/chart-area-interactive.tsx"
+        ]
+      },
+      {
+        "name": "Content Management",
+        "description": "Content management system for static pages, terms, privacy policy, and educational materials",
+        "files": [
+          "src/app/termos/",
+          "src/app/privacidade/",
+          "src/app/material-didatico/",
+          "src/app/codigo-de-conduta/"
+        ]
+      },
+      {
+        "name": "API Routes",
+        "description": "RESTful API endpoints for database testing, blog management, offers, uploads, and wallet operations",
+        "files": [
+          "src/app/api/db-test/route.ts",
+          "src/app/api/blog/route.ts",
+          "src/app/api/ofertas/route.ts",
+          "src/app/api/upload/route.ts",
+          "src/app/api/wallet/route.ts"
+        ]
+      },
+      {
+        "name": "Responsive Design",
+        "description": "Mobile-first responsive design with custom hooks for device detection and adaptive layouts",
+        "files": [
+          "src/hooks/use-mobile.ts",
+          "src/app/globals.css"
+        ]
+      },
+      {
+        "name": "Utility Functions",
+        "description": "Common utility functions for string manipulation, validation, and data processing",
+        "files": [
+          "src/lib/utils.ts"
+        ]
+      },
+      {
+        "name": "Landing Pages",
+        "description": "Marketing and informational landing pages for different user segments and company information",
+        "files": [
+          "src/app/page.tsx",
+          "src/app/capte-recursos/"
+        ]
+      },
+      {
+        "name": "Account Management",
+        "description": "User account management with profile settings, navigation, and account-related functionality",
+        "files": [
+          "src/app/conta/",
+          "src/components/account-nav.tsx"
+        ]
+      },
+      {
+        "name": "Company Management",
+        "description": "Company profile and management features for business users",
+        "files": [
+          "src/app/empresa/",
+          "src/components/empresa-nav.tsx"
+        ]
+      },
+      {
+        "name": "Project Management",
+        "description": "Project listing and management functionality for investment projects",
+        "files": [
+          "src/app/projetos/"
+        ]
+      }
+    ]
+  }
+}
