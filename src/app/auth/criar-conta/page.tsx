@@ -234,7 +234,7 @@ export default function CreateAccountPage() {
             }
             
             // Redirecionar para dashboard
-            router.push('/dashboard/investidor')
+            router.push('/conta')
           },
           onError: (ctx) => {
             throw new Error(ctx.error.message || 'Erro ao criar conta')
