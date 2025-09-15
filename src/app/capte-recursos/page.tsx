@@ -160,7 +160,7 @@ export default function CapteRecursosPage() {
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex items-end justify-between gap-4">
             <h2 className="text-2xl font-semibold">Como funciona</h2>
-            <Button asChild variant="secondary"><Link href="/auth/criar-conta?tipo=pj">Começar agora</Link></Button>
+            <Button asChild variant="secondary"><Link href="/auth/criar-conta">Começar agora</Link></Button>
           </div>
 
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
@@ -255,7 +255,7 @@ export default function CapteRecursosPage() {
             </div>
 
             <div className="mt-10 flex justify-center">
-              <Button asChild size="lg"><Link href="/auth/criar-conta?tipo=pj">Cadastre-se gratuitamente</Link></Button>
+              <Button asChild size="lg"><Link href="/auth/criar-conta">Cadastre-se gratuitamente</Link></Button>
             </div>
           </div>
         </section>
