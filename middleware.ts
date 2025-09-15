@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
 
 // Rotas protegidas que requerem autenticação
 const protectedRoutes = [
@@ -45,31 +44,16 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next()
   }
   
-  // Para rotas protegidas, verificar autenticação
-  try {
-    // Verificar a sessão usando Better Auth
-    const session = await auth.api.getSession({
-      headers: req.headers
-    })
-    
-    // Se não há sessão válida, redirecionar para login
-    if (!session) {
-      const loginUrl = new URL('/auth/login', req.url)
-      loginUrl.searchParams.set('redirect', path)
-      return NextResponse.redirect(loginUrl)
-    }
-    
-    // Se chegou até aqui, o usuário está autenticado e pode acessar
-    return NextResponse.next()
-    
-  } catch (error) {
-    console.error('Erro na verificação de autenticação:', error)
-    
-    // Em caso de erro, redirecionar para login por segurança
+  // Para rotas protegidas, verificar autenticação usando apenas cookies (Edge-safe)
+  const sessionToken = req.cookies.get('better-auth.session-token')?.value
+  if (isProtectedRoute && !sessionToken) {
     const loginUrl = new URL('/auth/login', req.url)
     loginUrl.searchParams.set('redirect', path)
     return NextResponse.redirect(loginUrl)
   }
+
+  // Usuário autenticado ou rota não exige mais verificações
+  return NextResponse.next()
 }
 
 // Configurar quais rotas o middleware deve processar
@@ -80,8 +64,8 @@ export const config = {
      * - api (rotas de API)
      * - _next/static (arquivos estáticos)
      * - _next/image (otimização de imagens)
-     * - favicon.ico, sitemap.xml, robots.txt (arquivos de metadados)
+     * - quaisquer arquivos com extensão (ex.: .png, .jpg, .svg, .ico, .xml, .txt etc.)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    '/((?!api|_next/static|_next/image|.*\\..*).*)',
   ],
 }
