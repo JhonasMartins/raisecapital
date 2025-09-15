@@ -88,11 +88,11 @@ export default function NavUser({ user }: NavUserProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+        <DropdownMenuItem onClick={() => router.push('/conta')}>
           <User className="mr-2 h-4 w-4" />
           <span>Dashboard</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push('/configuracoes')}>
+        <DropdownMenuItem onClick={() => router.push('/conta/seguranca')}>
           <Settings className="mr-2 h-4 w-4" />
           <span>Configurações</span>
         </DropdownMenuItem>

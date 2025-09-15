@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 
 // Rotas protegidas que requerem autenticação
 const protectedRoutes = [
-  '/dashboard',
   '/conta',
   '/empresa'
 ]

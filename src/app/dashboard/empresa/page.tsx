@@ -13,7 +13,7 @@ export default async function EmpresaDashboard() {
   
   // Se não há usuário, redirecionar para login
   if (!user) {
-    redirect('/auth/login?redirect=/dashboard/empresa')
+    redirect('/auth/login?redirect=/empresa')
   }
 
   const handleLogout = async () => {
