@@ -174,14 +174,32 @@ async function main() {
         ADD COLUMN IF NOT EXISTS pix_key VARCHAR(255),
         ADD COLUMN IF NOT EXISTS two_factor_enabled BOOLEAN DEFAULT false,
         ADD COLUMN IF NOT EXISTS two_factor_secret TEXT,
-        ADD COLUMN IF NOT EXISTS email_verified TIMESTAMP;
+        ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT false;
 
-      CREATE UNIQUE INDEX IF NOT EXISTS idx_users_cpf_unique ON users (cpf) WHERE cpf IS NOT NULL;
-      CREATE UNIQUE INDEX IF NOT EXISTS idx_users_cnpj_unique ON users (cnpj) WHERE cnpj IS NOT NULL;
+       CREATE UNIQUE INDEX IF NOT EXISTS idx_users_cpf_unique ON users (cpf) WHERE cpf IS NOT NULL;
+       CREATE UNIQUE INDEX IF NOT EXISTS idx_users_cnpj_unique ON users (cnpj) WHERE cnpj IS NOT NULL;
+     `)
+
+    // Ensure email_verified is boolean in existing databases where it might have been created as TIMESTAMP
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'users'
+            AND column_name = 'email_verified'
+            AND data_type IN ('timestamp without time zone','timestamp with time zone')
+        ) THEN
+          ALTER TABLE users
+            ALTER COLUMN email_verified DROP DEFAULT,
+            ALTER COLUMN email_verified TYPE boolean USING false,
+            ALTER COLUMN email_verified SET DEFAULT false;
+        END IF;
+      END$$;
     `)
-
-    await client.query('COMMIT')
-    console.log('Database setup successful: tables ofertas, blog and blog_comments are ready.')
+ 
+     await client.query('COMMIT')
+     console.log('Database setup successful: tables ofertas, blog and blog_comments are ready.')
   } catch (err) {
     await client.query('ROLLBACK')
     console.error('Database setup failed:', err.message)

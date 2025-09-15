@@ -48,7 +48,7 @@ ALTER TABLE users
   ADD COLUMN IF NOT EXISTS two_factor_secret TEXT,
 
   -- Auth integrations
-  ADD COLUMN IF NOT EXISTS email_verified TIMESTAMP;
+  ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT false;
 
 -- Partial unique indexes for CPF / CNPJ when provided
 CREATE UNIQUE INDEX IF NOT EXISTS idx_users_cpf_unique ON users (cpf) WHERE cpf IS NOT NULL;
