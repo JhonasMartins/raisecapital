@@ -16,28 +16,39 @@ O Raise Capital é uma plataforma full-stack que integra:
 
 ## 🛠️ Stack Tecnológica
 
-### Frontend
-- **[Next.js 15](https://nextjs.org/)** - Framework React com App Router e Server Components
-- **[React 19](https://react.dev/)** - Biblioteca para interfaces de usuário com hooks modernos
-- **[TypeScript](https://www.typescriptlang.org/)** - Tipagem estática para JavaScript
-- **[Tailwind CSS v4](https://tailwindcss.com/)** - Framework CSS utility-first
+### Core Framework
+- **[Next.js 15.5.2](https://nextjs.org/)** - Framework React com App Router, Server Components e Turbopack
+- **[React 19.1.0](https://react.dev/)** - Biblioteca para interfaces de usuário com React Compiler
+- **[TypeScript 5+](https://www.typescriptlang.org/)** - Tipagem estática para JavaScript
+- **[Tailwind CSS v4](https://tailwindcss.com/)** - Framework CSS utility-first com PostCSS
 
 ### UI & Componentes
-- **Componentes customizados** inspirados no [shadcn/ui](https://ui.shadcn.com/)
+- **[Base UI Components](https://base-ui.com/)** - Componentes headless da MUI (v1.0.0-beta.3)
 - **[Radix UI](https://www.radix-ui.com/)** - Primitivos acessíveis e não-estilizados
-- **[Lucide React](https://lucide.dev/)** - Ícones SVG otimizados
-- **[Framer Motion](https://www.framer.com/motion/)** - Animações fluidas e interativas
+- **[Lucide React](https://lucide.dev/)** - Ícones SVG otimizados (v0.542.0)
+- **[Tabler Icons](https://tabler.io/icons)** - Conjunto adicional de ícones SVG
+- **[Framer Motion 12](https://www.framer.com/motion/)** - Animações fluidas e interativas
+- **[Class Variance Authority](https://cva.style/)** - Utilitário para variantes de componentes
 
-### Dados & Estado
+### Dados & Autenticação
 - **[PostgreSQL](https://www.postgresql.org/)** - Banco de dados relacional robusto
-- **[Better Auth](https://www.better-auth.com/)** - Sistema de autenticação moderno
-- **React Hooks** - Gerenciamento de estado com `useState`, `useReducer`
+- **[Better Auth 1.3.9](https://www.better-auth.com/)** - Sistema de autenticação moderno e type-safe
+- **[TanStack Table v8](https://tanstack.com/table)** - Tabelas poderosas e flexíveis
+- **[Alchemy SDK](https://www.alchemy.com/)** - Integração com blockchain Ethereum
+
+### Editor & Conteúdo
+- **[TipTap 3.4.2](https://tiptap.dev/)** - Editor de texto rico e extensível
+- **[React Markdown](https://github.com/remarkjs/react-markdown)** - Renderização de Markdown
+- **[Remark GFM](https://github.com/remarkjs/remark-gfm)** - Suporte a GitHub Flavored Markdown
+- **[Sanitize HTML](https://github.com/apostrophecms/sanitize-html)** - Sanitização de conteúdo HTML
 
 ### Ferramentas & Utilitários
-- **[Recharts](https://recharts.org/)** - Gráficos e visualizações de dados
-- **[TipTap](https://tiptap.dev/)** - Editor de texto rico e extensível
-- **[Sharp](https://sharp.pixelplumbing.com/)** - Processamento de imagens otimizado
-- **[Turbopack](https://turbo.build/pack)** - Bundler ultra-rápido para desenvolvimento
+- **[Recharts 2.15.4](https://recharts.org/)** - Gráficos e visualizações de dados
+- **[Sharp 0.34.3](https://sharp.pixelplumbing.com/)** - Processamento de imagens otimizado
+- **[Vercel Blob](https://vercel.com/docs/storage/vercel-blob)** - Armazenamento de arquivos na nuvem
+- **[Nodemailer 7.0.6](https://nodemailer.com/)** - Envio de emails
+- **[Sonner](https://sonner.emilkowal.ski/)** - Sistema de notificações toast
+- **[Vaul](https://vaul.emilkowal.ski/)** - Drawer component para mobile
 
 ## 🎯 Funcionalidades Principais
 
@@ -71,6 +82,32 @@ O Raise Capital é uma plataforma full-stack que integra:
 - **Sanitização de dados** com sanitize-html
 - **Validação robusta** em formulários
 
+## 📦 Principais Dependências
+
+### 🎨 Interface & Componentes
+- **Base UI Components** - Componentes acessíveis e modernos
+- **shadcn/ui** - Sistema de design consistente
+- **Tabler Icons** - Ícones SVG otimizados
+- **Tailwind CSS** - Estilização utilitária
+
+### 🔧 Funcionalidades Avançadas
+- **DND Kit** - Drag and drop intuitivo
+- **Recharts** - Gráficos e visualizações
+- **React Hook Form** - Formulários performáticos
+- **Zod** - Validação de schemas TypeScript
+
+### 🗄️ Banco de Dados & Backend
+- **PostgreSQL (pg)** - Banco de dados principal
+- **Better Auth** - Sistema de autenticação
+- **Nodemailer** - Envio de e-mails
+- **Multer** - Upload de arquivos
+
+### 🚀 Desenvolvimento & Build
+- **Next.js 15** - Framework React full-stack
+- **TypeScript** - Tipagem estática
+- **ESLint** - Linting e qualidade de código
+- **PostCSS** - Processamento de CSS
+
 ## 📋 Pré-requisitos
 
 - **Node.js** LTS (>= 18.0.0)
@@ -82,17 +119,24 @@ O Raise Capital é uma plataforma full-stack que integra:
 
 ### 1. Clone o Repositório
 ```bash
+# Clone o projeto
 git clone <repository-url>
 cd raisecapital
+
+# Verifique se está na branch correta
+git branch
 ```
 
 ### 2. Instale as Dependências
 ```bash
-# Usando npm
+# Usando npm (recomendado)
 npm install
 
 # Ou usando yarn
 yarn install
+
+# Ou usando pnpm (mais rápido)
+pnpm install
 ```
 
 ### 3. Configuração de Ambiente
@@ -100,33 +144,80 @@ yarn install
 Crie um arquivo `.env.local` na raiz do projeto:
 
 ```bash
-# 🗄️ Banco de Dados
+# 🗄️ Banco de Dados PostgreSQL
 DATABASE_URL="postgres://USER:PASS@HOST:5432/DBNAME"
 DATABASE_SSL=false  # Para desenvolvimento local
+# Exemplo para desenvolvimento local:
+# DATABASE_URL="postgresql://postgres:123456@localhost:5432/raisecapital_dev"
 
 # 🔐 Autenticação (Better Auth)
 BETTER_AUTH_SECRET="your-secret-key-here"
 BETTER_AUTH_URL="http://localhost:3000"
 
-# 📧 Email (Nodemailer)
+# 📁 Upload de Arquivos
+UPLOAD_DIR="./public/uploads"
+MAX_FILE_SIZE=10485760  # 10MB
+ALLOWED_FILE_TYPES=".pdf,.jpg,.jpeg,.png,.webp"
+
+# 📧 Configuração de E-mail (Nodemailer)
 SMTP_HOST="your-smtp-host"
 SMTP_PORT=587
+SMTP_SECURE=false
 SMTP_USER="your-email@domain.com"
 SMTP_PASS="your-email-password"
+FROM_EMAIL="noreply@raisecapital.com"
+
+# 💳 Gateway de Pagamento Asaas (opcional)
+ASAAS_API_KEY="sua-chave-api-asaas"
+ASAAS_ENVIRONMENT="sandbox"  # ou "production"
+
+# 🌐 Alchemy SDK (opcional)
+ALCHEMY_API_KEY="sua-chave-alchemy"
+ALCHEMY_NETWORK="eth-mainnet"  # ou "eth-sepolia" para testes
 
 # ☁️ Upload de Arquivos (Vercel Blob)
 BLOB_READ_WRITE_TOKEN="your-vercel-blob-token"
+
+# 🔧 Configurações Gerais
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+NODE_ENV="development"
 ```
 
 ### 4. Configuração do Banco de Dados
 
+#### 🗄️ Estrutura do Banco
+O projeto utiliza PostgreSQL com 18 tabelas principais:
+- **users** - Usuários do sistema (empresas e investidores)
+- **empresas** - Dados das empresas captadoras
+- **investidores** - Perfil dos investidores (PF/PJ)
+- **ofertas** - Ofertas de investimento disponíveis
+- **acoes** - Ações e participações
+- **relatorios** - Relatórios financeiros e de performance
+- **blog** - Sistema de blog integrado
+- **newsletter_subscriptions** - Assinantes da newsletter
+- **files** - Gestão de arquivos e documentos
+
+#### 🚀 Executar Migrações
 ```bash
-# Execute as migrações
+# Execute o script de migração completo
 npm run db:migrate
 
-# Verifique a conexão
+# Ou execute diretamente com psql
+psql $DATABASE_URL -f database/migrations/001_create_all_tables.sql
+
+# Verifique se as tabelas foram criadas
+psql $DATABASE_URL -c "\dt"
+
+# Teste a conexão
 psql $DATABASE_URL -c "SELECT version();"
 ```
+
+#### 🔧 Recursos do Banco
+- **Índices otimizados** para consultas rápidas
+- **Triggers automáticos** para updated_at
+- **Constraints de integridade** referencial
+- **Funções personalizadas** para lógica de negócio
+- **Dados de exemplo** para desenvolvimento
 
 ### 5. Desenvolvimento
 
@@ -144,24 +235,56 @@ npm run dev
 
 ```
 raisecapital/
+├── 📁 .github/workflows/          # CI/CD e automações
+├── 📁 database/migrations/        # Scripts de migração do banco
+├── 📁 docs/                       # Documentação (termos, políticas)
+├── 📁 public/                     # Assets estáticos
+│   ├── 📁 assets/                 # Imagens e ícones do dashboard
+│   ├── 📁 conselho/               # Fotos do conselho consultivo
+│   ├── 📁 nossaequipe/            # Fotos da equipe
+│   ├── 📁 offers/                 # Ícones dos segmentos
+│   ├── 📁 segmentos/              # Imagens dos setores
+│   └── 📁 uploads/                # Arquivos enviados pelos usuários
+├── 📁 scripts/                    # Scripts de manutenção e migração
 ├── 📁 src/
 │   ├── 📁 app/                    # App Router (Next.js 15)
-│   │   ├── 📁 (auth)/             # Grupo de rotas de autenticação
+│   │   ├── 📁 api/                # API Routes (endpoints)
+│   │   ├── 📁 auth/               # Páginas de autenticação
+│   │   ├── 📁 blog/               # Sistema de blog integrado
 │   │   ├── 📁 conta/              # Dashboard do investidor
-│   │   ├── 📁 ofertas/            # Sistema de ofertas
-│   │   ├── 📁 blog/               # Blog e posts
-│   │   ├── 📁 api/                # Route Handlers (API)
-│   │   └── 📄 layout.tsx          # Layout raiz
-│   ├── 📁 components/             # Componentes React
-│   │   ├── 📁 ui/                 # Componentes base (shadcn-style)
-│   │   └── 📁 sections/           # Seções específicas
-│   └── 📁 lib/                    # Utilitários e configurações
-│       ├── 📄 db.ts               # Conexão PostgreSQL
-│       ├── 📄 auth.ts             # Configuração Better Auth
-│       └── 📄 utils.ts            # Funções utilitárias
-├── 📁 public/                     # Assets estáticos
-├── 📁 scripts/                    # Scripts de migração
-└── 📄 tailwind.config.js          # Configuração Tailwind CSS
+│   │   ├── 📁 dashboard/          # Painel administrativo
+│   │   ├── 📁 empresa/            # Dashboard da empresa
+│   │   ├── 📁 ofertas/            # Páginas públicas de ofertas
+│   │   ├── 📁 projetos/           # Detalhes dos projetos
+│   │   ├── 📁 capte-recursos/     # Landing para empresas
+│   │   ├── 📁 material-didatico/  # Conteúdo educativo
+│   │   ├── 📁 codigo-de-conduta/  # Página de conduta
+│   │   ├── 📁 privacidade/        # Política de privacidade
+│   │   ├── 📁 termos/             # Termos de uso
+│   │   ├── 📄 globals.css         # Estilos globais Tailwind
+│   │   ├── 📄 layout.tsx          # Layout raiz da aplicação
+│   │   └── 📄 page.tsx            # Landing page principal
+│   ├── 📁 components/             # Componentes reutilizáveis
+│   │   ├── 📁 ui/                 # Componentes base (shadcn/ui)
+│   │   ├── 📁 blog/               # Componentes específicos do blog
+│   │   ├── 📄 *-nav.tsx           # Componentes de navegação
+│   │   ├── 📄 *-card.tsx          # Cards e estatísticas
+│   │   └── 📄 *.tsx               # Outros componentes especializados
+│   ├── 📁 lib/                    # Utilitários e configurações
+│   │   ├── 📄 auth.ts             # Configuração Better Auth
+│   │   ├── 📄 db.ts               # Conexão PostgreSQL
+│   │   ├── 📄 email.ts            # Sistema de e-mail
+│   │   ├── 📄 blog.ts             # Lógica do blog
+│   │   ├── 📄 alchemy.ts          # Integração Alchemy SDK
+│   │   ├── 📄 asaas.ts            # Gateway de pagamento
+│   │   └── 📄 utils.ts            # Funções utilitárias
+│   └── 📁 hooks/                  # Custom React Hooks
+│       └── 📄 use-mobile.ts       # Hook para detecção mobile
+├── 📄 components.json             # Configuração shadcn/ui
+├── 📄 next.config.ts              # Configuração Next.js
+├── 📄 package.json                # Dependências e scripts
+├── 📄 tailwind.config.js          # Configuração Tailwind CSS
+└── 📄 tsconfig.json               # Configuração TypeScript
 ```
 
 ### Padrões de Desenvolvimento
