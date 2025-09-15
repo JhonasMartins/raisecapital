@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Eye, EyeOff } from "lucide-react"
 
@@ -106,6 +106,20 @@ export default function CriarContaPage() {
   const [error, setError] = useState("")
   
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  // Selecionar automaticamente a aba PJ quando a URL indicar '?tipo=pj' ou '/empresa'
+  useEffect(() => {
+    try {
+      const tipo = (searchParams.get('tipo') || '').toLowerCase()
+      if (tipo === 'pj' || tipo === 'empresa' || pathname.endsWith('/empresa')) {
+        setActiveTab('pj')
+      }
+    } catch {
+      // noop
+    }
+  }, [pathname, searchParams])
 
   const handleDocumentChange = (value: string) => {
     const formatted = activeTab === "pf" ? formatCPF(value) : formatCNPJ(value)
