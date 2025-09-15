@@ -4,7 +4,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
-import { TestimonialsCarousel } from "@/components/testimonials-carousel"
+import dynamic from "next/dynamic"
+
+// Importa o carrossel apenas para o cliente para evitar erros de prerenderização no build
+const TestimonialsCarousel = dynamic(
+  () => import("@/components/testimonials-carousel").then((m) => m.TestimonialsCarousel),
+  { ssr: false }
+)
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
