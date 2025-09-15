@@ -12,10 +12,7 @@ const dbPool = new Pool({
 })
 
 export const auth = betterAuth({
-  database: {
-    provider: 'pg',
-    pool: dbPool,
-  },
+  database: dbPool,
   
   emailAndPassword: {
     enabled: true,
@@ -76,11 +73,9 @@ export const auth = betterAuth({
     }
   },
 
-  trustedOrigins: [
-    process.env.NODE_ENV === 'production' 
-      ? 'https://raisecapital.com.br' 
-      : 'http://localhost:3000'
-  ],
+  trustedOrigins: process.env.NODE_ENV === 'production' 
+    ? ['https://raisecapital.com.br']
+    : ['http://localhost:3000', 'http://localhost:3001'],
 })
 
 export type Session = typeof auth.$Infer.Session
