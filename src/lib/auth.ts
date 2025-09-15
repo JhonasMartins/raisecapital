@@ -18,12 +18,14 @@ export interface User {
   email: string;
   name: string;
   created_at: Date;
+  userType?: string;
 }
 
 export interface SessionData {
   userId: string;
   email: string;
   name: string;
+  userType?: string;
   exp: number;
   [key: string]: any; // Para compatibilidade com JWTPayload
 }
@@ -55,6 +57,7 @@ export async function createSession(user: User): Promise<string> {
     userId: user.id,
     email: user.email,
     name: user.name,
+    userType: user.userType,
     exp: Math.floor((Date.now() + SESSION_DURATION) / 1000),
   };
 
@@ -114,7 +117,7 @@ export async function getCurrentUser(): Promise<User | null> {
 
     // Buscar dados atualizados do usuário no banco
     const result = await query(
-      'SELECT id, email, name, created_at FROM users WHERE id = $1',
+      'SELECT id, email, name, created_at, tipo_pessoa FROM users WHERE id = $1',
       [session.userId]
     );
 
@@ -126,6 +129,7 @@ export async function getCurrentUser(): Promise<User | null> {
       email: userRow.email,
       name: userRow.name,
       created_at: userRow.created_at,
+      userType: userRow.tipo_pessoa,
     };
   } catch {
     return null;
