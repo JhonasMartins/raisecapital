@@ -2,8 +2,10 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Eye, EyeOff } from "lucide-react"
+import { authClient } from "@/lib/auth-client"
 
 // Mantém lógica existente de abas/validações/consultas; aqui focamos no contêiner e cabeçalhos
 export default function CreateAccountPage() {
@@ -178,10 +180,75 @@ export default function CreateAccountPage() {
     }
   }
 
-  function onSubmit(e: React.FormEvent) {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
-    // Aqui você pode consolidar o payload para sua API interna
-    alert(`Cadastro (${tab}) enviado!`)
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      if (tab === "investidor") {
+        // Validações básicas
+        if (invPwd !== invPwdConf) {
+          throw new Error("As senhas não coincidem")
+        }
+        if (invPwd.length < 8) {
+          throw new Error("A senha deve ter pelo menos 8 caracteres")
+        }
+        if (invPessoa === "pf" && invCpfError) {
+          throw new Error("CPF inválido")
+        }
+        if (invPessoa === "pj" && invCnpjError) {
+          throw new Error("CNPJ inválido")
+        }
+
+        // Criar conta com Better Auth
+         const nomeElement = document.getElementById("nome") as HTMLInputElement
+         const nomeValue = nomeElement?.value || ""
+         
+         const result = await authClient.signUp.email({
+           email: invEmail,
+           password: invPwd,
+           name: nomeValue,
+         }, {
+           onSuccess: async (ctx) => {
+             // Enviar email de boas-vindas
+             try {
+               await fetch('/api/newsletter', {
+                 method: 'POST',
+                 headers: {
+                   'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify({
+                   email: invEmail,
+                   name: nomeValue,
+                   source: 'investor-signup',
+                   type: 'welcome-investor'
+                 })
+               })
+            } catch (emailError) {
+              console.error('Erro ao enviar email de boas-vindas:', emailError)
+            }
+            
+            // Redirecionar para dashboard
+            router.push('/dashboard/investidor')
+          },
+          onError: (ctx) => {
+            throw new Error(ctx.error.message || 'Erro ao criar conta')
+          }
+        })
+      } else {
+        // Lógica para empresa (mantém o alert por enquanto)
+        alert(`Cadastro de empresa enviado!`)
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro desconhecido')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -458,7 +525,15 @@ export default function CreateAccountPage() {
 
 
 
-        <Button type="submit" className="w-full">Criar conta</Button>
+        {error && (
+          <div className="p-3 rounded-md bg-red-50 border border-red-200">
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
+
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Criando conta..." : "Criar conta"}
+        </Button>
 
         <p className="text-center text-sm text-muted-foreground">
           Já possui conta? <Link href="/auth/login" className="hover:underline">Fazer login</Link>

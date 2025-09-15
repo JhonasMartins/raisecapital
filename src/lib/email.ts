@@ -113,6 +113,87 @@ export async function sendWelcomeEmail(to: string, name?: string) {
   await transporter.sendMail({ from, to, subject, text, html })
 }
 
+function buildInvestorWelcomeEmail(name?: string, opts?: { baseUrl?: string; linkBaseUrl?: string }) {
+  const from = process.env.SMTP_FROM || process.env.SMTP_USER || 'no-reply@example.com'
+  const displayName = name?.trim() || ''
+  const defaultBase = 'https://raisecapital.com.br'
+  const envBase = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || defaultBase).replace(/\/$/, '')
+  const assetBase = (opts?.baseUrl || envBase).replace(/\/$/, '')
+  const linkBase = (opts?.linkBaseUrl || envBase).replace(/\/$/, '')
+  const dashboardUrl = `${linkBase}/dashboard/investidor`
+
+  const brandPrimary = '#04a2fa'
+  const brandPrimaryDark = '#176d9f'
+
+  const subject = 'Bem-vindo(a) à Raise Capital — Sua conta de investidor foi criada!'
+  const text = `Olá${displayName ? `, ${displayName}` : ''}!
+
+Parabéns! Sua conta de investidor na Raise Capital foi criada com sucesso.
+
+Agora você pode:
+- Explorar oportunidades de investimento exclusivas
+- Acompanhar seu portfólio
+- Receber análises detalhadas de projetos
+- Conectar-se com empreendedores inovadores
+
+Acesse seu dashboard: ${dashboardUrl}
+
+Abraços,
+Equipe Raise Capital`
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(subject)}</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+    <div style="background: linear-gradient(135deg, ${brandPrimary} 0%, ${brandPrimaryDark} 100%); padding: 40px 20px; text-align: center;">
+      <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 600;">Raise Capital</h1>
+      <p style="color: rgba(255, 255, 255, 0.9); margin: 10px 0 0 0; font-size: 16px;">Plataforma de Investimentos</p>
+    </div>
+    
+    <div style="padding: 40px 30px;">
+      <h2 style="color: #1e293b; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">Bem-vindo(a)${displayName ? `, ${escapeHtml(displayName)}` : ''}!</h2>
+      
+      <p style="color: #475569; line-height: 1.6; margin: 0 0 20px 0; font-size: 16px;">Parabéns! Sua conta de investidor na Raise Capital foi criada com sucesso.</p>
+      
+      <div style="background-color: #f1f5f9; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <h3 style="color: #1e293b; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">Agora você pode:</h3>
+        <ul style="color: #475569; margin: 0; padding-left: 20px; line-height: 1.8;">
+          <li>Explorar oportunidades de investimento exclusivas</li>
+          <li>Acompanhar seu portfólio em tempo real</li>
+          <li>Receber análises detalhadas de projetos</li>
+          <li>Conectar-se com empreendedores inovadores</li>
+        </ul>
+      </div>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${escapeHtml(dashboardUrl)}" style="display: inline-block; background-color: ${brandPrimary}; color: white; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-weight: 600; font-size: 16px;">Acessar Dashboard</a>
+      </div>
+      
+      <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 30px 0 0 0; text-align: center;">Se você tiver dúvidas, nossa equipe está sempre disponível para ajudar.</p>
+    </div>
+    
+    <div style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+      <p style="color: #64748b; font-size: 14px; margin: 0;">Abraços,<br><strong>Equipe Raise Capital</strong></p>
+    </div>
+  </div>
+</body>
+</html>`
+
+  return { subject, text, html }
+}
+
+export async function sendInvestorWelcomeEmail(to: string, name?: string) {
+  const mailer = getMailer()
+  const { subject, text, html } = buildInvestorWelcomeEmail(name)
+  await mailer.sendMail({ from: process.env.SMTP_FROM || process.env.SMTP_USER, to, subject, text, html })
+}
+
 function escapeHtml(str: string) {
   return str
     .replace(/&/g, '&amp;')
