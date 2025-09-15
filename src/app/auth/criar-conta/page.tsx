@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Eye, EyeOff } from "lucide-react"
@@ -91,7 +91,7 @@ function isValidPassword(password: string): boolean {
          /[!@#$%^&*(),.?":{}|<>]/.test(password)
 }
 
-export default function CriarContaPage() {
+function CriarContaInner() {
   const [activeTab, setActiveTab] = useState<"pf" | "pj">("pf")
   const [formData, setFormData] = useState({
     name: "",
@@ -339,5 +339,19 @@ export default function CriarContaPage() {
         </p>
       </form>
     </div>
+  )
+}
+
+export default function CriarContaPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full max-w-[400px] mx-auto self-center">
+          <p className="text-sm text-muted-foreground">Carregando…</p>
+        </div>
+      }
+    >
+      <CriarContaInner />
+    </Suspense>
   )
 }
