@@ -139,14 +139,14 @@ export async function getCurrentUser(): Promise<User | null> {
 /**
  * Criar novo usuário
  */
-export async function createUser(email: string, password: string, name: string): Promise<User> {
+export async function createUser(email: string, password: string, name: string, userType: string = 'investidor'): Promise<User> {
   const hashedPassword = await hashPassword(password);
   
   const result = await query(
-    `INSERT INTO users (email, password_hash, name, created_at) 
-     VALUES ($1, $2, $3, NOW()) 
-     RETURNING id, email, name, created_at`,
-    [email, hashedPassword, name]
+    `INSERT INTO users (email, password_hash, name, tipo_pessoa, created_at) 
+     VALUES ($1, $2, $3, $4, NOW()) 
+     RETURNING id, email, name, created_at, tipo_pessoa`,
+    [email, hashedPassword, name, userType]
   );
 
   const userRow = result.rows[0] as any;
@@ -155,6 +155,7 @@ export async function createUser(email: string, password: string, name: string):
     email: userRow.email,
     name: userRow.name,
     created_at: userRow.created_at,
+    userType: userRow.tipo_pessoa,
   };
 }
 
@@ -163,7 +164,7 @@ export async function createUser(email: string, password: string, name: string):
  */
 export async function authenticateUser(email: string, password: string): Promise<User | null> {
   const result = await query(
-    'SELECT id, email, password_hash, name, created_at FROM users WHERE email = $1',
+    'SELECT id, email, password_hash, name, created_at, tipo_pessoa FROM users WHERE email = $1',
     [email]
   );
 
@@ -179,6 +180,7 @@ export async function authenticateUser(email: string, password: string): Promise
     email: userRow.email,
     name: userRow.name,
     created_at: userRow.created_at,
+    userType: userRow.tipo_pessoa,
   };
 }
 
@@ -204,4 +206,15 @@ export function isValidEmail(email: string): boolean {
 export function isValidPassword(password: string): boolean {
   // Mínimo 8 caracteres, pelo menos 1 letra e 1 número
   return password.length >= 8 && /[A-Za-z]/.test(password) && /\d/.test(password);
+}
+
+/**
+ * Criar entrada na tabela empresas para usuários do tipo empresa
+ */
+export async function createCompanyEntry(userId: string, nomeEmpresa: string, cnpj: string): Promise<void> {
+  await query(
+    `INSERT INTO empresas (user_id, nome_empresa, cnpj, created_at) 
+     VALUES ($1, $2, $3, NOW())`,
+    [userId, nomeEmpresa, cnpj]
+  );
 }

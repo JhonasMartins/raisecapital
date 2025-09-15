@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createUser, emailExists, isValidEmail, isValidPassword, createSession, setSessionCookie } from '@/lib/auth';
+import { createUser, emailExists, isValidEmail, isValidPassword, createSession, setSessionCookie, createCompanyEntry } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password, name } = body;
+    const { email, password, name, document, userType, nomeEmpresa } = body;
 
     // Validação de entrada
     if (!email || !password || !name) {
@@ -12,6 +12,25 @@ export async function POST(request: NextRequest) {
         { error: 'Email, senha e nome são obrigatórios' },
         { status: 400 }
       );
+    }
+
+    // Validações específicas para empresa
+    if (userType === 'empresa') {
+      if (!nomeEmpresa || !document) {
+        return NextResponse.json(
+          { error: 'Nome da empresa e CNPJ são obrigatórios para cadastro de empresa' },
+          { status: 400 }
+        );
+      }
+      
+      // Validação básica de CNPJ (14 dígitos)
+      const cnpjNumbers = document.replace(/\D/g, '');
+      if (cnpjNumbers.length !== 14) {
+        return NextResponse.json(
+          { error: 'CNPJ deve ter 14 dígitos' },
+          { status: 400 }
+        );
+      }
     }
 
     if (!isValidEmail(email)) {
@@ -44,7 +63,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Criar usuário
-    const user = await createUser(email.toLowerCase(), password, name.trim());
+    const user = await createUser(email.toLowerCase(), password, name.trim(), userType || 'investidor');
+
+    // Se for empresa, criar entrada na tabela empresas
+    if (userType === 'empresa' && nomeEmpresa && document) {
+      await createCompanyEntry(user.id, nomeEmpresa, document.replace(/\D/g, ''));
+    }
 
     // Criar sessão
     const sessionToken = await createSession(user);
@@ -56,6 +80,7 @@ export async function POST(request: NextRequest) {
         id: user.id,
         email: user.email,
         name: user.name,
+        userType: user.userType,
       },
     });
 

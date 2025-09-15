@@ -337,6 +337,10 @@ function CriarContaInner() {
         <p className="text-center text-sm text-muted-foreground">
           Já tem conta? <Link href="/auth/login" className="hover:underline">Fazer login</Link>
         </p>
+        
+        <p className="text-center text-sm text-muted-foreground">
+          É uma empresa? <Link href="/auth/criar-conta/empresa" className="hover:underline">Cadastro de empresa</Link>
+        </p>
       </form>
     </div>
   )
