@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
+import { TestimonialsCarousel } from "@/components/testimonials-carousel"
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -70,18 +71,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </div>
         </div>
 
-        {/* Depoimento */}
-        <div className="rounded-xl bg-white/10 p-5 backdrop-blur-sm shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
-          <p className="text-base font-medium">“Processo rápido e sem complicação.”</p>
-          <p className="mt-2 text-sm text-white/80">Em poucos minutos meu cadastro estava pronto e já pude acompanhar as oportunidades. Recomendo!</p>
-          <div className="mt-4 flex items-center gap-3 text-sm">
-            <div className="h-8 w-8 rounded-full bg-white/20" />
-            <div>
-              <p className="font-medium">C. Johns</p>
-              <p className="text-white/70">Investidora</p>
-            </div>
-          </div>
-        </div>
+        {/* Avaliações Rotativas */}
+        <TestimonialsCarousel />
       </aside>
 
       {/* Área do formulário à direita */}
