@@ -5,9 +5,7 @@ import type { ReactNode } from "react"
 
 export default function FooterGate({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  const isAuth = pathname?.startsWith("/auth")
-  const isAccount = pathname?.startsWith("/conta")
-  const isEmpresa = pathname?.startsWith("/empresa")
-  if (isAuth || isAccount || isEmpresa) return null
+  const hideChrome = pathname?.startsWith("/auth") || pathname?.startsWith("/painel")
+  if (hideChrome) return null
   return <>{children}</>
 }

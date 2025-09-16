@@ -94,8 +94,8 @@ export default function ConfirmacaoPage() {
       localStorage.removeItem('investmentTermsData')
       localStorage.removeItem('offerId')
       
-      // Redirecionar para página de sucesso ou dashboard
-      router.push('/dashboard?success=investment')
+      // Redirecionar para página de sucesso ou painel
+      router.push('/painel?success=investment')
     } catch (error) {
       console.error('Erro ao confirmar investimento:', error)
       alert('Erro ao processar investimento. Tente novamente.')
@@ -247,37 +247,6 @@ export default function ConfirmacaoPage() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Termos Aceitos */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Termos Aceitos</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2 text-green-600">
-            <CheckCircle className="h-4 w-4" />
-            <span className="text-sm">Termo de Ciência de Risco aceito</span>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Botões de Ação */}
-      <div className="flex justify-between pt-6">
-        <Button variant="outline" onClick={handleBack} disabled={isSubmitting}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Voltar
-        </Button>
-        
-        <Button 
-          onClick={handleConfirm} 
-          disabled={isSubmitting || (offer && (offer.status === 'encerrada' || offer.status === 'finalizada'))}
-          className="min-w-[120px]"
-        >
-          {isSubmitting ? 'Processando...' : 
-           offer && (offer.status === 'encerrada' || offer.status === 'finalizada') ? 'Oferta Encerrada' : 
-           'Confirmar Investimento'}
-        </Button>
-      </div>
     </div>
   )
 }
