@@ -38,31 +38,45 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function GradientBarMultipleChart() {
+export function GradientBarMultipleChart({
+  data,
+  showData = true,
+  title = "Performance Mensal",
+  description = "Janeiro - Junho 2025",
+}: {
+  data?: { month: string; aportes: number; rendimentos: number }[];
+  showData?: boolean;
+  title?: string;
+  description?: string;
+}) {
+  const theData = data ?? chartData;
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          Performance Mensal{" "}
-          <Badge
-            variant="outline"
-            className="text-green-500 bg-green-500/10 border-none ml-2"
-          >
-            <TrendingUp className="h-4 w-4" />
-            <span>+12.8%</span>
-          </Badge>
+          {title}{" "}
+          {showData && theData.length > 0 && (
+            <Badge
+              variant="outline"
+              className="text-green-500 bg-green-500/10 border-none ml-2"
+            >
+              <TrendingUp className="h-4 w-4" />
+              <span>+12.8%</span>
+            </Badge>
+          )}
         </CardTitle>
-        <CardDescription>Janeiro - Junho 2025</CardDescription>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-56 sm:h-64 w-full !aspect-auto">
-          <BarChart accessibilityLayer data={chartData}>
+          <BarChart accessibilityLayer data={theData}>
             <XAxis
               dataKey="month"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) => String(value).slice(0, 3)}
             />
             <ChartTooltip
               cursor={false}
