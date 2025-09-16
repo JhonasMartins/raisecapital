@@ -49,14 +49,15 @@ export function GradientBarMultipleChart({
   title?: string;
   description?: string;
 }) {
-  const theData = data ?? chartData;
+  const theData = showData ? (data ?? chartData) : [];
+  const hasData = showData && theData.length > 0;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>
           {title}{" "}
-          {showData && theData.length > 0 && (
+          {hasData && (
             <Badge
               variant="outline"
               className="text-green-500 bg-green-500/10 border-none ml-2"
@@ -66,7 +67,7 @@ export function GradientBarMultipleChart({
             </Badge>
           )}
         </CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardDescription>{hasData ? description : "—"}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-56 sm:h-64 w-full !aspect-auto">
@@ -78,20 +79,26 @@ export function GradientBarMultipleChart({
               axisLine={false}
               tickFormatter={(value) => String(value).slice(0, 3)}
             />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dashed" hideLabel />}
-            />
-            <Bar
-              dataKey="aportes"
-              shape={<CustomGradientBar />}
-              fill="var(--chart-1)"
-            />
-            <Bar
-              dataKey="rendimentos"
-              shape={<CustomGradientBar />}
-              fill="var(--chart-2)"
-            />
+            {hasData && (
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent indicator="dashed" hideLabel />}
+              />
+            )}
+            {hasData && (
+              <>
+                <Bar
+                  dataKey="aportes"
+                  shape={<CustomGradientBar />}
+                  fill="var(--chart-1)"
+                />
+                <Bar
+                  dataKey="rendimentos"
+                  shape={<CustomGradientBar />}
+                  fill="var(--chart-2)"
+                />
+              </>
+            )}
           </BarChart>
         </ChartContainer>
       </CardContent>

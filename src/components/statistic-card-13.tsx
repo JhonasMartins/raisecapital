@@ -84,7 +84,7 @@ export default function StatisticCard13({
         {/* Passing Checks */}
         <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
           <span>{passing}/{leftTotal} {leftSuffix}</span>
-          <span className="font-semibold text-foreground">{Math.round((passing / total) * 100)}% {rightSuffix}</span>
+          <span className="font-semibold text-foreground">{total > 0 ? Math.round((passing / total) * 100) : 0}% {rightSuffix}</span>
         </div>
       </CardContent>
     </Card>

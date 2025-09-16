@@ -201,7 +201,14 @@ export default function ContaDashboardPage() {
               leftSuffix="perguntas respondidas"
               rightSuffix="concluído"
             />
-            <StatisticCard13 />
+            <StatisticCard13
+              title="Compliance Checks"
+              total={0}
+              passing={0}
+              leftTotal={0}
+              leftSuffix="checks"
+              rightSuffix="assigned"
+            />
           </div>
         </CardContent>
       </Card>
