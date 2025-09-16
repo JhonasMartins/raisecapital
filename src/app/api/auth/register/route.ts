@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createUser, emailExists, isValidEmail, isValidPassword, createSession, setSessionCookie, createCompanyEntry } from '@/lib/auth';
+import { createUser, emailExists, isValidEmail, createSession, setSessionCookie, createCompanyEntry } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password, name, document, userType, nomeEmpresa } = body;
+    const { email, password, name, userType, nomeEmpresa, document } = body;
 
     // Validação de entrada
     if (!email || !password || !name) {
@@ -14,42 +14,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validações específicas para empresa
-    if (userType === 'empresa') {
-      if (!nomeEmpresa || !document) {
-        return NextResponse.json(
-          { error: 'Nome da empresa e CNPJ são obrigatórios para cadastro de empresa' },
-          { status: 400 }
-        );
-      }
-      
-      // Validação básica de CNPJ (14 dígitos)
-      const cnpjNumbers = document.replace(/\D/g, '');
-      if (cnpjNumbers.length !== 14) {
-        return NextResponse.json(
-          { error: 'CNPJ deve ter 14 dígitos' },
-          { status: 400 }
-        );
-      }
-    }
-
     if (!isValidEmail(email)) {
       return NextResponse.json(
         { error: 'Formato de email inválido' },
-        { status: 400 }
-      );
-    }
-
-    if (!isValidPassword(password)) {
-      return NextResponse.json(
-        { error: 'Senha deve ter pelo menos 8 caracteres, incluindo letras e números' },
-        { status: 400 }
-      );
-    }
-
-    if (name.trim().length < 2) {
-      return NextResponse.json(
-        { error: 'Nome deve ter pelo menos 2 caracteres' },
         { status: 400 }
       );
     }
@@ -62,8 +29,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Normalizar tipo de pessoa conforme constraint da tabela users (pf/pj)
+    const tipoPessoaNormalized = userType === 'empresa' ? 'pj' : 'pf';
+
     // Criar usuário
-    const user = await createUser(email.toLowerCase(), password, name.trim(), userType || 'investidor');
+    const user = await createUser(email.toLowerCase(), password, name.trim(), tipoPessoaNormalized);
 
     // Se for empresa, criar entrada na tabela empresas
     if (userType === 'empresa' && nomeEmpresa && document) {
