@@ -327,7 +327,6 @@ async function main() {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
-      CREATE INDEX IF NOT EXISTS investimentos_user_id_idx ON investimentos (user_id);
       CREATE INDEX IF NOT EXISTS investimentos_oferta_id_idx ON investimentos (oferta_id);
       CREATE INDEX IF NOT EXISTS investimentos_status_idx ON investimentos (status);
     `)
@@ -358,7 +357,6 @@ async function main() {
         status VARCHAR(20) NOT NULL DEFAULT 'processada' CHECK (status IN ('pendente', 'processada', 'cancelada')),
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
-      CREATE INDEX IF NOT EXISTS transacoes_user_id_idx ON transacoes (user_id);
       CREATE INDEX IF NOT EXISTS transacoes_investimento_id_idx ON transacoes (investimento_id);
       CREATE INDEX IF NOT EXISTS transacoes_tipo_idx ON transacoes (tipo);
       CREATE INDEX IF NOT EXISTS transacoes_data_idx ON transacoes (data_transacao);
@@ -377,22 +375,6 @@ async function main() {
       END$$;
     `)
 
-    // Tabela de rendimentos mensais
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS rendimentos (
-        id BIGSERIAL PRIMARY KEY,
-        investimento_id BIGINT NOT NULL REFERENCES investimentos(id) ON DELETE CASCADE,
-        mes_referencia DATE NOT NULL,
-        valor_rendimento NUMERIC(15,2) NOT NULL,
-        percentual_rendimento NUMERIC(5,4),
-        valor_base NUMERIC(15,2) NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      );
-      CREATE INDEX IF NOT EXISTS rendimentos_investimento_id_idx ON rendimentos (investimento_id);
-      CREATE INDEX IF NOT EXISTS rendimentos_mes_referencia_idx ON rendimentos (mes_referencia);
-      CREATE UNIQUE INDEX IF NOT EXISTS rendimentos_unique_idx ON rendimentos (investimento_id, mes_referencia);
-    `)
-
     // Tabela de distribuição de carteira (para cálculos de diversificação)
     await client.query(`
       CREATE TABLE IF NOT EXISTS distribuicao_carteira (
@@ -404,7 +386,6 @@ async function main() {
         data_calculo TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
-      CREATE INDEX IF NOT EXISTS distribuicao_user_id_idx ON distribuicao_carteira (user_id);
       CREATE INDEX IF NOT EXISTS distribuicao_categoria_idx ON distribuicao_carteira (categoria);
     `)
 
@@ -450,12 +431,27 @@ async function main() {
         END IF;
       END$$;
     `)
- 
+    // Tabela de rendimentos mensais
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS rendimentos (
+        id BIGSERIAL PRIMARY KEY,
+        investimento_id BIGINT NOT NULL REFERENCES investimentos(id) ON DELETE CASCADE,
+        mes_referencia DATE NOT NULL,
+        valor_rendimento NUMERIC(15,2) NOT NULL,
+        percentual_rendimento NUMERIC(5,4),
+        valor_base NUMERIC(15,2) NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS rendimentos_investimento_id_idx ON rendimentos (investimento_id);
+      CREATE INDEX IF NOT EXISTS rendimentos_mes_referencia_idx ON rendimentos (mes_referencia);
+      CREATE UNIQUE INDEX IF NOT EXISTS rendimentos_unique_idx ON rendimentos (investimento_id, mes_referencia);
+    `)
+
      await client.query('COMMIT')
      console.log('Database setup successful: tables ofertas, blog, investimentos and related tables are ready.')
   } catch (err) {
     await client.query('ROLLBACK')
-    console.error('Database setup failed:', err.message)
+    console.error('Database setup failed:', err && (err.stack || err.message || err))
     process.exitCode = 1
   } finally {
     client.release()
@@ -465,6 +461,6 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error('Unexpected error:', e)
+    console.error('Unexpected error:', e && (e.stack || e.message || e))
     process.exit(1)
   })
