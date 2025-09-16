@@ -229,7 +229,9 @@ export default function RelatoriosPage() {
                               {formatBRL(oferta.captado)} de {formatBRL(oferta.meta)}
                             </div>
                           </div>
-                          <div className="text-sm font-medium">{percentual.toFixed(1)}%</div>
+                          <Badge variant={oferta.status === 'ativa' ? 'primary' : 'secondary'}>
+                            {percentual.toFixed(1)}%
+                          </Badge>
                         </div>
                         <div className="w-full bg-muted rounded-full h-2">
                           <div 
