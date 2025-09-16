@@ -51,83 +51,12 @@ import {
 import { formatBRL } from "@/lib/utils"
 
 export default function RelatoriosPage() {
-  // Mock data para demonstração
+  // Mock data removida: substituir por estrutura vazia/zeros para manter o layout sem conteúdo fictício
   const mockData = {
-    captacaoMensal: [
-      { mes: 'Jan', valor: 450000, meta: 500000 },
-      { mes: 'Fev', valor: 680000, meta: 600000 },
-      { mes: 'Mar', valor: 520000, meta: 550000 },
-      { mes: 'Abr', valor: 780000, meta: 700000 },
-      { mes: 'Mai', valor: 650000, meta: 650000 },
-      { mes: 'Jun', valor: 890000, meta: 800000 },
-    ],
-    investidoresPorTipo: [
-      { tipo: 'Pessoa Física', valor: 1250000, count: 45, color: '#8884d8' },
-      { tipo: 'Pessoa Jurídica', valor: 2100000, count: 23, color: '#82ca9d' },
-      { tipo: 'Fundos', valor: 1800000, count: 12, color: '#ffc658' },
-      { tipo: 'Family Office', valor: 950000, count: 8, color: '#ff7300' },
-    ],
-    performanceOfertas: [
-      {
-        id: 1,
-        nome: 'Expansão Agritech',
-        meta: 3000000,
-        captado: 1850000,
-        investidores: 89,
-        conversao: 12.5,
-        ticketMedio: 20786,
-        status: 'ativa'
-      },
-      {
-        id: 2,
-        nome: 'Série A - Fintech',
-        meta: 2000000,
-        captado: 1000000,
-        investidores: 38,
-        conversao: 8.2,
-        ticketMedio: 26316,
-        status: 'ativa'
-      },
-      {
-        id: 3,
-        nome: 'Seed Round',
-        meta: 500000,
-        captado: 500000,
-        investidores: 25,
-        conversao: 15.8,
-        ticketMedio: 20000,
-        status: 'encerrada'
-      }
-    ],
-    relatoriosDisponiveis: [
-      {
-        id: 1,
-        nome: 'Relatório Mensal - Junho 2024',
-        tipo: 'Mensal',
-        dataGeracao: '2024-07-01',
-        periodo: 'Jun/2024',
-        status: 'disponivel',
-        tamanho: '2.4 MB'
-      },
-      {
-        id: 2,
-        nome: 'Relatório Trimestral - Q2 2024',
-        tipo: 'Trimestral',
-        dataGeracao: '2024-07-01',
-        periodo: 'Q2/2024',
-        status: 'disponivel',
-        tamanho: '5.1 MB'
-      },
-      {
-        id: 3,
-        nome: 'Relatório de Performance - Ofertas Ativas',
-        tipo: 'Performance',
-        dataGeracao: '2024-06-28',
-        periodo: 'Jun/2024',
-        status: 'processando',
-        tamanho: '-'
-      }
-    ]
+    captacaoMensal: [] as Array<{ mes: string; valor: number; meta: number }>,
+    investidoresPorTipo: [] as Array<{ tipo: string; valor: number; count: number; color: string }>,
+    performanceOfertas: [] as Array<any>,
+    relatoriosDisponiveis: [] as Array<any>,
   }
 
   const formatDate = (dateString: string) => {
@@ -193,11 +122,11 @@ export default function RelatoriosPage() {
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-green-500" />
               <div>
-                <div className="text-2xl font-bold">{formatBRL(2850000)}</div>
+                <div className="text-2xl font-bold">{formatBRL(0)}</div>
                 <div className="text-sm text-muted-foreground">Total Captado</div>
                 <div className="text-xs text-green-600 flex items-center gap-1 mt-1">
                   <TrendingUp className="h-3 w-3" />
-                  +15.2% vs mês anterior
+                  0% vs mês anterior
                 </div>
               </div>
             </div>
@@ -208,11 +137,11 @@ export default function RelatoriosPage() {
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5 text-blue-500" />
               <div>
-                <div className="text-2xl font-bold">127</div>
+                <div className="text-2xl font-bold">0</div>
                 <div className="text-sm text-muted-foreground">Total Investidores</div>
                 <div className="text-xs text-blue-600 flex items-center gap-1 mt-1">
                   <TrendingUp className="h-3 w-3" />
-                  +8.5% vs mês anterior
+                  0% vs mês anterior
                 </div>
               </div>
             </div>
@@ -223,11 +152,11 @@ export default function RelatoriosPage() {
             <div className="flex items-center gap-2">
               <Target className="h-5 w-5 text-orange-500" />
               <div>
-                <div className="text-2xl font-bold">10.8%</div>
+                <div className="text-2xl font-bold">0%</div>
                 <div className="text-sm text-muted-foreground">Taxa Conversão</div>
                 <div className="text-xs text-orange-600 flex items-center gap-1 mt-1">
                   <TrendingUp className="h-3 w-3" />
-                  +2.1% vs mês anterior
+                  0% vs mês anterior
                 </div>
               </div>
             </div>
@@ -238,11 +167,11 @@ export default function RelatoriosPage() {
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-purple-500" />
               <div>
-                <div className="text-2xl font-bold">{formatBRL(22441)}</div>
+                <div className="text-2xl font-bold">{formatBRL(0)}</div>
                 <div className="text-sm text-muted-foreground">Ticket Médio</div>
                 <div className="text-xs text-purple-600 flex items-center gap-1 mt-1">
                   <TrendingUp className="h-3 w-3" />
-                  +5.8% vs mês anterior
+                  0% vs mês anterior
                 </div>
               </div>
             </div>
@@ -290,7 +219,7 @@ export default function RelatoriosPage() {
               <CardContent>
                 <div className="space-y-4">
                   {mockData.performanceOfertas.map((oferta) => {
-                    const percentual = (oferta.captado / oferta.meta) * 100
+                    const percentual = oferta.meta > 0 ? (oferta.captado / oferta.meta) * 100 : 0
                     return (
                       <div key={oferta.id} className="space-y-2">
                         <div className="flex justify-between items-center">
@@ -300,20 +229,13 @@ export default function RelatoriosPage() {
                               {formatBRL(oferta.captado)} de {formatBRL(oferta.meta)}
                             </div>
                           </div>
-                          <Badge variant={oferta.status === 'ativa' ? 'primary' : 'secondary'}>
-                            {percentual.toFixed(1)}%
-                          </Badge>
+                          <div className="text-sm font-medium">{percentual.toFixed(1)}%</div>
                         </div>
                         <div className="w-full bg-muted rounded-full h-2">
                           <div 
                             className="bg-primary h-2 rounded-full transition-all duration-300" 
                             style={{ width: `${Math.min(percentual, 100)}%` }}
                           />
-                        </div>
-                        <div className="grid grid-cols-3 gap-4 text-xs text-muted-foreground">
-                          <div>{oferta.investidores} investidores</div>
-                          <div>{oferta.conversao}% conversão</div>
-                          <div>{formatBRL(oferta.ticketMedio)} ticket médio</div>
                         </div>
                       </div>
                     )
@@ -323,7 +245,7 @@ export default function RelatoriosPage() {
             </Card>
           </div>
         </TabsContent>
-        
+
         <TabsContent value="captacao" className="space-y-4">
           <Card>
             <CardHeader>

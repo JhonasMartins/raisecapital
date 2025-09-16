@@ -103,53 +103,23 @@ const KpiStatCard = ({
 )
 
 export default function EmpresaDashboardPage() {
-  // Mock data para demonstração
+  // Mock data removida: substituir por estrutura vazia para manter o layout sem conteúdo fictício
   const mockData = {
-    totalCaptado: 2850000,
-    metaCaptacao: 5000000,
-    numeroInvestidores: 127,
-    ofertasAtivas: 2,
-    ticketMedio: 22440,
-    conversaoLeads: 8.5,
+    totalCaptado: 0,
+    metaCaptacao: 0,
+    numeroInvestidores: 0,
+    ofertasAtivas: 0,
+    ticketMedio: 0,
+    conversaoLeads: 0,
     
-    captacaoMensal: [
-      { mes: "Jan", valor: 180000 },
-      { mes: "Fev", valor: 220000 },
-      { mes: "Mar", valor: 350000 },
-      { mes: "Abr", valor: 420000 },
-      { mes: "Mai", valor: 380000 },
-      { mes: "Jun", valor: 450000 },
-    ],
+    captacaoMensal: [] as Array<{ mes: string; valor: number }>,
     
-    ofertas: [
-      {
-        id: 1,
-        nome: "Expansão Agritech",
-        meta: 3000000,
-        captado: 1850000,
-        investidores: 89,
-        prazo: "45 dias",
-        status: "ativa"
-      },
-      {
-        id: 2,
-        nome: "Série A - Fintech",
-        meta: 2000000,
-        captado: 1000000,
-        investidores: 38,
-        prazo: "72 dias",
-        status: "ativa"
-      }
-    ],
+    ofertas: [] as Array<any>,
     
-    proximasAcoes: [
-      { id: 1, titulo: "Reunião com investidores Série A", data: "Hoje, 14:00", tipo: "reuniao" },
-      { id: 2, titulo: "Envio de relatório mensal", data: "Amanhã", tipo: "relatorio" },
-      { id: 3, titulo: "Aprovação de documentos CVM", data: "Em 3 dias", tipo: "documento" },
-    ]
+    proximasAcoes: [] as Array<any>,
   }
 
-  const percentualCaptado = (mockData.totalCaptado / mockData.metaCaptacao) * 100
+  const percentualCaptado = mockData.metaCaptacao > 0 ? (mockData.totalCaptado / mockData.metaCaptacao) * 100 : 0
 
   return (
     <div className="space-y-6">

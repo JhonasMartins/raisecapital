@@ -27,51 +27,10 @@ import {
 import { formatBRL } from "@/lib/utils"
 
 export default function OfertasPage() {
-  // Mock data para demonstração
+  // Mock data removida: substituir por estrutura vazia para manter o layout sem conteúdo fictício
   const mockOfertas = {
-    ativas: [
-      {
-        id: 1,
-        nome: "Expansão Agritech",
-        descricao: "Captação para expansão da operação agrícola",
-        meta: 3000000,
-        captado: 1850000,
-        investidores: 89,
-        dataInicio: "2024-01-15",
-        dataFim: "2024-03-15",
-        status: "ativa",
-        tipo: "equity",
-        ticketMinimo: 10000,
-      },
-      {
-        id: 2,
-        nome: "Série A - Fintech",
-        descricao: "Rodada Série A para desenvolvimento de produto",
-        meta: 2000000,
-        captado: 1000000,
-        investidores: 38,
-        dataInicio: "2024-02-01",
-        dataFim: "2024-04-01",
-        status: "ativa",
-        tipo: "equity",
-        ticketMinimo: 25000,
-      }
-    ],
-    encerradas: [
-      {
-        id: 3,
-        nome: "Seed Round",
-        descricao: "Rodada inicial de investimento",
-        meta: 500000,
-        captado: 500000,
-        investidores: 25,
-        dataInicio: "2023-10-01",
-        dataFim: "2023-12-01",
-        status: "encerrada",
-        tipo: "equity",
-        ticketMinimo: 5000,
-      }
-    ]
+    ativas: [] as Array<any>,
+    encerradas: [] as Array<any>,
   }
 
   const formatDate = (dateString: string) => {
@@ -105,8 +64,8 @@ export default function OfertasPage() {
   }
 
   const OfertaCard = ({ oferta }: { oferta: any }) => {
-    const percentual = (oferta.captado / oferta.meta) * 100
-    const diasRestantes = Math.ceil((new Date(oferta.dataFim).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+    const percentual = oferta.meta > 0 ? (oferta.captado / oferta.meta) * 100 : 0
+    const diasRestantes = Math.max(0, Math.ceil((new Date(oferta.dataFim).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
 
     return (
       <Card>

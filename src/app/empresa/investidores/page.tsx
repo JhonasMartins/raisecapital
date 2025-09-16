@@ -31,79 +31,10 @@ import { formatBRL } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 
 export default function InvestidoresPage() {
-  // Mock data para demonstração
+  // Mock data removida: substituir por estrutura vazia para manter o layout sem conteúdo fictício
   const mockInvestidores = {
-    ativos: [
-      {
-        id: 1,
-        nome: "Carlos Silva",
-        email: "carlos.silva@email.com",
-        telefone: "+55 11 99999-9999",
-        avatar: "/avatars/carlos.jpg",
-        empresa: "Silva Investimentos",
-        cargo: "Sócio-Diretor",
-        valorInvestido: 250000,
-        dataInvestimento: "2024-01-15",
-        oferta: "Expansão Agritech",
-        status: "ativo",
-        tipo: "pessoa_fisica",
-        rating: 5,
-        investimentosAnteriores: 12,
-        ticketMedio: 180000,
-      },
-      {
-        id: 2,
-        nome: "Ana Costa",
-        email: "ana.costa@venture.com",
-        telefone: "+55 11 88888-8888",
-        avatar: "/avatars/ana.jpg",
-        empresa: "Venture Capital SP",
-        cargo: "Partner",
-        valorInvestido: 500000,
-        dataInvestimento: "2024-02-01",
-        oferta: "Série A - Fintech",
-        status: "ativo",
-        tipo: "pessoa_juridica",
-        rating: 5,
-        investimentosAnteriores: 45,
-        ticketMedio: 750000,
-      },
-      {
-        id: 3,
-        nome: "Roberto Mendes",
-        email: "roberto@angelinvest.com",
-        telefone: "+55 11 77777-7777",
-        avatar: "/avatars/roberto.jpg",
-        empresa: "Angel Invest",
-        cargo: "Angel Investor",
-        valorInvestido: 100000,
-        dataInvestimento: "2024-01-20",
-        oferta: "Expansão Agritech",
-        status: "ativo",
-        tipo: "pessoa_fisica",
-        rating: 4,
-        investimentosAnteriores: 8,
-        ticketMedio: 95000,
-      }
-    ],
-    potenciais: [
-      {
-        id: 4,
-        nome: "Mariana Santos",
-        email: "mariana@growthfund.com",
-        telefone: "+55 11 66666-6666",
-        avatar: "/avatars/mariana.jpg",
-        empresa: "Growth Fund",
-        cargo: "Investment Manager",
-        status: "interessado",
-        tipo: "pessoa_juridica",
-        rating: 4,
-        investimentosAnteriores: 23,
-        ticketMedio: 400000,
-        ultimoContato: "2024-02-10",
-        fonte: "LinkedIn",
-      }
-    ]
+    ativos: [] as Array<any>,
+    potenciais: [] as Array<any>,
   }
 
   const formatDate = (dateString: string) => {
@@ -284,19 +215,13 @@ export default function InvestidoresPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Investidores</h1>
           <p className="text-muted-foreground">
-            Gerencie seus investidores ativos e acompanhe leads potenciais.
+            Gerencie o relacionamento com seus investidores e potenciais parceiros.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
-            Filtros
-          </Button>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Adicionar Investidor
-          </Button>
-        </div>
+        <Button>
+          <Plus className="h-4 w-4 mr-2" />
+          Adicionar Novo
+        </Button>
       </div>
 
       {/* Busca */}
