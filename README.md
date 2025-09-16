@@ -32,7 +32,7 @@ O Raise Capital é uma plataforma full-stack que integra:
 
 ### Dados & Autenticação
 - **[PostgreSQL](https://www.postgresql.org/)** - Banco de dados relacional robusto
-- **[Better Auth 1.3.9](https://www.better-auth.com/)** - Sistema de autenticação moderno e type-safe
+- **[JWT (Jose)](https://github.com/panva/jose)** - Sistema de autenticação JWT customizado
 - **[TanStack Table v8](https://tanstack.com/table)** - Tabelas poderosas e flexíveis
 - **[Alchemy SDK](https://www.alchemy.com/)** - Integração com blockchain Ethereum
 
@@ -77,7 +77,7 @@ O Raise Capital é uma plataforma full-stack que integra:
 - **SEO otimizado** para melhor indexação
 
 ### 🔐 Autenticação & Segurança
-- **Better Auth** para autenticação moderna
+- **JWT** para autenticação customizada
 - **Proteção de rotas** com middleware
 - **Sanitização de dados** com sanitize-html
 - **Validação robusta** em formulários
@@ -98,7 +98,7 @@ O Raise Capital é uma plataforma full-stack que integra:
 
 ### 🗄️ Banco de Dados & Backend
 - **PostgreSQL (pg)** - Banco de dados principal
-- **Better Auth** - Sistema de autenticação
+- **JWT** - Sistema de autenticação
 - **Nodemailer** - Envio de e-mails
 - **Multer** - Upload de arquivos
 
@@ -150,9 +150,8 @@ DATABASE_SSL=false  # Para desenvolvimento local
 # Exemplo para desenvolvimento local:
 # DATABASE_URL="postgresql://postgres:123456@localhost:5432/raisecapital_dev"
 
-# 🔐 Autenticação (Better Auth)
-BETTER_AUTH_SECRET="your-secret-key-here"
-BETTER_AUTH_URL="http://localhost:3000"
+# 🔐 Autenticação (JWT)
+SESSION_SECRET="your-super-secret-jwt-key-change-in-production"
 
 # 📁 Upload de Arquivos
 UPLOAD_DIR="./public/uploads"
@@ -271,7 +270,7 @@ raisecapital/
 │   │   ├── 📄 *-card.tsx          # Cards e estatísticas
 │   │   └── 📄 *.tsx               # Outros componentes especializados
 │   ├── 📁 lib/                    # Utilitários e configurações
-│   │   ├── 📄 auth.ts             # Configuração Better Auth
+│   │   ├── 📄 auth.ts             # Sistema de autenticação JWT
 │   │   ├── 📄 db.ts               # Conexão PostgreSQL
 │   │   ├── 📄 email.ts            # Sistema de e-mail
 │   │   ├── 📄 blog.ts             # Lógica do blog
@@ -425,7 +424,7 @@ CMD ["npm", "start"]
 - 📖 **[Next.js Documentation](https://nextjs.org/docs)** - Framework React
 - 🎨 **[Tailwind CSS](https://tailwindcss.com/docs)** - Framework CSS
 - 🧩 **[Radix UI](https://www.radix-ui.com/)** - Componentes acessíveis
-- 🔐 **[Better Auth](https://www.better-auth.com/)** - Autenticação moderna
+- 🔐 **[JWT (Jose)](https://github.com/panva/jose)** - Autenticação customizada
 - 📊 **[Recharts](https://recharts.org/)** - Gráficos React
 - ✍️ **[TipTap](https://tiptap.dev/)** - Editor de texto rico
 

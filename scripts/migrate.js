@@ -27,6 +27,21 @@ async function main() {
   try {
     await client.query('BEGIN')
 
+    // Criar tabela users se não existir
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id BIGSERIAL PRIMARY KEY,
+        email TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        name TEXT NOT NULL,
+        tipo_pessoa VARCHAR(10) DEFAULT 'investidor' CHECK (tipo_pessoa IN ('pf','pj')),
+        email_verified BOOLEAN DEFAULT false,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS users_email_idx ON users (email);
+    `)
+
     // ofertas
     await client.query(`
       CREATE TABLE IF NOT EXISTS ofertas (
@@ -61,6 +76,26 @@ async function main() {
       CREATE INDEX IF NOT EXISTS ofertas_categoria_idx ON ofertas (categoria);
       CREATE INDEX IF NOT EXISTS ofertas_modalidade_idx ON ofertas (modalidade);
       CREATE INDEX IF NOT EXISTS ofertas_status_idx ON ofertas (status);
+    `)
+
+    // Criar tabela empresas se não existir
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS empresas (
+        id BIGSERIAL PRIMARY KEY,
+        user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        razao_social TEXT NOT NULL,
+        cnpj VARCHAR(18) UNIQUE,
+        nome_fantasia TEXT,
+        setor TEXT,
+        descricao TEXT,
+        website TEXT,
+        telefone TEXT,
+        endereco_completo TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS empresas_user_id_idx ON empresas (user_id);
+      CREATE INDEX IF NOT EXISTS empresas_cnpj_idx ON empresas (cnpj);
     `)
 
     // Garantir colunas novas em bases já existentes
@@ -198,7 +233,7 @@ async function main() {
       END$$;
     `)
 
-    // Compatibility with Better Auth: use default user_type and allow NULL password_hash (auth stores password elsewhere)
+    // Configurações para o sistema de autenticação JWT customizado
     await client.query(`
       DO $$
       BEGIN
@@ -208,13 +243,6 @@ async function main() {
         ) THEN
           -- Ensure default value for user_type to avoid NOT NULL violations on insert
           ALTER TABLE users ALTER COLUMN user_type SET DEFAULT 'investidor';
-        END IF;
-        IF EXISTS (
-          SELECT 1 FROM information_schema.columns
-          WHERE table_name = 'users' AND column_name = 'password_hash'
-        ) THEN
-          -- Allow NULL password_hash because Better Auth manages password in its own tables
-          ALTER TABLE users ALTER COLUMN password_hash DROP NOT NULL;
         END IF;
       END$$;
     `)
@@ -231,9 +259,100 @@ async function main() {
         END IF;
       END$$;
     `)
+
+    // Remover tabela conflitante se existir
+    await client.query('DROP TABLE IF EXISTS "session" CASCADE;');
+
+    // Tabela de investimentos dos usuários
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS investimentos (
+        id BIGSERIAL PRIMARY KEY,
+        user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        oferta_id BIGINT NOT NULL REFERENCES ofertas(id) ON DELETE CASCADE,
+        valor_investido NUMERIC(15,2) NOT NULL,
+        data_investimento TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        status VARCHAR(20) NOT NULL DEFAULT 'ativo' CHECK (status IN ('ativo', 'resgatado', 'cancelado')),
+        tipo_investimento VARCHAR(50) NOT NULL,
+        prazo_meses INTEGER,
+        taxa_retorno NUMERIC(5,2),
+        valor_atual NUMERIC(15,2),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS investimentos_user_id_idx ON investimentos (user_id);
+      CREATE INDEX IF NOT EXISTS investimentos_oferta_id_idx ON investimentos (oferta_id);
+      CREATE INDEX IF NOT EXISTS investimentos_status_idx ON investimentos (status);
+    `)
+
+    // Tabela de transações/movimentações
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS transacoes (
+        id BIGSERIAL PRIMARY KEY,
+        user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        investimento_id BIGINT REFERENCES investimentos(id) ON DELETE CASCADE,
+        tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('aporte', 'resgate', 'rendimento', 'taxa')),
+        valor NUMERIC(15,2) NOT NULL,
+        descricao TEXT,
+        data_transacao TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        status VARCHAR(20) NOT NULL DEFAULT 'processada' CHECK (status IN ('pendente', 'processada', 'cancelada')),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS transacoes_user_id_idx ON transacoes (user_id);
+      CREATE INDEX IF NOT EXISTS transacoes_investimento_id_idx ON transacoes (investimento_id);
+      CREATE INDEX IF NOT EXISTS transacoes_tipo_idx ON transacoes (tipo);
+      CREATE INDEX IF NOT EXISTS transacoes_data_idx ON transacoes (data_transacao);
+    `)
+
+    // Tabela de rendimentos mensais
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS rendimentos (
+        id BIGSERIAL PRIMARY KEY,
+        investimento_id BIGINT NOT NULL REFERENCES investimentos(id) ON DELETE CASCADE,
+        mes_referencia DATE NOT NULL,
+        valor_rendimento NUMERIC(15,2) NOT NULL,
+        percentual_rendimento NUMERIC(5,4),
+        valor_base NUMERIC(15,2) NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS rendimentos_investimento_id_idx ON rendimentos (investimento_id);
+      CREATE INDEX IF NOT EXISTS rendimentos_mes_referencia_idx ON rendimentos (mes_referencia);
+      CREATE UNIQUE INDEX IF NOT EXISTS rendimentos_unique_idx ON rendimentos (investimento_id, mes_referencia);
+    `)
+
+    // Tabela de distribuição de carteira (para cálculos de diversificação)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS distribuicao_carteira (
+        id BIGSERIAL PRIMARY KEY,
+        user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        categoria VARCHAR(100) NOT NULL,
+        valor_investido NUMERIC(15,2) NOT NULL,
+        percentual NUMERIC(5,2) NOT NULL,
+        data_calculo TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS distribuicao_user_id_idx ON distribuicao_carteira (user_id);
+      CREATE INDEX IF NOT EXISTS distribuicao_categoria_idx ON distribuicao_carteira (categoria);
+    `)
+
+    // Tabela de KPIs do usuário (para métricas do dashboard)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS kpis_usuario (
+        id BIGSERIAL PRIMARY KEY,
+        user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        saldo_total NUMERIC(15,2) NOT NULL DEFAULT 0,
+        valor_investido NUMERIC(15,2) NOT NULL DEFAULT 0,
+        rendimento_total NUMERIC(15,2) NOT NULL DEFAULT 0,
+        rentabilidade_percentual NUMERIC(5,2) NOT NULL DEFAULT 0,
+        aportes_pendentes NUMERIC(15,2) NOT NULL DEFAULT 0,
+        data_atualizacao TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS kpis_usuario_user_id_unique ON kpis_usuario (user_id);
+    `)
  
      await client.query('COMMIT')
-     console.log('Database setup successful: tables ofertas, blog and blog_comments are ready.')
+     console.log('Database setup successful: tables ofertas, blog, investimentos and related tables are ready.')
   } catch (err) {
     await client.query('ROLLBACK')
     console.error('Database setup failed:', err.message)
