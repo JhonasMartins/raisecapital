@@ -1,84 +1,82 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { ArrowLeft, DollarSign, TrendingUp, Clock, Shield, AlertCircle } from 'lucide-react'
 import { formatBRL } from '@/lib/utils'
-import { AlertCircle } from 'lucide-react'
 
 interface Offer {
+  id?: string
   name: string
+  category: string
+  modality: string
   min: number
-  goal: number
   raised: number
+  goal: number
+  deadline: string
+  cover: string
+  status: string
+  tir?: number
 }
 
 interface InvestmentValuePageProps {
-  params: Promise<{ slug: string }>
+  params: { id: string }
 }
 
-export default function InvestmentValuePage({ params }: InvestmentValuePageProps) {
+export default function InvestmentValuePage() {
+  const params = useParams()
   const router = useRouter()
-  const [slug, setSlug] = useState<string>('')
+  const [offerId, setOfferId] = useState<string>('')
   const [offer, setOffer] = useState<Offer | null>(null)
-  const [amount, setAmount] = useState('')
-  const [error, setError] = useState('')
+  const [amount, setAmount] = useState<string>('')
+  const [error, setError] = useState<string>('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const getParams = async () => {
-      const resolvedParams = await params
-      setSlug(resolvedParams.slug)
+    if (params?.id) {
+      setOfferId(params.id as string)
     }
-    getParams()
   }, [params])
 
-  useEffect(() => {
-    if (!slug) return
-
-    const fetchOffer = async () => {
-      try {
-        // Buscar dados da oferta (simulando com dados mock por enquanto)
-        const mockOffers: Record<string, Offer> = {
-          'fintech-xyz': {
-            name: 'Fintech XYZ',
-            min: 1000,
-            goal: 500000,
-            raised: 350000
-          },
-          'agrotech-verde': {
-            name: 'Agrotech Verde',
-            min: 500,
-            goal: 300000,
-            raised: 120000
-          },
-          'healthtech-vida': {
-            name: 'HealthTech Vida',
-            min: 2000,
-            goal: 450000,
-            raised: 450000
-          }
-        }
-
-        const offerData = mockOffers[slug]
-        if (offerData) {
-          setOffer(offerData)
-        } else {
+  const fetchOffer = async (id: string) => {
+    try {
+      setLoading(true)
+      setError('')
+      
+      // Buscar oferta real do banco de dados
+      const response = await fetch(`/api/ofertas/${id}`)
+      
+      if (!response.ok) {
+        if (response.status === 404) {
           setError('Oferta não encontrada')
+        } else {
+          setError('Erro ao carregar oferta')
         }
-      } catch (err) {
-        setError('Erro ao carregar dados da oferta')
-      } finally {
         setLoading(false)
+        return
       }
+      
+      const offerData = await response.json()
+      setOffer(offerData)
+    } catch (err) {
+      console.error('Erro ao buscar oferta:', err)
+      setError('Erro ao carregar oferta')
+    } finally {
+      setLoading(false)
     }
+  }
 
-    fetchOffer()
-  }, [slug])
+  useEffect(() => {
+    if (offerId) {
+      fetchOffer(offerId)
+    }
+  }, [offerId])
 
   const handleAmountChange = (value: string) => {
     // Remove caracteres não numéricos
@@ -104,10 +102,10 @@ export default function InvestmentValuePage({ params }: InvestmentValuePageProps
 
     // Salvar valor no localStorage para usar nas próximas etapas
     localStorage.setItem('investmentAmount', amount)
-    localStorage.setItem('offerSlug', slug)
+    localStorage.setItem('offerId', offerId)
     
     // Navegar para próxima etapa
-    router.push(`/investir/${slug}/dados`)
+    router.push(`/investir/${offerId}/dados`)
   }
 
   if (loading) {

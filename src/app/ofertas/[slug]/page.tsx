@@ -17,6 +17,7 @@ type DocumentLink = { label: string; url: string }
 type Investor = { name: string }
 
 interface Offer {
+  id?: string
   name: string
   subtitle?: string
   category: string
@@ -439,7 +440,7 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
               <CardContent className="space-y-5">
                 {/* CTA principal */}
                 <Button size="lg" className="w-full" asChild>
-                  <Link href={`/investir/${slug}`}>Investir agora</Link>
+                  <Link href={`/investir/${offer.id || slug}`}>Investir agora</Link>
                 </Button>
 
                 {/* Progresso */}
@@ -482,6 +483,7 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
 // Buscar oferta no banco por slug com fallback aos mocks estáticos
 async function getOfferBySlug(slug: string): Promise<Offer | null> {
   type OfferRow = {
+    id: string
     nome: string
     slug: string
     categoria: string
@@ -509,7 +511,7 @@ async function getOfferBySlug(slug: string): Promise<Offer | null> {
   try {
     const db = getDb()
     const { rows } = await db.query<OfferRow>(
-      `SELECT nome, slug, categoria, modalidade, minimo_investimento, arrecadado, meta,
+      `SELECT id, nome, slug, categoria, modalidade, minimo_investimento, arrecadado, meta,
                data_limite, prazo_texto, capa, status, subtitulo, produto, pagamento, tir,
                resumo_pdf, sobre_operacao, sobre_empresa,
                empreendedores, financeiros, documentos, informacoes_essenciais, investidores
@@ -527,6 +529,7 @@ async function getOfferBySlug(slug: string): Promise<Offer | null> {
           : (typeof r.data_limite === 'string' ? r.data_limite : ''))
 
     const offer: Offer = {
+      id: r.id,
       name: r.nome,
       subtitle: r.subtitulo ?? undefined,
       category: r.categoria,

@@ -1,12 +1,12 @@
 import { redirect } from 'next/navigation'
 
 interface InvestmentFlowPageProps {
-  params: Promise<{ slug: string }>
+  params: Promise<{ id: string }>
 }
 
 export default async function InvestmentFlowPage({ params }: InvestmentFlowPageProps) {
-  const { slug } = await params
+  const { id } = await params
   
   // Redirecionar para a primeira etapa do wizard
-  redirect(`/investir/${slug}/valor`)
+  redirect(`/investir/${id}/valor`)
 }

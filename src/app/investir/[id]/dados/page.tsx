@@ -52,7 +52,7 @@ interface UserData {
 export default function DadosPage() {
   const router = useRouter()
   const params = useParams()
-  const slug = params.slug as string
+  const offerId = params.id as string
   
   const [userData, setUserData] = useState<UserData>({
     // Mock de dados pré-preenchidos
@@ -114,13 +114,13 @@ export default function DadosPage() {
     }
     
     // Salvar dados no localStorage
-    localStorage.setItem('investmentUserData', JSON.stringify(userData))
+    localStorage.setItem('investmentData', JSON.stringify(userData))
     
-    router.push(`/investir/${slug}/termos`)
+    router.push(`/investir/${offerId}/termos`)
   }
 
   const handlePrevious = () => {
-    router.push(`/investir/${slug}/valor`)
+    router.push(`/investir/${offerId}/valor`)
   }
 
   return (
