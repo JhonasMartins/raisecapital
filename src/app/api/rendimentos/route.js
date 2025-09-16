@@ -24,6 +24,11 @@ export async function GET() {
     const hasInv = (c) => invCols.has(c);
     const hasOf = (c) => ofCols.has(c);
 
+    // Detectar coluna de usuário de forma resiliente
+    const userIdCandidates = ['user_id', 'usuario_id', 'investidor_id', 'cliente_id', 'owner_id', 'users_id'];
+    const foundUserId = userIdCandidates.find((c) => hasInv(c));
+    const colUserId = foundUserId ? `i.${foundUserId}` : null;
+
     // Mapear colunas equivalentes
     const colValorInvestido = hasInv('valor_investido')
       ? 'i.valor_investido'
@@ -42,11 +47,20 @@ export async function GET() {
 
     const colStatus = hasInv('status') ? 'i.status' : hasInv('situacao') ? 'i.situacao' : "'ativo'";
 
-    const colAtivoNome = hasOf('nome') ? 'o.nome' : hasOf('titulo') ? 'o.titulo' : "'Ativo'";
-    const colCategoria = hasOf('categoria') ? 'o.categoria' : 'NULL';
-    const colModalidade = hasOf('modalidade') ? 'o.modalidade' : 'NULL';
+    // Verificar se JOIN com ofertas é possível (precisamos de oferta_id em investimentos)
+    const hasOfertaId = hasInv('oferta_id');
+
+    const colAtivoNome = hasOfertaId && (hasOf('nome') ? 'o.nome' : hasOf('titulo') ? 'o.titulo' : "'Ativo'");
+    const colCategoria = hasOfertaId && hasOf('categoria') ? 'o.categoria' : 'NULL';
+    const colModalidade = hasOfertaId && hasOf('modalidade') ? 'o.modalidade' : 'NULL';
     // Usar apenas o.tir se existir; evitar referenciar o.yield_anual que não existe em nosso schema
-    const colYieldAnual = hasOf('tir') ? 'o.tir' : 'NULL';
+    const colYieldAnual = hasOfertaId && hasOf('tir') ? 'o.tir' : 'NULL';
+
+    // Montar JOIN condicionalmente
+    const joinOfertas = hasOfertaId ? 'JOIN ofertas o ON i.oferta_id = o.id' : '';
+
+    // Construir WHERE do usuário de forma segura
+    const whereUser = colUserId ? `${colUserId} = $1` : '1=0';
 
     // Construir SELECT com base nas colunas detectadas
     const investmentsQuery = `
@@ -55,7 +69,7 @@ export async function GET() {
         ${colValorInvestido} AS valor_investido,
         ${colValorAtual} AS valor_atual,
         ${colStatus} AS status,
-        ${colAtivoNome} AS ativo_nome,
+        ${colAtivoNome || "'Ativo'"} AS ativo_nome,
         ${colCategoria} AS categoria,
         ${colModalidade} AS modalidade,
         ${colYieldAnual} AS yield_anual,
@@ -67,8 +81,8 @@ export async function GET() {
           ELSE 0
         END AS rentabilidade_percentual
       FROM investimentos i
-      JOIN ofertas o ON i.oferta_id = o.id
-      WHERE i.user_id = $1
+      ${joinOfertas}
+      WHERE ${whereUser}
       ORDER BY ${colDataInvest} DESC
     `;
 
@@ -76,10 +90,12 @@ export async function GET() {
     try {
       console.log('[rendimentos] invCols:', Array.from(invCols));
       console.log('[rendimentos] ofCols:', Array.from(ofCols));
+      console.log('[rendimentos] colUserId:', colUserId);
       console.log('[rendimentos] SQL:', investmentsQuery);
     } catch {}
 
-    const investmentsResult = await query(investmentsQuery, [user.id]);
+    const params = colUserId ? [user.id] : undefined;
+    const investmentsResult = await query(investmentsQuery, params);
     const investments = investmentsResult.rows;
 
     // Calcular KPIs de rendimentos
