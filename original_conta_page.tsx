@@ -16,9 +16,6 @@ import {
   TrendingUp,
   IdCard,
   ClipboardList,
-  Building2,
-  Wheat,
-  Factory,
   MoreHorizontal,
   Settings,
   TriangleAlert,
@@ -31,7 +28,7 @@ import {
 import { formatBRL } from "@/lib/utils"
 import PortfolioDistributionChart from "@/components/portfolio-distribution-chart"
 import StatisticCard13 from "@/components/statistic-card-13"
-import { GradientBarMultipleChart } from "@/components/ui/gradient-bar-multiple-chart"
+// import removido: GradientBarMultipleChart
 
 // Card inspirado no ReUI StatisticCard1, com delta e comparativo opcionais
 const KpiStatCard = ({
@@ -100,17 +97,12 @@ const KpiStatCard = ({
 )
 
 export default function ContaDashboardPage() {
-  const distribuicao = [
-    { key: "imobiliario", label: "Imobiliário", value: 23000, color: "var(--chart-1)" },
-    { key: "agro", label: "Agro", value: 12000, color: "var(--chart-2)" },
-    { key: "infra", label: "Infra", value: 7000, color: "var(--chart-3)" },
-    { key: "credito", label: "Crédito", value: 6000, color: "var(--chart-4)" },
-    { key: "outros", label: "Outros", value: 2000, color: "var(--chart-5)" },
-  ] as const
-  const totalDistribuicao = distribuicao.reduce((acc, i) => acc + i.value, 0)
+  type Segmento = { key: string; label: string; value: number; color: string }
+  const distribuicao: Segmento[] = []
+  const totalDistribuicao = 0
 
   // Mock para KPI de aportes pendentes (fluxo via Asaas)
-  const aportesPendentesValor = 2500
+  const aportesPendentesValor = 0
 
   return (
     <div className="w-full space-y-4 sm:space-y-6">
@@ -122,10 +114,10 @@ export default function ContaDashboardPage() {
         </CardHeader>
         <CardContent className="p-4 sm:p-6">
           <div className="grid grid-cols-1 gap-3 xs:grid-cols-2 lg:grid-cols-4 sm:gap-4">
-            <KpiStatCard title="Saldo disponível" value={formatBRL(12450)} />
-            <KpiStatCard title="Posição investida" value={formatBRL(38000)} />
-            <KpiStatCard title="Rentabilidade acumulada" value="+8,2%" delta={8.2} positive />
-            <KpiStatCard title="Aportes pendentes" value={formatBRL(aportesPendentesValor)} />
+            <KpiStatCard title="Saldo disponível" value={formatBRL(0)} />
+            <KpiStatCard title="Posição investida" value={formatBRL(0)} />
+            <KpiStatCard title="Rentabilidade acumulada" value="—" />
+            <KpiStatCard title="Aportes pendentes" value={formatBRL(0)} />
           </div>
           <Separator className="my-4 sm:my-6" />
           <Tabs defaultValue="consolidado" className="w-full">
@@ -160,16 +152,16 @@ export default function ContaDashboardPage() {
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
               {distribuicao.map((s) => {
-                const pct = Math.round((s.value / totalDistribuicao) * 1000) / 10
+                const pct = 0
                 return (
                   <div key={s.key} className="flex items-center justify-between gap-3 text-sm rounded-md border bg-card px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: s.color }} />
-                      <span>{s.label}</span>
+                      <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: (s as any).color }} />
+                      <span>{(s as any).label}</span>
                     </div>
                     <div className="tabular-nums text-muted-foreground">
                       <span className="mr-2">{pct}%</span>
-                      <span>{formatBRL(s.value)}</span>
+                      <span>{formatBRL(0)}</span>
                     </div>
                   </div>
                 )
@@ -184,7 +176,17 @@ export default function ContaDashboardPage() {
       </Card>
 
       {/* Performance mensal */}
-      <GradientBarMultipleChart />
+      <Card>
+        <CardHeader>
+          <CardTitle>Performance Mensal</CardTitle>
+          <CardDescription>Sem dados disponíveis</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-56 sm:h-64 w-full flex items-center justify-center text-sm text-muted-foreground">
+            Sem dados para exibir
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Próximos passos */}
       <Card>
@@ -197,22 +199,29 @@ export default function ContaDashboardPage() {
             <StatisticCard13
               title="Finalize seu KYC"
               icon={<IdCard className="w-5 h-5 text-primary" />}
-              total={10}
-              passing={6}
-              leftTotal={10}
+              total={0}
+              passing={0}
+              leftTotal={0}
               leftSuffix="documentos"
               rightSuffix="concluído"
             />
             <StatisticCard13
               title="Suitability"
               icon={<ClipboardList className="w-5 h-5 text-primary" />}
-              total={10}
+              total={0}
               passing={0}
-              leftTotal={10}
+              leftTotal={0}
               leftSuffix="perguntas respondidas"
               rightSuffix="concluído"
             />
-            <StatisticCard13 />
+            <StatisticCard13
+              title="Checklist"
+              total={0}
+              passing={0}
+              leftTotal={0}
+              leftSuffix="itens"
+              rightSuffix="concluído"
+            />
           </div>
         </CardContent>
       </Card>
@@ -227,7 +236,7 @@ export default function ContaDashboardPage() {
                 Investimentos em andamento
               </CardTitle>
               <CardDescription className="text-sm">Acompanhe o status de cada etapa</CardDescription>
-              <div className="text-xs text-muted-foreground">Última atualização há 2 dias</div>
+              <div className="text-xs text-muted-foreground">Sem atualizações recentes</div>
             </div>
           </div>
         </CardHeader>
@@ -251,53 +260,20 @@ export default function ContaDashboardPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
-                        <TableCell className="pl-0 py-2 text-sm">
-                          <div className="flex items-center gap-2 whitespace-nowrap">
-                            <Building2 className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                            <span>Imobiliário Alpha</span>
+                      <TableRow>
+                        <TableCell colSpan={5} className="h-40 text-center">
+                          <div className="flex h-full flex-col items-center justify-center gap-3 py-6">
+                            <div className="text-sm text-muted-foreground">Sem investimentos no momento</div>
+                            <div className="text-xs text-muted-foreground">Quando existirem investimentos, eles aparecerão aqui.</div>
                           </div>
                         </TableCell>
-                        <TableCell className="py-2 text-sm">
-                          <Badge variant="outline" className="gap-1 whitespace-nowrap"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" />Aportado</Badge>
-                        </TableCell>
-                        <TableCell className="py-2 text-right text-sm tabular-nums whitespace-nowrap">{formatBRL(10000)}</TableCell>
-                        <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell whitespace-nowrap">+7,3%</TableCell>
-                        <TableCell className="py-2 text-right text-sm hidden sm:table-cell whitespace-nowrap">há 2 dias</TableCell>
-                      </TableRow>
-                      <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
-                        <TableCell className="pl-0 py-2 text-sm">
-                          <div className="flex items-center gap-2 whitespace-nowrap">
-                            <Wheat className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                            <span>Crédito Agro Beta</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="py-2 text-sm">
-                          <Badge variant="outline" className="gap-1 whitespace-nowrap"><span className="h-1.5 w-1.5 rounded-full bg-amber-500" />Em análise</Badge>
-                        </TableCell>
-                        <TableCell className="py-2 text-right text-sm tabular-nums whitespace-nowrap">{formatBRL(5000)}</TableCell>
-                        <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell whitespace-nowrap">—</TableCell>
-                        <TableCell className="py-2 text-right text-sm hidden sm:table-cell whitespace-nowrap">há 1 dia</TableCell>
-                      </TableRow>
-                      <TableRow className="odd:bg-muted/20 hover:bg-muted/40 transition-colors">
-                        <TableCell className="pl-0 py-2 text-sm">
-                          <div className="flex items-center gap-2 whitespace-nowrap">
-                            <Factory className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                            <span>Infra Gamma</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="py-2 text-sm">
-                          <Badge variant="outline" className="gap-1 whitespace-nowrap"><span className="h-1.5 w-1.5 rounded-full bg-green-600" />Liquidado</Badge>
-                        </TableCell>
-                        <TableCell className="py-2 text-right text-sm tabular-nums whitespace-nowrap">{formatBRL(7000)}</TableCell>
-                        <TableCell className="py-2 text-right text-sm tabular-nums hidden sm:table-cell whitespace-nowrap">+2,1%</TableCell>
-                        <TableCell className="py-2 text-right text-sm hidden sm:table-cell whitespace-nowrap">há 3 dias</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
                 </div>
               </div>
             </TabsContent>
+            {/* Movimentações segue com estado vazio já implementado */}
             <TabsContent value="movs" className="mt-4">
               <div className="rounded-md border bg-card overflow-x-auto -mx-4 sm:-mx-6">
                 <div className="inline-block min-w-full px-4 sm:px-6">
