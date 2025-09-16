@@ -14,7 +14,7 @@ export async function GET() {
     const investmentsQuery = `
       SELECT 
         i.id,
-        i.valor_investido,
+        i.valor as valor_investido,
         i.valor_atual,
         i.status,
         o.nome as ativo_nome,
@@ -23,21 +23,21 @@ export async function GET() {
         o.yield_anual,
         i.data_investimento,
         CASE 
-          WHEN i.status = 'ativo' THEN i.valor_atual - i.valor_investido
+          WHEN i.status = 'confirmado' THEN COALESCE(i.valor_atual, i.valor) - i.valor
           ELSE 0
         END as rendimento_bruto,
         CASE 
-          WHEN i.status = 'ativo' AND i.valor_investido > 0 
-          THEN ((i.valor_atual - i.valor_investido) / i.valor_investido) * 100
+          WHEN i.status = 'confirmado' AND i.valor > 0 
+          THEN ((COALESCE(i.valor_atual, i.valor) - i.valor) / i.valor) * 100
           ELSE 0
         END as rentabilidade_percentual
       FROM investimentos i
       JOIN ofertas o ON i.oferta_id = o.id
-      WHERE i.investidor_email = $1 AND i.investidor_id = $2
+      WHERE i.investidor_id = $1
       ORDER BY i.data_investimento DESC
     `;
 
-    const investmentsResult = await query(investmentsQuery, [user.email, user.id]);
+    const investmentsResult = await query(investmentsQuery, [user.id]);
     const investments = investmentsResult.rows;
 
     // Calcular KPIs de rendimentos
