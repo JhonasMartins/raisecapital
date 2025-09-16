@@ -241,8 +241,8 @@ export default function MeusInvestimentosPage() {
       {/* KPIs 2x2 */}
       <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <Kpi title="Aportado" value={formatBRL(totalAportado)} icon={<CheckCircle2 className="size-4 sm:size-5 text-primary" />} />
-        <Kpi title="Em análise" value={formatBRL(portfolioData?.emAnalise || 5000)} icon={<Hourglass className="size-4 sm:size-5 text-primary" />} />
-        <Kpi title="Rentabilidade" value={portfolioData?.rentabilidadeTotal ? `+${portfolioData.rentabilidadeTotal}%` : "+7,3%"} icon={<TrendingUp className="size-4 sm:size-5 text-primary" />} />
+        <Kpi title="Em análise" value={formatBRL(portfolioData?.emAnalise || 0)} icon={<Hourglass className="size-4 sm:size-5 text-primary" />} />
+        <Kpi title="Rentabilidade" value={portfolioData?.rentabilidadePercentual ? `+${portfolioData.rentabilidadePercentual.toFixed(1)}%` : "+0,0%"} icon={<TrendingUp className="size-4 sm:size-5 text-primary" />} />
         <Kpi title="Pendentes" value={formatBRL(totalPendentes)} icon={<QrCode className="size-4 sm:size-5 text-primary" />} />
       </div>
 
@@ -376,7 +376,7 @@ export default function MeusInvestimentosPage() {
           {/* QRCode gerado */}
           {qrCode ? (
             <div className="rounded-md border p-3 sm:p-4">
-              <div className="mb-2 text-xs sm:text-sm font-medium">Escaneie o QRCode para pagar</div>
+              <div className="mb-2 text-xs sm:text-sm font-medium">Link de pagamento</div>
               <div className="flex justify-center">
                 <img alt="QRCode PIX" src={qrCode} className="h-32 w-32 sm:h-48 sm:w-48" />
               </div>
@@ -425,12 +425,12 @@ function RowPendente({ icon, nome, ofertaId, valor, categoria, onPagar, isLoadin
           size="sm" 
           onClick={() => onPagar(ofertaId, valor)} 
           disabled={isLoading} 
-          aria-label={`Gerar QRCode para ${nome}`}
+          aria-label={`Gerar link de pagamento para ${nome}`}
           className="text-xs px-2 py-1 h-7 sm:h-8 sm:px-3 sm:py-2 sm:text-sm"
         >
           <QrCode className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> 
-          <span className="hidden xs:inline">{isLoading ? "Gerando..." : "Gerar QRCode"}</span>
-          <span className="xs:hidden">{isLoading ? "..." : "QR"}</span>
+          <span className="hidden xs:inline">{isLoading ? "Gerando..." : "Pagar"}</span>
+          <span className="xs:hidden">{isLoading ? "..." : "Pagar"}</span>
         </Button>
       </TableCell>
     </TableRow>

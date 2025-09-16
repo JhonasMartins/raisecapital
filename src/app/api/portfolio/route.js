@@ -46,12 +46,13 @@ export async function GET() {
       // Buscar dados consolidados do portfólio
       const portfolioQuery = `
         SELECT 
-          COALESCE(SUM(inv.valor_investido), 0) as total_investido,
-          COALESCE(SUM(inv.valor_atual), SUM(inv.valor_investido), 0) as valor_atual,
-          COALESCE(SUM(inv.rentabilidade_valor), 0) as rentabilidade_valor,
-          COUNT(inv.id) as total_investimentos
+          COALESCE(SUM(CASE WHEN inv.status = 'ativo' THEN inv.valor_investido ELSE 0 END), 0) as total_investido,
+          COALESCE(SUM(CASE WHEN inv.status = 'ativo' THEN inv.valor_atual ELSE inv.valor_investido END), 0) as valor_atual,
+          COALESCE(SUM(CASE WHEN inv.status = 'ativo' THEN inv.rentabilidade_valor ELSE 0 END), 0) as rentabilidade_valor,
+          COALESCE(SUM(CASE WHEN inv.status IN ('pendente', 'em_analise', 'aguardando_pagamento') THEN inv.valor_investido ELSE 0 END), 0) as em_analise,
+          COUNT(CASE WHEN inv.status = 'ativo' THEN inv.id END) as total_investimentos
         FROM investimentos inv
-        WHERE inv.investidor_id = $1 AND inv.status = 'ativo'
+        WHERE inv.investidor_id = $1
       `;
       
       const portfolioResult = await client.query(portfolioQuery, [investidor.id]);
@@ -76,6 +77,7 @@ export async function GET() {
       const totalInvestido = parseFloat(portfolio.total_investido || 0);
       const valorAtual = parseFloat(portfolio.valor_atual || 0);
       const rentabilidadeValor = parseFloat(portfolio.rentabilidade_valor || 0);
+      const emAnalise = parseFloat(portfolio.em_analise || 0);
       const rentabilidadePercentual = totalInvestido > 0 ? ((valorAtual - totalInvestido) / totalInvestido) * 100 : 0;
       
       const distribuicao = distribuicaoResult.rows.map(item => ({
@@ -91,8 +93,13 @@ export async function GET() {
         valorAtual,
         rentabilidade: rentabilidadeValor,
         rentabilidadePercentual,
+        emAnalise,
         totalInvestimentos: parseInt(portfolio.total_investimentos || 0),
-        distribuicao
+        distribuicao,
+        distribuicaoPorCategoria: distribuicao.map(item => ({
+          categoria: item.categoria,
+          valor: item.valorInvestido
+        }))
       });
       
     } finally {
