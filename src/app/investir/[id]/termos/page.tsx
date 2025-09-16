@@ -8,11 +8,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { AlertCircle, FileText } from 'lucide-react'
 
 export default function TermosPage() {
   const router = useRouter()
   const params = useParams()
-  const slug = params.slug as string
+  const offerId = params.id as string
   
   const [perfilInvestidor, setPerfilInvestidor] = useState<string>('')
   const [investimentosOutrasPlataformas, setInvestimentosOutrasPlataformas] = useState<string>('')
@@ -50,11 +51,11 @@ export default function TermosPage() {
     
     localStorage.setItem('investmentTermsData', JSON.stringify(termosData))
     
-    router.push(`/investir/${slug}/confirmacao`)
+    router.push(`/investir/${offerId}/confirmacao`)
   }
 
   const handlePrevious = () => {
-    router.push(`/investir/${slug}/dados`)
+    router.push(`/investir/${offerId}/dados`)
   }
 
   const formatCurrency = (value: string) => {

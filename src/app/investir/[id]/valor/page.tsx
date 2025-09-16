@@ -25,14 +25,17 @@ interface Offer {
   tir?: number
 }
 
-interface InvestmentValuePageProps {
+interface ValorPageProps {
   params: { id: string }
 }
 
-export default function InvestmentValuePage() {
-  const params = useParams()
+export default function ValorPage({ params }: ValorPageProps) {
   const router = useRouter()
-  const [offerId, setOfferId] = useState<string>('')
+  const offerId = params.id as string
+  const [offer, setOffer] = useState<Offer | null>(null)
+  const [amount, setAmount] = useState<string>('')
+  const [error, setError] = useState<string>('')
+  const [loading, setLoading] = useState(true)
   const [offer, setOffer] = useState<Offer | null>(null)
   const [amount, setAmount] = useState<string>('')
   const [error, setError] = useState<string>('')
