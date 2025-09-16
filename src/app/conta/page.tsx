@@ -29,6 +29,21 @@ import { formatBRL } from "@/lib/utils"
 import PortfolioDistributionChart from "@/components/portfolio-distribution-chart"
 import StatisticCard13 from "@/components/statistic-card-13"
 import { GradientBarMultipleChart } from "@/components/ui/gradient-bar-multiple-chart"
+import { headers } from "next/headers"
+
+async function fetchJSON<T>(url: string) {
+  const isRelative = url.startsWith("/")
+  let finalUrl = url
+  if (isRelative) {
+    const hdrs = await headers()
+    const protocol = hdrs.get("x-forwarded-proto") ?? "http"
+    const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "localhost:3000"
+    finalUrl = `${protocol}://${host}${url}`
+  }
+  const res = await fetch(finalUrl, { cache: "no-store" })
+  if (!res.ok) return null as unknown as T
+  return (await res.json()) as T
+}
 
 // Card inspirado no ReUI StatisticCard1, com delta e comparativo opcionais
 const KpiStatCard = ({
@@ -96,8 +111,25 @@ const KpiStatCard = ({
   </Card>
 )
 
-export default function ContaDashboardPage() {
-  const distribuicao = [] as const
+export default async function ContaDashboardPage() {
+  const overview = await fetchJSON<{ balanceAvailable: number; investedTotal: number; cumulativeReturnPct: number; pendingContributions: number }>(
+    "/api/conta/overview"
+  )
+
+  const portfolio = await fetchJSON<{ allocation: { label: string; value: number }[] }>("/api/conta/portfolio")
+  const perf = await fetchJSON<{ items: { label: string; aportes: number; rendimentos: number }[] }>(
+    "/api/conta/performance"
+  )
+  const checks = await fetchJSON<{ checksPassing: number; checksRequired: number; assignedPct: number }>(
+    "/api/conta/checks"
+  )
+
+  const distribuicao: { key: string; label: string; value: number; color: string }[] = (portfolio?.allocation || []).map((it, idx) => ({
+    key: `seg${idx + 1}`,
+    label: it.label,
+    value: it.value,
+    color: ["#2563eb", "#16a34a", "#f59e0b", "#9333ea", "#ef4444", "#06b6d4"][idx % 6],
+  }))
   const totalDistribuicao = (distribuicao as ReadonlyArray<{ value: number }>).reduce((acc, i) => acc + i.value, 0)
 
   return (
@@ -110,10 +142,10 @@ export default function ContaDashboardPage() {
         </CardHeader>
         <CardContent className="p-4 sm:p-6">
           <div className="grid grid-cols-1 gap-3 xs:grid-cols-2 lg:grid-cols-4 sm:gap-4">
-            <KpiStatCard title="Saldo disponível" value="—" />
-            <KpiStatCard title="Posição investida" value="—" />
-            <KpiStatCard title="Rentabilidade acumulada" value="—" />
-            <KpiStatCard title="Aportes pendentes" value="—" />
+            <KpiStatCard title="Saldo disponível" value={typeof overview?.balanceAvailable === "number" ? formatBRL(overview.balanceAvailable) : "—"} />
+            <KpiStatCard title="Posição investida" value={typeof overview?.investedTotal === "number" ? formatBRL(overview.investedTotal) : "—"} />
+            <KpiStatCard title="Rentabilidade acumulada" value={typeof overview?.cumulativeReturnPct === "number" ? `${overview.cumulativeReturnPct.toFixed(2)}%` : "—"} />
+            <KpiStatCard title="Aportes pendentes" value={typeof overview?.pendingContributions === "number" ? formatBRL(overview.pendingContributions) : "—"} />
           </div>
           <Separator className="my-4 sm:my-6" />
           <Tabs defaultValue="consolidado" className="w-full">
@@ -173,7 +205,7 @@ export default function ContaDashboardPage() {
       </Card>
 
       {/* Performance mensal */}
-      <GradientBarMultipleChart showData={false} />
+      <GradientBarMultipleChart showData={true} data={perf?.items?.map(i => ({ month: i.label, aportes: i.aportes, rendimentos: i.rendimentos })) ?? []} title="Performance Mensal" description={new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).formatRange?.(new Date(new Date().getFullYear(), new Date().getMonth()-5, 1), new Date()) ?? "Últimos meses"} />
 
       {/* Próximos passos */}
       <Card>
@@ -203,9 +235,9 @@ export default function ContaDashboardPage() {
             />
             <StatisticCard13
               title="Compliance Checks"
-              total={0}
-              passing={0}
-              leftTotal={0}
+              total={checks?.checksRequired ?? 0}
+              passing={checks?.checksPassing ?? 0}
+              leftTotal={checks?.checksRequired ?? 0}
               leftSuffix="checks"
               rightSuffix="assigned"
             />
