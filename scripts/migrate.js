@@ -78,13 +78,12 @@ async function main() {
       CREATE INDEX IF NOT EXISTS ofertas_status_idx ON ofertas (status);
     `)
 
-    // Criar tabela empresas se não existir
+    // Criar/ajustar tabela empresas de forma idempotente
     await client.query(`
       CREATE TABLE IF NOT EXISTS empresas (
         id BIGSERIAL PRIMARY KEY,
-        user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        razao_social TEXT NOT NULL,
-        cnpj VARCHAR(18) UNIQUE,
+        razao_social TEXT,
+        cnpj VARCHAR(18),
         nome_fantasia TEXT,
         setor TEXT,
         descricao TEXT,
@@ -94,8 +93,50 @@ async function main() {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
-      CREATE INDEX IF NOT EXISTS empresas_user_id_idx ON empresas (user_id);
-      CREATE INDEX IF NOT EXISTS empresas_cnpj_idx ON empresas (cnpj);
+    `)
+
+    // Garantir colunas essenciais e relacionamento com users
+    await client.query(`
+      ALTER TABLE empresas
+        ADD COLUMN IF NOT EXISTS user_id BIGINT,
+        ADD COLUMN IF NOT EXISTS razao_social TEXT,
+        ADD COLUMN IF NOT EXISTS nome_empresa TEXT,
+        ADD COLUMN IF NOT EXISTS cnpj VARCHAR(18);
+    `)
+
+    // Garantir FK (se ainda não existir)
+    await client.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.table_constraints
+          WHERE table_name = 'empresas' AND constraint_name = 'empresas_user_id_fkey'
+        ) THEN
+          ALTER TABLE empresas
+            ADD CONSTRAINT empresas_user_id_fkey
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+        END IF;
+      END$$;
+    `)
+
+    // Índices idempotentes (protegidos por checagem de coluna)
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'empresas' AND column_name = 'user_id'
+        ) THEN
+          EXECUTE 'CREATE INDEX IF NOT EXISTS empresas_user_id_idx ON empresas (user_id)';
+        END IF;
+
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'empresas' AND column_name = 'cnpj'
+        ) THEN
+          EXECUTE 'CREATE INDEX IF NOT EXISTS empresas_cnpj_idx ON empresas (cnpj)';
+        END IF;
+      END$$;
     `)
 
     // Garantir colunas novas em bases já existentes
@@ -215,6 +256,13 @@ async function main() {
        CREATE UNIQUE INDEX IF NOT EXISTS idx_users_cnpj_unique ON users (cnpj) WHERE cnpj IS NOT NULL;
      `)
 
+    // Asaas customer linkage (idempotent)
+    await client.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS asaas_customer_id TEXT;
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_users_asaas_customer_id_unique
+        ON users (asaas_customer_id) WHERE asaas_customer_id IS NOT NULL;
+    `)
+
     // Ensure email_verified is boolean in existing databases where it might have been created as TIMESTAMP
     await client.query(`
       DO $$
@@ -284,6 +332,19 @@ async function main() {
       CREATE INDEX IF NOT EXISTS investimentos_status_idx ON investimentos (status);
     `)
 
+    // Guard index on investimentos.user_id
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'investimentos' AND column_name = 'user_id'
+        ) THEN
+          EXECUTE 'CREATE INDEX IF NOT EXISTS investimentos_user_id_idx ON investimentos (user_id)';
+        END IF;
+      END$$;
+    `)
+
     // Tabela de transações/movimentações
     await client.query(`
       CREATE TABLE IF NOT EXISTS transacoes (
@@ -301,6 +362,19 @@ async function main() {
       CREATE INDEX IF NOT EXISTS transacoes_investimento_id_idx ON transacoes (investimento_id);
       CREATE INDEX IF NOT EXISTS transacoes_tipo_idx ON transacoes (tipo);
       CREATE INDEX IF NOT EXISTS transacoes_data_idx ON transacoes (data_transacao);
+    `)
+
+    // Guard index on transacoes.user_id
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'transacoes' AND column_name = 'user_id'
+        ) THEN
+          EXECUTE 'CREATE INDEX IF NOT EXISTS transacoes_user_id_idx ON transacoes (user_id)';
+        END IF;
+      END$$;
     `)
 
     // Tabela de rendimentos mensais
@@ -334,6 +408,19 @@ async function main() {
       CREATE INDEX IF NOT EXISTS distribuicao_categoria_idx ON distribuicao_carteira (categoria);
     `)
 
+    // Guard index on distribuicao_carteira.user_id
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'distribuicao_carteira' AND column_name = 'user_id'
+        ) THEN
+          EXECUTE 'CREATE INDEX IF NOT EXISTS distribuicao_user_id_idx ON distribuicao_carteira (user_id)';
+        END IF;
+      END$$;
+    `)
+
     // Tabela de KPIs do usuário (para métricas do dashboard)
     await client.query(`
       CREATE TABLE IF NOT EXISTS kpis_usuario (
@@ -349,6 +436,19 @@ async function main() {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
       CREATE UNIQUE INDEX IF NOT EXISTS kpis_usuario_user_id_unique ON kpis_usuario (user_id);
+    `)
+
+    // Guard unique index on kpis_usuario.user_id
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'kpis_usuario' AND column_name = 'user_id'
+        ) THEN
+          EXECUTE 'CREATE UNIQUE INDEX IF NOT EXISTS kpis_usuario_user_id_unique ON kpis_usuario (user_id)';
+        END IF;
+      END$$;
     `)
  
      await client.query('COMMIT')

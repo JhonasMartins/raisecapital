@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { asaas } from '@/lib/asaas'
+import { getCurrentUser } from '@/lib/auth'
+import { query } from '@/lib/db'
 
 export async function POST(req: Request) {
   try {
@@ -22,11 +24,10 @@ export async function POST(req: Request) {
     }
 
     const apiKey = process.env.ASAAS_API_KEY
-    const customerId = process.env.ASAAS_CUSTOMER_ID
     const billing = (billingType || 'PIX') as 'PIX' | 'BOLETO' | 'CREDIT_CARD'
 
     // Fallback mock quando não há configuração do Asaas
-    if (!apiKey || !customerId) {
+    if (!apiKey) {
       if (billing === 'PIX') {
         const svg = encodeURIComponent(
           `<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'>
@@ -67,6 +68,66 @@ export async function POST(req: Request) {
         last4: '4242',
         mocked: true,
       })
+    }
+
+    // Obter usuário autenticado
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+    }
+
+    // Carregar dados do usuário no banco (cpf/cnpj e asaas_customer_id)
+    const userRowRes = await query(
+      `SELECT id, email, name, tipo_pessoa, cpf, cnpj, asaas_customer_id FROM users WHERE id = $1`,
+      [currentUser.id]
+    )
+    if (userRowRes.rows.length === 0) {
+      return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
+    }
+
+    const userRow: any = userRowRes.rows[0]
+    let customerId: string | null = userRow.asaas_customer_id || null
+
+    // Se não há customer vinculado, tentar buscar/criar agora
+    if (!customerId) {
+      const tipoPessoa = userRow.tipo_pessoa === 'pj' ? 'pj' : 'pf'
+      const cpfCnpj = (tipoPessoa === 'pj' ? userRow.cnpj : userRow.cpf) as string | null
+      const normalizedDoc = cpfCnpj ? String(cpfCnpj).replace(/\D/g, '') : null
+
+      if (!normalizedDoc) {
+        return NextResponse.json({ error: 'Documento (CPF/CNPJ) ausente no cadastro do usuário' }, { status: 400 })
+      }
+
+      // Tentar localizar existente
+      try {
+        const existing = await asaas.getCustomerByCpfCnpj(normalizedDoc)
+        if (existing?.data && existing.data.length > 0) {
+          customerId = existing.data[0]?.id || null
+        }
+      } catch (e) {
+        // segue para tentativa de criação
+      }
+
+      // Criar se ainda não encontrado
+      if (!customerId) {
+        const personType = tipoPessoa === 'pj' ? 'JURIDICA' : 'FISICA'
+        const displayName = (tipoPessoa === 'pj' ? (userRow.razao_social || userRow.name) : userRow.name) as string
+        const created = await asaas.createCustomer({
+          name: displayName,
+          email: userRow.email,
+          cpfCnpj: normalizedDoc,
+          personType,
+          notificationEnabled: true,
+        })
+        customerId = created?.id || null
+      }
+
+      if (!customerId) {
+        return NextResponse.json({ error: 'Falha ao vincular cliente no Asaas' }, { status: 502 })
+      }
+
+      // Persistir no banco
+      await query('UPDATE users SET asaas_customer_id = $1 WHERE id = $2', [customerId, currentUser.id])
     }
 
     // Cria pagamento real via Asaas
