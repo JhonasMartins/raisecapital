@@ -434,17 +434,62 @@ async function main() {
     // Tabela de rendimentos mensais
     await client.query(`
       CREATE TABLE IF NOT EXISTS rendimentos (
-        id BIGSERIAL PRIMARY KEY,
-        investimento_id BIGINT NOT NULL REFERENCES investimentos(id) ON DELETE CASCADE,
-        mes_referencia DATE NOT NULL,
-        valor_rendimento NUMERIC(15,2) NOT NULL,
-        percentual_rendimento NUMERIC(5,4),
-        valor_base NUMERIC(15,2) NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        id BIGSERIAL PRIMARY KEY
       );
-      CREATE INDEX IF NOT EXISTS rendimentos_investimento_id_idx ON rendimentos (investimento_id);
-      CREATE INDEX IF NOT EXISTS rendimentos_mes_referencia_idx ON rendimentos (mes_referencia);
-      CREATE UNIQUE INDEX IF NOT EXISTS rendimentos_unique_idx ON rendimentos (investimento_id, mes_referencia);
+    `)
+
+    // Garantir colunas essenciais da tabela rendimentos em bases já existentes
+    await client.query(`
+      ALTER TABLE rendimentos
+        ADD COLUMN IF NOT EXISTS investimento_id BIGINT,
+        ADD COLUMN IF NOT EXISTS mes_referencia DATE,
+        ADD COLUMN IF NOT EXISTS valor_rendimento NUMERIC(15,2),
+        ADD COLUMN IF NOT EXISTS percentual_rendimento NUMERIC(5,4),
+        ADD COLUMN IF NOT EXISTS valor_base NUMERIC(15,2),
+        ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+    `)
+
+    // Garantir FK para investimento_id
+    await client.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.table_constraints
+          WHERE table_name = 'rendimentos' AND constraint_name = 'rendimentos_investimento_id_fkey'
+        ) THEN
+          ALTER TABLE rendimentos
+            ADD CONSTRAINT rendimentos_investimento_id_fkey
+            FOREIGN KEY (investimento_id) REFERENCES investimentos(id) ON DELETE CASCADE;
+        END IF;
+      END$$;
+    `)
+
+    // Índices idempotentes (protegidos por checagem de coluna)
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'rendimentos' AND column_name = 'investimento_id'
+        ) THEN
+          EXECUTE 'CREATE INDEX IF NOT EXISTS rendimentos_investimento_id_idx ON rendimentos (investimento_id)';
+        END IF;
+
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'rendimentos' AND column_name = 'mes_referencia'
+        ) THEN
+          EXECUTE 'CREATE INDEX IF NOT EXISTS rendimentos_mes_referencia_idx ON rendimentos (mes_referencia)';
+        END IF;
+
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns WHERE table_name = 'rendimentos' AND column_name = 'investimento_id'
+        ) AND EXISTS (
+          SELECT 1 FROM information_schema.columns WHERE table_name = 'rendimentos' AND column_name = 'mes_referencia'
+        ) THEN
+          EXECUTE 'CREATE UNIQUE INDEX IF NOT EXISTS rendimentos_unique_idx ON rendimentos (investimento_id, mes_referencia)';
+        END IF;
+      END$$;
     `)
 
      await client.query('COMMIT')
