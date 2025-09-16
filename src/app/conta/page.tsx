@@ -29,18 +29,26 @@ import { formatBRL } from "@/lib/utils"
 import PortfolioDistributionChart from "@/components/portfolio-distribution-chart"
 import StatisticCard13 from "@/components/statistic-card-13"
 import { GradientBarMultipleChart } from "@/components/ui/gradient-bar-multiple-chart"
-import { headers } from "next/headers"
+import { headers, cookies } from "next/headers"
 
 async function fetchJSON<T>(url: string) {
   const isRelative = url.startsWith("/")
   let finalUrl = url
+  const reqHeaders: HeadersInit = {}
+
   if (isRelative) {
-    const hdrs = await headers()
+    const [hdrs, cookieStore] = await Promise.all([headers(), cookies()])
     const protocol = hdrs.get("x-forwarded-proto") ?? "http"
     const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "localhost:3000"
     finalUrl = `${protocol}://${host}${url}`
+
+    const cookieHeader = cookieStore.getAll().map(c => `${c.name}=${c.value}`).join("; ")
+    if (cookieHeader) {
+      ;(reqHeaders as Record<string, string>)["cookie"] = cookieHeader
+    }
   }
-  const res = await fetch(finalUrl, { cache: "no-store" })
+
+  const res = await fetch(finalUrl, { cache: "no-store", headers: reqHeaders })
   if (!res.ok) return null as unknown as T
   return (await res.json()) as T
 }
