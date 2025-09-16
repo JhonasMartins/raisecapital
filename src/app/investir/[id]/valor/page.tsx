@@ -173,14 +173,14 @@ export default function ValorPage({ params }: ValorPageProps) {
           </p>
           <div className="space-y-3">
             <Button 
-              onClick={() => router.push('/login')} 
+              onClick={() => router.push('/auth/login')} 
               className="w-full"
             >
               Fazer Login
             </Button>
             <Button 
               variant="outline" 
-              onClick={() => router.push('/cadastro')}
+              onClick={() => router.push('/auth/criar-conta')}
               className="w-full"
             >
               Criar Conta

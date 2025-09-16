@@ -186,10 +186,10 @@ export default function DadosPage() {
             Você precisa estar logado para continuar com o investimento.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button onClick={() => router.push('/login')}>
+            <Button onClick={() => router.push('/auth/login')}>
               Fazer Login
             </Button>
-            <Button variant="outline" onClick={() => router.push('/register')}>
+            <Button variant="outline" onClick={() => router.push('/auth/criar-conta')}>
               Criar Conta
             </Button>
             <Button variant="ghost" onClick={() => router.push('/ofertas')}>
