@@ -131,6 +131,18 @@ export default function DadosPage() {
   }
 
   const handleNext = () => {
+    // Verificar se o usuário está autenticado
+    if (isAuthenticated === false) {
+      alert('Você precisa estar logado para continuar com o investimento.')
+      return
+    }
+
+    // Verificar se a oferta está encerrada
+    if (offer && (offer.status === 'encerrada' || offer.status === 'finalizada')) {
+      alert('Esta oferta já foi encerrada e não aceita mais investimentos.')
+      return
+    }
+
     // Validação básica dos campos obrigatórios
     const requiredFields = [
       'nome', 'sobrenome', 'dataNascimento', 'nacionalidade', 'genero', 'cpf', 'rg', 
@@ -158,18 +170,59 @@ export default function DadosPage() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold">Confirmação de Dados</h1>
-        <p className="text-muted-foreground mt-2">
-          Verifique se todos os seus dados estão corretos. Caso não estejam, preencha corretamente antes de continuar.
-        </p>
-      </div>
+      {/* Carregamento */}
+      {(loading || isAuthenticated === null) && (
+        <div className="text-center py-8">
+          <p>Carregando...</p>
+        </div>
+      )}
 
-      <Alert>
-        <AlertDescription>
-          Verifique se todos os seus dados estão corretos. Caso não estejam, preencha corretamente antes de continuar.
-        </AlertDescription>
-      </Alert>
+      {/* Tela de login para usuários não autenticados */}
+      {!loading && isAuthenticated === false && (
+        <div className="text-center py-8 space-y-4">
+          <Lock className="mx-auto h-12 w-12 text-muted-foreground" />
+          <h2 className="text-xl font-semibold">Login Necessário</h2>
+          <p className="text-muted-foreground">
+            Você precisa estar logado para continuar com o investimento.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button onClick={() => router.push('/login')}>
+              Fazer Login
+            </Button>
+            <Button variant="outline" onClick={() => router.push('/register')}>
+              Criar Conta
+            </Button>
+            <Button variant="ghost" onClick={() => router.push('/ofertas')}>
+              Voltar às Ofertas
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Alerta para oferta encerrada */}
+      {!loading && isAuthenticated && offer && (offer.status === 'encerrada' || offer.status === 'finalizada') && (
+        <Alert className="border-red-200 bg-red-50">
+          <AlertDescription className="text-red-800">
+            <strong>Oferta Encerrada:</strong> Esta oferta já foi finalizada e não aceita mais investimentos.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Conteúdo principal - só mostra se autenticado e oferta ativa */}
+      {!loading && isAuthenticated && (!offer || (offer.status !== 'encerrada' && offer.status !== 'finalizada')) && (
+        <>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Confirmação de Dados</h1>
+            <p className="text-muted-foreground mt-2">
+              Verifique se todos os seus dados estão corretos. Caso não estejam, preencha corretamente antes de continuar.
+            </p>
+          </div>
+
+          <Alert>
+            <AlertDescription>
+              Verifique se todos os seus dados estão corretos. Caso não estejam, preencha corretamente antes de continuar.
+            </AlertDescription>
+          </Alert>
 
       <div className="space-y-6">
         {/* Dados Pessoais */}
@@ -500,10 +553,15 @@ export default function DadosPage() {
         <Button variant="outline" onClick={handlePrevious}>
           Anterior
         </Button>
-        <Button onClick={handleNext}>
-          Próximo
+        <Button 
+          onClick={handleNext}
+          disabled={offer && (offer.status === 'encerrada' || offer.status === 'finalizada')}
+        >
+          {offer && (offer.status === 'encerrada' || offer.status === 'finalizada') ? 'Oferta Encerrada' : 'Próximo'}
         </Button>
       </div>
+        </>
+      )}
     </div>
   )
 }

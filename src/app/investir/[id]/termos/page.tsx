@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,19 +8,62 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle, FileText } from 'lucide-react'
+import { AlertCircle, FileText, Lock } from 'lucide-react'
 
 export default function TermosPage() {
   const router = useRouter()
   const params = useParams()
   const offerId = params.id as string
   
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const [offer, setOffer] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const [perfilInvestidor, setPerfilInvestidor] = useState<string>('')
   const [investimentosOutrasPlataformas, setInvestimentosOutrasPlataformas] = useState<string>('')
   const [aceitouTermos, setAceitouTermos] = useState<boolean>(false)
   const [errors, setErrors] = useState<string[]>([])
 
+  const checkAuthentication = async () => {
+    try {
+      const response = await fetch('/api/auth/me')
+      setIsAuthenticated(response.ok)
+    } catch (error) {
+      setIsAuthenticated(false)
+    }
+  }
+
+  const fetchOffer = async () => {
+    try {
+      const response = await fetch(`/api/offers/${offerId}`)
+      if (response.ok) {
+        const offerData = await response.json()
+        setOffer(offerData)
+      }
+    } catch (error) {
+      console.error('Erro ao buscar oferta:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    checkAuthentication()
+    fetchOffer()
+  }, [offerId])
+
   const handleNext = () => {
+    // Verificar se o usuário está autenticado
+    if (isAuthenticated === false) {
+      alert('Você precisa estar logado para continuar com o investimento.')
+      return
+    }
+
+    // Verificar se a oferta está encerrada
+    if (offer && (offer.status === 'encerrada' || offer.status === 'finalizada')) {
+      alert('Esta oferta já foi encerrada e não aceita mais investimentos.')
+      return
+    }
+
     const newErrors: string[] = []
     
     if (!perfilInvestidor) {
@@ -78,12 +121,53 @@ export default function TermosPage() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold">Termos e Declarações</h1>
-        <p className="text-muted-foreground mt-2">
-          Complete as informações necessárias para prosseguir com seu investimento
-        </p>
-      </div>
+      {/* Carregamento */}
+      {(loading || isAuthenticated === null) && (
+        <div className="text-center py-8">
+          <p>Carregando...</p>
+        </div>
+      )}
+
+      {/* Tela de login para usuários não autenticados */}
+      {!loading && isAuthenticated === false && (
+        <div className="text-center py-8 space-y-4">
+          <Lock className="mx-auto h-12 w-12 text-muted-foreground" />
+          <h2 className="text-xl font-semibold">Login Necessário</h2>
+          <p className="text-muted-foreground">
+            Você precisa estar logado para continuar com o investimento.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button onClick={() => router.push('/login')}>
+              Fazer Login
+            </Button>
+            <Button variant="outline" onClick={() => router.push('/register')}>
+              Criar Conta
+            </Button>
+            <Button variant="ghost" onClick={() => router.push('/ofertas')}>
+              Voltar às Ofertas
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Alerta para oferta encerrada */}
+      {!loading && isAuthenticated && offer && (offer.status === 'encerrada' || offer.status === 'finalizada') && (
+        <Alert className="border-red-200 bg-red-50">
+          <AlertDescription className="text-red-800">
+            <strong>Oferta Encerrada:</strong> Esta oferta já foi finalizada e não aceita mais investimentos.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Conteúdo principal - só mostra se autenticado e oferta ativa */}
+      {!loading && isAuthenticated && (!offer || (offer.status !== 'encerrada' && offer.status !== 'finalizada')) && (
+        <>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Termos e Declarações</h1>
+            <p className="text-muted-foreground mt-2">
+              Complete as informações necessárias para prosseguir com seu investimento
+            </p>
+          </div>
 
       {errors.length > 0 && (
         <Alert variant="destructive">
@@ -220,10 +304,15 @@ export default function TermosPage() {
         <Button variant="outline" onClick={handlePrevious}>
           Anterior
         </Button>
-        <Button onClick={handleNext}>
-          Próximo
+        <Button 
+          onClick={handleNext}
+          disabled={offer && (offer.status === 'encerrada' || offer.status === 'finalizada')}
+        >
+          {offer && (offer.status === 'encerrada' || offer.status === 'finalizada') ? 'Oferta Encerrada' : 'Próximo'}
         </Button>
       </div>
+        </>
+      )}
     </div>
   )
 }

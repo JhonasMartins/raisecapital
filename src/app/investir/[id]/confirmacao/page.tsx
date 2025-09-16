@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { CheckCircle, AlertCircle, ArrowLeft, FileText } from 'lucide-react'
+import { CheckCircle, AlertCircle, ArrowLeft, FileText, Lock } from 'lucide-react'
 
 interface InvestmentSummary {
   offerName: string
@@ -20,8 +20,38 @@ export default function ConfirmacaoPage() {
   const params = useParams()
   const offerId = params.id as string
   
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const [offer, setOffer] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const [summary, setSummary] = useState<InvestmentSummary | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const checkAuthentication = async () => {
+    try {
+      // Simular verificação de autenticação
+      const isAuth = localStorage.getItem('userToken') !== null
+      setIsAuthenticated(isAuth)
+    } catch (error) {
+      setIsAuthenticated(false)
+    }
+  }
+
+  const fetchOffer = async () => {
+    try {
+      // Simular busca da oferta
+      const mockOffer = { id: offerId, status: 'ativa', name: 'Fintech XYZ' }
+      setOffer(mockOffer)
+    } catch (error) {
+      console.error('Erro ao buscar oferta:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    checkAuthentication()
+    fetchOffer()
+  }, [offerId])
 
   useEffect(() => {
     // Carregar dados do localStorage
@@ -40,6 +70,18 @@ export default function ConfirmacaoPage() {
   }, [])
 
   const handleConfirm = async () => {
+    // Verificar autenticação
+    if (!isAuthenticated) {
+      alert('Você precisa estar logado para confirmar o investimento.')
+      return
+    }
+
+    // Verificar status da oferta
+    if (offer && (offer.status === 'encerrada' || offer.status === 'finalizada')) {
+      alert('Esta oferta já foi encerrada e não aceita mais investimentos.')
+      return
+    }
+
     setIsSubmitting(true)
     
     try {
