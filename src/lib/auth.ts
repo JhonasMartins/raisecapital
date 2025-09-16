@@ -99,7 +99,13 @@ export async function setSessionCookie(token: string) {
  */
 export async function clearSessionCookie() {
   const cookieStore = await cookies();
-  cookieStore.delete(SESSION_COOKIE_NAME);
+  cookieStore.set(SESSION_COOKIE_NAME, '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 0, // Expira imediatamente
+    path: '/',
+  });
 }
 
 /**
