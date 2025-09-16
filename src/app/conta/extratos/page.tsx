@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -17,25 +17,6 @@ type Entry = {
   type: EntryType;
   amount: number; // positivo para créditos, negativo para débitos
 };
-
-const ENTRIES: Entry[] = [
-  { id: "e1", date: "2025-10-12", description: "Provento — Imobiliário Alpha", type: "provento", amount: 230.5 },
-  { id: "e2", date: "2025-10-12", description: "Aporte via PIX", type: "aporte", amount: 1500 },
-  { id: "e3", date: "2025-10-10", description: "Taxa de administração — Fundo Infra Beta", type: "taxa", amount: -18.9 },
-  { id: "e4", date: "2025-10-08", description: "Resgate parcial — Crédito Gamma", type: "retirada", amount: -500 },
-  { id: "e5", date: "2025-10-05", description: "Provento — Agro Delta", type: "provento", amount: 142.22 },
-  { id: "e6", date: "2025-10-01", description: "Aporte via PIX", type: "aporte", amount: 1000 },
-  { id: "e7", date: "2025-09-27", description: "Provento — Imobiliário Alpha", type: "provento", amount: 228.1 },
-  { id: "e8", date: "2025-09-22", description: "Aporte via PIX", type: "aporte", amount: 2000 },
-  { id: "e9", date: "2025-09-18", description: "Taxa de administração — Infra Beta", type: "taxa", amount: -18.9 },
-  { id: "e10", date: "2025-09-12", description: "Provento — Agro Delta", type: "provento", amount: 130.0 },
-  { id: "e11", date: "2025-09-10", description: "Resgate parcial — Crédito Gamma", type: "retirada", amount: -300 },
-  { id: "e12", date: "2025-09-05", description: "Aporte via PIX", type: "aporte", amount: 500 },
-  { id: "e13", date: "2025-08-28", description: "Provento — Imobiliário Alpha", type: "provento", amount: 220.0 },
-  { id: "e14", date: "2025-08-22", description: "Aporte via PIX", type: "aporte", amount: 1200 },
-  { id: "e15", date: "2025-08-19", description: "Taxa de custódia", type: "taxa", amount: -5.5 },
-  { id: "e16", date: "2025-08-01", description: "Aporte via PIX", type: "aporte", amount: 800 },
-];
 
 function typeToLabel(t: EntryType) {
   switch (t) {
