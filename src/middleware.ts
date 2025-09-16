@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifySession } from '@/lib/auth';
 
 // Rotas que requerem autenticação
-const protectedRoutes = ['/conta', '/empresa', '/investir'];
+const protectedRoutes = ['/investir'];
 
 // Rotas de autenticação (usuários logados não devem acessar)
 const authRoutes = [
@@ -39,23 +39,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Se é rota de auth e há sessão válida, redirecionar baseado no tipo de usuário
+  // Se é rota de auth e há sessão válida, redirecionar para página inicial
   if (isAuthRoute && session) {
-    if (session.userType === 'empresa') {
-      return NextResponse.redirect(new URL('/empresa', request.url));
-    } else {
-      return NextResponse.redirect(new URL('/conta', request.url));
-    }
-  }
-
-  // Verificar se usuário empresa está tentando acessar /conta
-  if (pathname.startsWith('/conta') && session?.userType === 'empresa') {
-    return NextResponse.redirect(new URL('/empresa', request.url));
-  }
-
-  // Verificar se usuário investidor está tentando acessar /empresa
-  if (pathname.startsWith('/empresa') && session?.userType !== 'empresa') {
-    return NextResponse.redirect(new URL('/conta', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   return NextResponse.next();

@@ -5,13 +5,13 @@ const oldDbPool = new Pool({
   connectionString: 'postgresql://raisecapitaldatabase:150523272942150523805628soft99@65.109.3.180:5433/raisecapitaldatabase'
 });
 
-// Configuração do Supabase
-const supabasePool = new Pool({
+// Configuração do banco PostgreSQL atual
+const pgPool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-// Função para mapear status do banco antigo para o Supabase
+// Função para mapear status do banco antigo para o PostgreSQL
 function mapStatus(oldStatus) {
   const statusMap = {
     'Em captação': 'ativa',
@@ -23,7 +23,7 @@ function mapStatus(oldStatus) {
   return statusMap[oldStatus] || 'rascunho';
 }
 
-// Função para mapear modalidade do banco antigo para o Supabase
+// Função para mapear modalidade do banco antigo para o PostgreSQL
 function mapTipo(modalidade) {
   const tipoMap = {
     'Equity': 'equity',
@@ -34,23 +34,23 @@ function mapTipo(modalidade) {
 }
 
 // Função para criar uma empresa temporária se necessário
-async function createTempCompany(supabaseClient) {
+async function createTempCompany(pgClient) {
   try {
     // Verificar se já existe uma empresa
-    const existingCompany = await supabaseClient.query('SELECT id FROM empresas LIMIT 1');
+    const existingCompany = await pgClient.query('SELECT id FROM empresas LIMIT 1');
     if (existingCompany.rows.length > 0) {
       return existingCompany.rows[0].id;
     }
 
     // Buscar um usuário existente
-    const userResult = await supabaseClient.query('SELECT id FROM users LIMIT 1');
+    const userResult = await pgClient.query('SELECT id FROM users LIMIT 1');
     if (userResult.rows.length === 0) {
-      throw new Error('Nenhum usuário encontrado no Supabase');
+      throw new Error('Nenhum usuário encontrado no PostgreSQL');
     }
     const userId = userResult.rows[0].id;
 
     // Criar empresa temporária
-    const companyResult = await supabaseClient.query(`
+    const companyResult = await pgClient.query(`
       INSERT INTO empresas (
         razao_social, 
         nome_fantasia, 
@@ -74,15 +74,15 @@ async function createTempCompany(supabaseClient) {
 
 async function migrateOfertas() {
   let oldDbClient;
-  let supabaseClient;
+  let pgClient;
 
   try {
     console.log('Conectando aos bancos de dados...');
     oldDbClient = await oldDbPool.connect();
-    supabaseClient = await supabasePool.connect();
+    pgClient = await pgPool.connect();
 
     // Criar empresa temporária se necessário
-    const empresaId = await createTempCompany(supabaseClient);
+    const empresaId = await createTempCompany(pgClient);
 
     // Buscar ofertas do banco antigo
     console.log('Buscando ofertas do banco antigo...');
@@ -126,7 +126,7 @@ async function migrateOfertas() {
       try {
         console.log(`Migrando oferta: ${oferta.nome}`);
 
-        const insertResult = await supabaseClient.query(`
+        const insertResult = await pgClient.query(`
           INSERT INTO ofertas (
             nome,
             descricao,
@@ -200,15 +200,15 @@ async function migrateOfertas() {
     console.log('Migração de ofertas concluída!');
 
     // Verificar quantas ofertas foram migradas
-    const countResult = await supabaseClient.query('SELECT COUNT(*) as total FROM ofertas');
-    console.log(`Total de ofertas no Supabase após migração: ${countResult.rows[0].total}`);
+    const countResult = await pgClient.query('SELECT COUNT(*) as total FROM ofertas');
+    console.log(`Total de ofertas no PostgreSQL após migração: ${countResult.rows[0].total}`);
 
   } catch (error) {
     console.error('Erro durante a migração:', error);
     throw error;
   } finally {
     if (oldDbClient) oldDbClient.release();
-    if (supabaseClient) supabaseClient.release();
+    if (pgClient) pgClient.release();
   }
 }
 

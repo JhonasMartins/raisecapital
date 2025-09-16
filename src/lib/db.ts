@@ -47,10 +47,19 @@ export async function query<T = unknown>(text: string, params?: readonly unknown
      return { rows: res.rows as T[] }
   } catch (error) {
     const duration = Date.now() - startTime
+    const pgErr = error as any
     console.error(`Database query failed (${duration}ms):`, {
-      query: text.substring(0, 100),
-      error: error instanceof Error ? error.message : 'Unknown error',
-      params: params ? '[REDACTED]' : undefined
+      query: typeof text === 'string' ? text.substring(0, 100) : undefined,
+      error: pgErr?.message || 'Unknown error',
+      code: pgErr?.code,
+      detail: pgErr?.detail,
+      schema: pgErr?.schema,
+      table: pgErr?.table,
+      constraint: pgErr?.constraint,
+      position: pgErr?.position,
+      severity: pgErr?.severity,
+      routine: pgErr?.routine,
+      params: params ? '[REDACTED]' : undefined,
     })
     throw error
    }

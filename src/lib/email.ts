@@ -122,7 +122,7 @@ function buildInvestorWelcomeEmail(name?: string, opts?: { baseUrl?: string; lin
   const envBase = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || defaultBase).replace(/\/$/, '')
   const assetBase = (opts?.baseUrl || envBase).replace(/\/$/, '')
   const linkBase = (opts?.linkBaseUrl || envBase).replace(/\/$/, '')
-  const dashboardUrl = `${linkBase}/conta`
+  const dashboardUrl = `${linkBase}/`
 
   const brandPrimary = '#04a2fa'
   const brandPrimaryDark = '#176d9f'

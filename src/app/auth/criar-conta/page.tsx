@@ -182,8 +182,8 @@ function CriarContaInner() {
         throw new Error(data.error || 'Erro ao criar conta')
       }
 
-      // Redirecionar para /conta após registro bem-sucedido
-      router.push('/conta')
+      // Redirecionar para página inicial após registro bem-sucedido
+        router.push('/')
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao criar conta')

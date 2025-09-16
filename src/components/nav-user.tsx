@@ -68,13 +68,9 @@ export default function NavUser({ user }: NavUserProps) {
     ? user.name.split(' ').map(n => n[0]).join('').toUpperCase()
     : user.email.substring(0, 2).toUpperCase();
 
-  // Heurística temporária: se o usuário está navegando dentro de /empresa,
-  // considerar contexto de empresa; caso contrário, direcionar para /conta.
-  const isEmpresaContext = (pathname || '').startsWith('/empresa');
-  const dashboardHref = isEmpresaContext ? '/empresa' : '/conta';
-  // Para configurações do investidor existe /conta/perfil; na área da empresa
-  // ainda não há rota de configurações disponível, então apontamos para /empresa por ora.
-  const settingsHref = isEmpresaContext ? '/empresa' : '/conta/perfil';
+  // Redirecionar para página inicial já que as páginas de dashboard foram removidas
+  const dashboardHref = '/';
+  const settingsHref = '/';
 
   return (
     <DropdownMenu>

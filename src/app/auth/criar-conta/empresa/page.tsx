@@ -105,8 +105,8 @@ function CriarContaEmpresaInner() {
         throw new Error(data.error || 'Erro ao criar conta da empresa')
       }
 
-      // Redirecionar para /empresa após registro bem-sucedido
-      router.push('/empresa')
+      // Redirecionar para página inicial após registro bem-sucedido
+        router.push('/')
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao criar conta da empresa')

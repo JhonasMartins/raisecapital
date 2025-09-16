@@ -15,7 +15,7 @@ function LoginForm() {
   
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirect') || '/conta'
+  const redirectTo = searchParams.get('redirect') || '/'
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
