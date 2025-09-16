@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ArrowLeft, DollarSign, TrendingUp, Clock, Shield, AlertCircle } from 'lucide-react'
+import { ArrowLeft, DollarSign, TrendingUp, Clock, Shield, AlertCircle, Lock } from 'lucide-react'
 import { formatBRL } from '@/lib/utils'
 
 interface Offer {
@@ -36,6 +36,22 @@ export default function ValorPage({ params }: ValorPageProps) {
   const [amount, setAmount] = useState<string>('')
   const [error, setError] = useState<string>('')
   const [loading, setLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+
+  // Verificar autenticação
+  const checkAuthentication = async () => {
+    try {
+      const response = await fetch('/api/auth/me')
+      if (response.ok) {
+        setIsAuthenticated(true)
+      } else {
+        setIsAuthenticated(false)
+      }
+    } catch (error) {
+      console.error('Erro ao verificar autenticação:', error)
+      setIsAuthenticated(false)
+    }
+  }
 
   const fetchOffer = async (id: string) => {
     try {
@@ -66,6 +82,9 @@ export default function ValorPage({ params }: ValorPageProps) {
   }
 
   useEffect(() => {
+    // Verificar autenticação primeiro
+    checkAuthentication()
+    
     if (offerId) {
       fetchOffer(offerId)
     }
@@ -80,6 +99,18 @@ export default function ValorPage({ params }: ValorPageProps) {
 
   const handleContinue = () => {
     if (!offer) return
+
+    // Verificar se usuário está autenticado
+    if (!isAuthenticated) {
+      setError('Você precisa estar logado para investir')
+      return
+    }
+
+    // Verificar se a oferta está encerrada
+    if (offer.status === 'encerrada' || offer.status === 'finalizada') {
+      setError('Esta oferta já foi encerrada e não aceita mais investimentos')
+      return
+    }
 
     // Converter de centavos para reais
     const numericAmount = parseInt(amount) / 100
@@ -119,12 +150,49 @@ export default function ValorPage({ params }: ValorPageProps) {
     })
   }
 
-  if (loading) {
+  if (loading || isAuthenticated === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Carregando oferta...</p>
+          <p>Carregando...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Se não estiver autenticado, mostrar tela de login
+  if (isAuthenticated === false) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center max-w-md mx-auto">
+          <Lock className="h-12 w-12 text-primary mx-auto mb-4" />
+          <h2 className="text-xl font-semibold mb-2">Login Necessário</h2>
+          <p className="text-muted-foreground mb-6">
+            Você precisa estar logado para investir nesta oferta.
+          </p>
+          <div className="space-y-3">
+            <Button 
+              onClick={() => router.push('/login')} 
+              className="w-full"
+            >
+              Fazer Login
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => router.push('/cadastro')}
+              className="w-full"
+            >
+              Criar Conta
+            </Button>
+            <Button 
+              variant="ghost" 
+              onClick={() => router.push('/ofertas')}
+              className="w-full"
+            >
+              Voltar às Ofertas
+            </Button>
+          </div>
         </div>
       </div>
     )
@@ -171,6 +239,16 @@ export default function ValorPage({ params }: ValorPageProps) {
           Escolha o valor que deseja investir em <span className="font-semibold">{offer.name}</span>
         </p>
       </div>
+
+      {/* Verificar se oferta está encerrada */}
+      {(offer.status === 'encerrada' || offer.status === 'finalizada') && (
+        <Alert className="border-red-200 bg-red-50">
+          <AlertCircle className="h-4 w-4 text-red-600" />
+          <AlertDescription className="text-red-800">
+            <strong>Oferta Encerrada:</strong> Esta oferta já foi finalizada e não aceita mais investimentos.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Informações da Oferta */}
       <Card>
