@@ -112,6 +112,55 @@ export default function ConfirmacaoPage() {
     router.push(`/investir/${offerId}/valor`)
   }
 
+  // Tela de carregamento
+  if (loading || isAuthenticated === null) {
+    return (
+      <div className="text-center py-8">
+        <p>Carregando...</p>
+      </div>
+    )
+  }
+
+  // Tela de login para usuários não autenticados
+  if (!loading && isAuthenticated === false) {
+    return (
+      <div className="text-center py-8 space-y-4">
+        <Lock className="mx-auto h-12 w-12 text-muted-foreground" />
+        <h2 className="text-xl font-semibold">Login Necessário</h2>
+        <p className="text-muted-foreground">
+          Você precisa estar logado para confirmar o investimento.
+        </p>
+        <div className="flex gap-4 justify-center">
+          <Button onClick={() => router.push('/login')}>
+            Fazer Login
+          </Button>
+          <Button variant="outline" onClick={() => router.push('/register')}>
+            Criar Conta
+          </Button>
+          <Button variant="ghost" onClick={() => router.push('/ofertas')}>
+            Voltar às Ofertas
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // Alerta para oferta encerrada
+  if (!loading && isAuthenticated && offer && (offer.status === 'encerrada' || offer.status === 'finalizada')) {
+    return (
+      <div className="text-center py-8 space-y-4">
+        <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
+        <h2 className="text-xl font-semibold">Oferta Encerrada</h2>
+        <p className="text-muted-foreground">
+          Esta oferta já foi finalizada e não aceita mais investimentos.
+        </p>
+        <Button onClick={() => router.push('/ofertas')}>
+          Ver Outras Ofertas
+        </Button>
+      </div>
+    )
+  }
+
   if (!summary) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -221,10 +270,12 @@ export default function ConfirmacaoPage() {
         
         <Button 
           onClick={handleConfirm} 
-          disabled={isSubmitting}
+          disabled={isSubmitting || (offer && (offer.status === 'encerrada' || offer.status === 'finalizada'))}
           className="min-w-[120px]"
         >
-          {isSubmitting ? 'Processando...' : 'Confirmar Investimento'}
+          {isSubmitting ? 'Processando...' : 
+           offer && (offer.status === 'encerrada' || offer.status === 'finalizada') ? 'Oferta Encerrada' : 
+           'Confirmar Investimento'}
         </Button>
       </div>
     </div>
