@@ -176,13 +176,17 @@ function CriarContaInner() {
         }),
       })
 
-      const data = await response.json()
+      // Tenta ler como texto e depois fazer parse de JSON, evitando quebrar em HTML/redirect
+      const raw = await response.text()
+      let data: any = null
+      try { data = raw ? JSON.parse(raw) : null } catch { /* fallback para texto puro */ }
 
       if (!response.ok) {
-        throw new Error(data.error || 'Erro ao criar conta')
+        const msg = (data && (data.error || data.message)) || (raw?.slice(0,200) || 'Erro ao criar conta')
+        throw new Error(typeof msg === 'string' ? msg : 'Erro ao criar conta')
       }
 
-      // Redirecionar para /conta após registro bem-sucedido
+      // Sucesso
       router.push('/conta')
       router.refresh()
     } catch (err) {

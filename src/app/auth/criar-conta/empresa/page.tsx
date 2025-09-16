@@ -99,13 +99,16 @@ function CriarContaEmpresaInner() {
         }),
       })
 
-      const data = await response.json()
+      // Ler como texto e tentar parse JSON; evita erro quando resposta não é JSON puro
+      const raw = await response.text()
+      let data: any = null
+      try { data = raw ? JSON.parse(raw) : null } catch { /* keep raw */ }
 
       if (!response.ok) {
-        throw new Error(data.error || 'Erro ao criar conta da empresa')
+        const msg = (data && (data.error || data.message)) || (raw?.slice(0,200) || 'Erro ao criar conta da empresa')
+        throw new Error(typeof msg === 'string' ? msg : 'Erro ao criar conta da empresa')
       }
 
-      // Redirecionar para /empresa após registro bem-sucedido
       router.push('/empresa')
       router.refresh()
     } catch (err) {
