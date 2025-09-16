@@ -50,12 +50,46 @@ function formatDatePT(dateStr: string) {
 }
 
 export default function ContaExtratosPage() {
+  const [entries, setEntries] = useState<Entry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 8;
 
-  const sorted = useMemo(() => {
-    return [...ENTRIES].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  // Carregar dados da API
+  useEffect(() => {
+    const fetchExtratos = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('/api/extratos');
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Erro ao carregar extratos');
+        }
+        
+        if (data.success && data.data) {
+          setEntries(data.data);
+        } else {
+          setEntries([]);
+        }
+      } catch (err) {
+        console.error('Erro ao buscar extratos:', err);
+        setError(err instanceof Error ? err.message : 'Erro desconhecido');
+        setEntries([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExtratos();
   }, []);
+
+  const sorted = useMemo(() => {
+    return [...entries].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  }, [entries]);
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const currentSlice = useMemo(() => {
@@ -72,89 +106,163 @@ export default function ContaExtratosPage() {
     return Array.from(map.entries()).sort((a, b) => (a[0] < b[0] ? 1 : -1));
   }, [currentSlice]);
 
-  function handleExportCSV() {
-    const rows = [
-      ["Data", "Tipo", "Descrição", "Valor"],
-      ...sorted.map((e) => [
-        e.date,
-        typeToLabel(e.type),
-        e.description,
-        e.amount.toFixed(2),
-      ]),
-    ];
-    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const handleExportCSV = () => {
+    if (entries.length === 0) {
+      alert('Nenhum dado para exportar');
+      return;
+    }
+
+    const csvContent = [
+      ['Data', 'Descrição', 'Tipo', 'Valor'].join(','),
+      ...entries.map(entry => [
+        entry.date,
+        `"${entry.description}"`,
+        typeToLabel(entry.type),
+        entry.amount.toString()
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `extrato_raisecapital.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
+    link.setAttribute('href', url);
+    link.setAttribute('download', `extratos_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start justify-between gap-3">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Extratos</h1>
-          <p className="text-sm text-muted-foreground">Lançamentos por data com exportação CSV</p>
+          <h1 className="text-2xl font-bold tracking-tight">Extratos</h1>
+          <p className="text-muted-foreground">
+            Histórico completo de movimentações da sua conta
+          </p>
         </div>
-        <Button onClick={handleExportCSV} aria-label="Exportar extrato em CSV">Exportar CSV</Button>
+        <Button 
+          onClick={handleExportCSV} 
+          variant="outline"
+          disabled={loading || entries.length === 0}
+        >
+          Exportar CSV
+        </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Timeline de lançamentos</CardTitle>
-          <CardDescription>Organizado por data mais recente</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {grouped.map(([date, items]) => (
-              <div key={date}>
-                <div className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">{formatDatePT(date)}</div>
-                <div className="space-y-2">
-                  {items.map((e, idx) => (
-                    <div key={e.id} className="flex items-center justify-between rounded-md border bg-card px-3 py-2 text-sm">
-                      <div className="flex items-center gap-3">
-                        <span className="inline-block h-2 w-2 rounded-full bg-muted-foreground/60" aria-hidden />
-                        <div>
-                          <div className="font-medium text-foreground">{e.description}</div>
-                          <div className="mt-0.5 text-xs text-muted-foreground">{typeToLabel(e.type)}</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className={typeToBadgeClasses(e.type)}>{typeToLabel(e.type)}</Badge>
-                        <div className={`${e.amount >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"} tabular-nums`}>
-                          {e.amount >= 0 ? "+" : ""}{formatBRL(e.amount)}
+      {/* Estados de loading e error */}
+      {loading && (
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-center">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Carregando extratos...</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {error && (
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center">
+              <p className="text-red-600 mb-2">Erro ao carregar extratos</p>
+              <p className="text-muted-foreground text-sm">{error}</p>
+              <Button 
+                onClick={() => window.location.reload()} 
+                variant="outline" 
+                className="mt-4"
+              >
+                Tentar novamente
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Lista de extratos */}
+      {!loading && !error && entries.length === 0 && (
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center">
+              <p className="text-muted-foreground">Nenhum extrato encontrado</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {!loading && !error && entries.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Movimentações</CardTitle>
+            <CardDescription>
+              {sorted.length} {sorted.length === 1 ? 'lançamento' : 'lançamentos'} encontrados
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="space-y-0">
+              {currentSlice.map((entry, index) => (
+                <div key={entry.id} className="border-b last:border-b-0">
+                  <div className="p-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className={`w-2 h-2 rounded-full ${
+                        entry.type === 'aporte' ? 'bg-green-500' :
+                        entry.type === 'provento' ? 'bg-blue-500' :
+                        entry.type === 'taxa' ? 'bg-red-500' :
+                        'bg-orange-500'
+                      }`} />
+                      <div>
+                        <p className="font-medium">{entry.description}</p>
+                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                          <span>{formatDatePT(entry.date)}</span>
+                          <Badge variant="secondary" className="text-xs">
+                            {typeToLabel(entry.type)}
+                          </Badge>
                         </div>
                       </div>
                     </div>
-                  ))}
+                    <div className={`text-right font-medium ${
+                      entry.amount >= 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {entry.amount >= 0 ? '+' : ''}{formatBRL(entry.amount)}
+                    </div>
+                  </div>
                 </div>
-                <Separator className="my-4" />
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-          {/* Paginação inferior */}
-          <div className="mt-4 flex items-center justify-between gap-3 text-sm">
-            <div className="text-muted-foreground">
-              Mostrando {Math.min((page - 1) * pageSize + 1, sorted.length)}–{Math.min(page * pageSize, sorted.length)} de {sorted.length}
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} aria-label="Página anterior">
-                Anterior
-              </Button>
-              <div className="text-xs text-muted-foreground">
-                Página {page} de {totalPages}
-              </div>
-              <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} aria-label="Próxima página">
-                Próxima
-              </Button>
-            </div>
+      {/* Paginação */}
+      {!loading && !error && totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Página {page} de {totalPages}
+          </p>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(Math.max(1, page - 1))}
+              disabled={page === 1}
+            >
+              Anterior
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(Math.min(totalPages, page + 1))}
+              disabled={page === totalPages}
+            >
+              Próxima
+            </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      )}
     </div>
   );
 }
