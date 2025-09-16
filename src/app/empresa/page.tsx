@@ -136,7 +136,7 @@ export default function EmpresaDashboardPage() {
         <KpiStatCard
           title="Total Captado"
           value={formatBRL(mockData.totalCaptado)}
-          delta={12.5}
+          delta={0}
           positive={true}
           lastLabel="Meta"
           lastValue={formatBRL(mockData.metaCaptacao)}
@@ -144,26 +144,26 @@ export default function EmpresaDashboardPage() {
         <KpiStatCard
           title="Investidores"
           value={mockData.numeroInvestidores}
-          delta={8.2}
+          delta={0}
           positive={true}
           lastLabel="Novos este mês"
-          lastValue="23"
+          lastValue={0}
         />
         <KpiStatCard
           title="Ticket Médio"
           value={formatBRL(mockData.ticketMedio)}
-          delta={-2.1}
-          positive={false}
+          delta={0}
+          positive={true}
           lastLabel="Mês anterior"
-          lastValue={formatBRL(22920)}
+          lastValue={formatBRL(0)}
         />
         <KpiStatCard
           title="Conversão de Leads"
           value={`${mockData.conversaoLeads}%`}
-          delta={1.8}
+          delta={0}
           positive={true}
           lastLabel="Meta"
-          lastValue="10%"
+          lastValue="0%"
         />
       </div>
 
