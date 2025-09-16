@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifySession } from '@/lib/auth';
 
 // Rotas que requerem autenticação
-const protectedRoutes = ['/conta', '/empresa'];
+const protectedRoutes = ['/conta', '/empresa', '/investir'];
 
 // Rotas de autenticação (usuários logados não devem acessar)
 const authRoutes = [
