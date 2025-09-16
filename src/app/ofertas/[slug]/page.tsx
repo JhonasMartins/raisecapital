@@ -439,9 +439,15 @@ export default async function OfferDetailPage({ params }: { params: Promise<{ sl
               </CardHeader>
               <CardContent className="space-y-5">
                 {/* CTA principal */}
-                <Button size="lg" className="w-full" asChild>
-                  <Link href={`/investir/${offer.id || slug}`}>Investir agora</Link>
-                </Button>
+                {offer.status === 'Encerrada' ? (
+                  <Button size="lg" className="w-full bg-gray-500 hover:bg-gray-600" asChild>
+                    <Link href="/ofertas">Oferta encerrada</Link>
+                  </Button>
+                ) : (
+                  <Button size="lg" className="w-full" asChild>
+                    <Link href={`/investir/${offer.id || slug}`}>Investir agora</Link>
+                  </Button>
+                )}
 
                 {/* Progresso */}
                 <div>
