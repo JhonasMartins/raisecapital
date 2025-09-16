@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Lock } from 'lucide-react'
 
 interface UserData {
   // Dados pessoais
@@ -53,6 +54,38 @@ export default function DadosPage() {
   const router = useRouter()
   const params = useParams()
   const offerId = params.id as string
+  
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const [offer, setOffer] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  
+  const checkAuthentication = async () => {
+    try {
+      const response = await fetch('/api/auth/me')
+      setIsAuthenticated(response.ok)
+    } catch (error) {
+      setIsAuthenticated(false)
+    }
+  }
+
+  const fetchOffer = async () => {
+    try {
+      const response = await fetch(`/api/offers/${offerId}`)
+      if (response.ok) {
+        const offerData = await response.json()
+        setOffer(offerData)
+      }
+    } catch (error) {
+      console.error('Erro ao buscar oferta:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    checkAuthentication()
+    fetchOffer()
+  }, [offerId])
   
   const [userData, setUserData] = useState<UserData>({
     // Mock de dados pré-preenchidos

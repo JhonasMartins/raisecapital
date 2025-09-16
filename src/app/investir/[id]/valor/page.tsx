@@ -384,10 +384,18 @@ export default function ValorPage({ params }: ValorPageProps) {
         
         <Button 
           onClick={handleContinue}
-          disabled={!amount || parseInt(amount) <= 0}
+          disabled={
+            !amount || 
+            parseInt(amount) <= 0 || 
+            offer.status === 'encerrada' || 
+            offer.status === 'finalizada'
+          }
           className="min-w-[120px]"
         >
-          Continuar
+          {(offer.status === 'encerrada' || offer.status === 'finalizada') 
+            ? 'Oferta Encerrada' 
+            : 'Continuar'
+          }
         </Button>
       </div>
     </div>
