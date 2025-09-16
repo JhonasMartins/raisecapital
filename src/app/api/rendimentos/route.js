@@ -20,7 +20,7 @@ export async function GET() {
         o.nome as ativo_nome,
         o.categoria,
         o.modalidade,
-        o.yield_anual,
+        i.rentabilidade_atual,
         i.data_investimento,
         CASE 
           WHEN i.status = 'confirmado' THEN COALESCE(i.valor_atual, i.valor) - i.valor
@@ -75,7 +75,7 @@ export async function GET() {
     const yieldMedioPonderado = totalInvestido > 0 
       ? investments.reduce((total, inv) => {
           const peso = (parseFloat(inv.valor_investido) || 0) / totalInvestido;
-          return total + ((parseFloat(inv.yield_anual) || 0) * peso);
+          return total + ((parseFloat(inv.rentabilidade_atual) || 0) * peso);
         }, 0)
       : 0;
 
