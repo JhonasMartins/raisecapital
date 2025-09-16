@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 
 interface InvestmentLayoutProps {
   children: ReactNode
-  params: Promise<{ slug: string }>
+  params: Promise<{ id: string }>
 }
 
 const steps = [
@@ -18,7 +18,7 @@ const steps = [
 ]
 
 export default async function InvestmentLayout({ children, params }: InvestmentLayoutProps) {
-  const { slug } = await params
+  const { id } = await params
   
   return (
     <div className="min-h-screen bg-background">
@@ -26,7 +26,7 @@ export default async function InvestmentLayout({ children, params }: InvestmentL
         {/* Header com botão voltar */}
         <div className="mb-8">
           <Button variant="ghost" size="sm" asChild className="mb-4">
-            <Link href={`/ofertas/${slug}`}>
+            <Link href={`/ofertas/${id}`}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar para a oferta
             </Link>
