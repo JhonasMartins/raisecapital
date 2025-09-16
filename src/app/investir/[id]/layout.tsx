@@ -1,9 +1,12 @@
-import { ReactNode } from 'react'
+'use client'
+
+import { ReactNode, useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { usePathname } from 'next/navigation'
 
 interface InvestmentLayoutProps {
   children: ReactNode
@@ -17,8 +20,23 @@ const steps = [
   { id: 'confirmacao', title: 'Confirmação', step: 4 },
 ]
 
-export default async function InvestmentLayout({ children, params }: InvestmentLayoutProps) {
-  const { id } = await params
+export default function InvestmentLayout({ children, params }: InvestmentLayoutProps) {
+  const pathname = usePathname()
+  const [id, setId] = useState<string>('')
+  
+  useEffect(() => {
+    params.then(({ id }) => setId(id))
+  }, [params])
+  
+  // Determinar o step atual baseado na URL
+  const getCurrentStep = () => {
+    const currentPath = pathname.split('/').pop()
+    const stepIndex = steps.findIndex(step => step.id === currentPath)
+    return stepIndex >= 0 ? stepIndex : 0
+  }
+  
+  const currentStepIndex = getCurrentStep()
+  const progressValue = ((currentStepIndex + 1) / steps.length) * 100
   
   return (
     <div className="min-h-screen bg-background">
@@ -44,7 +62,7 @@ export default async function InvestmentLayout({ children, params }: InvestmentL
             {steps.map((step, index) => (
               <div key={step.id} className="flex flex-col items-center flex-1">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium mb-2 ${
-                  index === 0 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                  index <= currentStepIndex ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
                 }`}>
                   {step.step}
                 </div>
@@ -54,7 +72,7 @@ export default async function InvestmentLayout({ children, params }: InvestmentL
               </div>
             ))}
           </div>
-          <Progress value={25} className="h-2" />
+          <Progress value={progressValue} className="h-2" />
         </div>
 
         {/* Main content */}

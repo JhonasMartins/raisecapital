@@ -72,16 +72,17 @@ export default function ValorPage({ params }: ValorPageProps) {
   }, [offerId])
 
   const handleAmountChange = (value: string) => {
-    // Remove caracteres não numéricos
-    const numericValue = value.replace(/\D/g, '')
-    setAmount(numericValue)
+    // Remove tudo exceto números
+    const cleanValue = value.replace(/\D/g, '')
+    setAmount(cleanValue)
     setError('')
   }
 
   const handleContinue = () => {
     if (!offer) return
 
-    const numericAmount = parseInt(amount)
+    // Converter de centavos para reais
+    const numericAmount = parseInt(amount) / 100
     
     if (!amount || numericAmount <= 0) {
       setError('Por favor, insira um valor válido')
@@ -93,8 +94,8 @@ export default function ValorPage({ params }: ValorPageProps) {
       return
     }
 
-    // Salvar valor no localStorage
-    localStorage.setItem('investmentAmount', amount)
+    // Salvar valor em reais no localStorage
+    localStorage.setItem('investmentAmount', numericAmount.toString())
     localStorage.setItem('offerId', offerId)
     
     // Navegar para próxima página
@@ -105,10 +106,17 @@ export default function ValorPage({ params }: ValorPageProps) {
     router.push(`/ofertas/${offerId}`)
   }
 
-  const formatInputValue = (value: string) => {
-    if (!value) return ''
+  const formatDisplayValue = (value: string) => {
+    if (!value || value === '0') return ''
+    
     const numericValue = parseInt(value)
-    return formatBRL(numericValue)
+    if (isNaN(numericValue) || numericValue === 0) return ''
+    
+    // Formatar como moeda brasileira sem o símbolo R$
+    return (numericValue / 100).toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })
   }
 
   if (loading) {
@@ -220,7 +228,7 @@ export default function ValorPage({ params }: ValorPageProps) {
                 id="amount"
                 type="text"
                 placeholder="0,00"
-                value={formatInputValue(amount)}
+                value={formatDisplayValue(amount)}
                 onChange={(e) => handleAmountChange(e.target.value)}
                 className="text-lg font-semibold pl-8"
               />
@@ -246,7 +254,7 @@ export default function ValorPage({ params }: ValorPageProps) {
                   key={suggestedAmount}
                   variant="outline"
                   size="sm"
-                  onClick={() => setAmount(suggestedAmount.toString())}
+                  onClick={() => setAmount((suggestedAmount * 100).toString())}
                   className="text-xs"
                 >
                   {formatBRL(suggestedAmount)}
