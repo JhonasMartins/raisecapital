@@ -41,9 +41,12 @@ export default function ConfirmacaoPage() {
 
   const checkAuthentication = async () => {
     try {
-      // Simular verificação de autenticação
-      const isAuth = localStorage.getItem('userToken') !== null
-      setIsAuthenticated(isAuth)
+      const res = await fetch('/api/auth/me', {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store',
+      })
+      setIsAuthenticated(res.ok)
     } catch (error) {
       setIsAuthenticated(false)
     }
