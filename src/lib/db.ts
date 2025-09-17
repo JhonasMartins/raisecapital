@@ -14,17 +14,31 @@ export function getDb() {
     if (!connectionString) {
       throw new Error('DATABASE_URL is not set')
     }
-    const useSSL = process.env.DATABASE_SSL !== 'false'
+    // Default SSL to false unless explicitly enabled
+    const useSSL = process.env.DATABASE_SSL === 'true'
     _pool = new Pool({
       connectionString,
       max: 8, // Aumentado para melhor throughput
       min: 2, // Manter conexões ativas para reduzir latência
       idleTimeoutMillis: 30000, // 30s timeout para conexões ociosas
       connectionTimeoutMillis: 5000, // 5s timeout para novas conexões
+      keepAlive: true,
       ssl: useSSL ? { rejectUnauthorized: false } : undefined,
     })
   }
   return _pool
+}
+
+export async function resetPool() {
+  if (_pool) {
+    try {
+      await _pool.end()
+    } catch (e) {
+      console.warn('Error while ending DB pool (ignored):', (e as Error).message)
+    } finally {
+      _pool = null
+    }
+  }
 }
 
 export async function query<T = unknown>(text: string, params?: readonly unknown[]): Promise<{ rows: T[] }> {
@@ -47,11 +61,22 @@ export async function query<T = unknown>(text: string, params?: readonly unknown
      return { rows: res.rows as T[] }
   } catch (error) {
     const duration = Date.now() - startTime
+    const message = error instanceof Error ? error.message : String(error)
     console.error(`Database query failed (${duration}ms):`, {
       query: text.substring(0, 100),
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: message,
       params: params ? '[REDACTED]' : undefined
     })
+
+    // Retry uma vez em erros de conexão interrompida
+    if (/terminated unexpectedly|ECONNRESET|Connection reset/i.test(message)) {
+      console.warn('DB connection error detected. Resetting pool and retrying query once...')
+      await resetPool()
+      const retryPool = getDb()
+      const res = await retryPool.query(text, params ? [...params] as unknown[] : undefined)
+      return { rows: res.rows as T[] }
+    }
+
     throw error
    }
  }
