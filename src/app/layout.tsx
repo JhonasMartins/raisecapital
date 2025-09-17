@@ -21,7 +21,7 @@ const interMono = Inter({
   variable: "--font-inter-mono",
   subsets: ["latin"],
   display: 'swap',
-  preload: true,
+  preload: false,
 });
 
 export const metadata: Metadata = {
