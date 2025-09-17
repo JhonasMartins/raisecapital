@@ -89,7 +89,7 @@ export default function DadosPage() {
       const response = await fetch('/api/user/profile')
       if (response.ok) {
         const data = await response.json()
-        setUserData(data)
+        setUserData(data?.profile ?? data)
       }
     } catch (error) {
       console.error('Erro ao buscar dados do usuário:', error)
@@ -139,6 +139,13 @@ export default function DadosPage() {
   })
 
   const [isLoadingUserData, setIsLoadingUserData] = useState(true)
+const [formError, setFormError] = useState<string>('')
+useEffect(() => {
+  if (formError) {
+    const el = document.getElementById('form-error')
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+}, [formError])
 
   // Helpers de formatação
   const onlyDigits = (s: string) => s.replace(/\D/g, '')
@@ -225,13 +232,13 @@ export default function DadosPage() {
   const handleNext = () => {
     // Verificar se o usuário está autenticado
     if (isAuthenticated === false) {
-      alert('Você precisa estar logado para continuar com o investimento.')
+      setFormError('Você precisa estar logado para continuar com o investimento.')
       return
     }
 
     // Verificar se a oferta está encerrada
     if (offer && (offer.status === 'encerrada' || offer.status === 'finalizada')) {
-      alert('Esta oferta já foi encerrada e não aceita mais investimentos.')
+      setFormError('Esta oferta já foi encerrada e não aceita mais investimentos.')
       return
     }
 
@@ -278,7 +285,8 @@ export default function DadosPage() {
       }
       
       const missingFieldNames = missingFields.map(field => fieldNames[field as keyof typeof fieldNames]).join(', ')
-      alert(`Por favor, preencha todos os campos obrigatórios: ${missingFieldNames}`)
+     setFormError(`Por favor, preencha todos os campos obrigatórios: ${missingFieldNames}`)
+     document.getElementById('form-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       
       // Focar no primeiro campo vazio
       const firstMissingField = document.querySelector(`[id="${missingFields[0]}"]`) as HTMLElement
@@ -293,33 +301,38 @@ export default function DadosPage() {
     // Validações específicas de formato
     const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/
     if (userData.cpf && !cpfRegex.test(userData.cpf)) {
-      alert('CPF deve estar no formato 000.000.000-00')
+     setFormError('CPF deve estar no formato 000.000.000-00')
+     document.getElementById('form-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       document.getElementById('cpf')?.focus()
       return
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (userData.email && !emailRegex.test(userData.email)) {
-      alert('Por favor, insira um e-mail válido')
+     setFormError('Por favor, insira um e-mail válido')
+     document.getElementById('form-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       document.getElementById('email')?.focus()
       return
     }
 
     const phoneRegex = /^\(\d{2}\)\s\d{4,5}-\d{4}$/
     if (userData.telefone && !phoneRegex.test(userData.telefone)) {
-      alert('Telefone deve estar no formato (00) 00000-0000')
+     setFormError('Telefone deve estar no formato (00) 00000-0000')
+     document.getElementById('form-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       document.getElementById('telefone')?.focus()
       return
     }
 
     const cepRegex = /^\d{5}-\d{3}$/
     if (userData.cep && !cepRegex.test(userData.cep)) {
-      alert('CEP deve estar no formato 00000-000')
+     setFormError('CEP deve estar no formato 00000-000')
+     document.getElementById('form-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       document.getElementById('cep')?.focus()
       return
     }
     
     // Salvar dados atualizados no banco antes de prosseguir
+   setFormError('')
     saveUserData()
     
     // Salvar dados no localStorage para as próximas etapas
@@ -405,6 +418,12 @@ export default function DadosPage() {
               Verifique se todos os seus dados estão corretos. Caso não estejam, preencha corretamente antes de continuar.
             </AlertDescription>
           </Alert>
+
+         {formError && (
+           <Alert className="border-red-200 bg-red-50" id="form-error">
+             <AlertDescription className="text-red-800">{formError}</AlertDescription>
+           </Alert>
+         )}
 
           {/* Loading state para dados do usuário */}
           {isLoadingUserData && (
