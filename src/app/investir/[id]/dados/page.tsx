@@ -48,6 +48,12 @@ interface UserData {
   digitoConta: string
   pixTipo?: string
   pixChave?: string
+  
+  // Documento para estrangeiros
+  docTipo?: string
+  docNumero?: string
+  docPaisEmissor?: string
+  docOrgaoEmissor?: string
 }
 
 export default function DadosPage() {
@@ -136,6 +142,12 @@ export default function DadosPage() {
     digitoConta: '',
     pixTipo: '',
     pixChave: '',
+
+    // Documento para estrangeiros
+    docTipo: '',
+    docNumero: '',
+    docPaisEmissor: '',
+    docOrgaoEmissor: '',
   })
 
   const [isLoadingUserData, setIsLoadingUserData] = useState(true)
@@ -161,6 +173,41 @@ useEffect(() => {
     setOrgaoExpTipo(tipo)
     setOrgaoExpUF(uf)
   }, [userData.orgaoExp])
+
+  const handleOrgaoExpTipoChange = (value: string) => {
+    setOrgaoExpTipo(value)
+    const combined = value && orgaoExpUF ? `${value}/${orgaoExpUF}` : value || orgaoExpUF || ''
+    handleInputChange('orgaoExp', combined)
+  }
+  const handleOrgaoExpUFChange = (value: string) => {
+    setOrgaoExpUF(value)
+    const combined = orgaoExpTipo && value ? `${orgaoExpTipo}/${value}` : orgaoExpTipo || value || ''
+    handleInputChange('orgaoExp', combined)
+  }
+
+  // Ajustar documentos quando nacionalidade muda
+  useEffect(() => {
+    const isBR = userData.nacionalidade === 'Brasileira'
+    if (isBR) {
+      setUserData(prev => ({
+        ...prev,
+        docTipo: '',
+        docNumero: '',
+        docPaisEmissor: '',
+        docOrgaoEmissor: '',
+      }))
+    } else {
+      setUserData(prev => ({
+        ...prev,
+        cpf: '',
+        rg: '',
+        orgaoExp: '',
+      }))
+      setOrgaoExpTipo('')
+      setOrgaoExpUF('')
+    }
+  }, [userData.nacionalidade])
+
   // Helpers de formatação
   const onlyDigits = (s: string) => s.replace(/\D/g, '')
   const formatCPF = (value: string) => {
@@ -256,13 +303,17 @@ useEffect(() => {
       return
     }
 
+    // Nacionalidade fixada como Brasileira; não há necessidade de ajustar documentos dinamicamente.
+
     // Validação rigorosa dos campos obrigatórios
-    const requiredFields = [
-      'nome', 'sobrenome', 'dataNascimento', 'nacionalidade', 'genero', 'cpf', 'rg', 
-      'orgaoExp', 'estadoCivil', 'empresa', 'profissao', 'cargo', 'email', 'telefone',
+    const baseRequired = [
+      'nome', 'sobrenome', 'dataNascimento', 'nacionalidade', 'genero',
+      'estadoCivil', 'empresa', 'profissao', 'cargo', 'email', 'telefone',
       'pais', 'cep', 'endereco', 'numero', 'bairro', 'cidade', 'estado',
       'banco', 'agencia', 'conta', 'digitoConta'
     ]
+    const docRequired = ['cpf', 'rg', 'orgaoExp']
+    const requiredFields = [...baseRequired, ...docRequired]
     
     const missingFields = requiredFields.filter(field => {
       const value = userData[field as keyof UserData]
@@ -295,20 +346,19 @@ useEffect(() => {
         banco: 'Banco',
         agencia: 'Agência',
         conta: 'Conta',
-        digitoConta: 'Dígito da Conta'
-      }
-      
+        digitoConta: 'Dígito da Conta',
+        docTipo: 'Tipo de Documento',
+        docNumero: 'Número do Documento',
+        docPaisEmissor: 'País Emissor do Documento',
+      } as const
       const missingFieldNames = missingFields.map(field => fieldNames[field as keyof typeof fieldNames]).join(', ')
-     setFormError(`Por favor, preencha todos os campos obrigatórios: ${missingFieldNames}`)
-     document.getElementById('form-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      
-      // Focar no primeiro campo vazio
+      setFormError(`Por favor, preencha todos os campos obrigatórios: ${missingFieldNames}`)
+      document.getElementById('form-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       const firstMissingField = document.querySelector(`[id="${missingFields[0]}"]`) as HTMLElement
       if (firstMissingField) {
         firstMissingField.focus()
         firstMissingField.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }
-      
       return
     }
 
@@ -486,24 +536,7 @@ useEffect(() => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="nacionalidade">Nacionalidade *</Label>
-                      <Select value={userData.nacionalidade} onValueChange={(value) => handleInputChange('nacionalidade', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Brasileira">Brasileira</SelectItem>
-                          <SelectItem value="Estrangeira">Estrangeira</SelectItem>
-                          <SelectItem value="Portuguesa">Portuguesa</SelectItem>
-                          <SelectItem value="Argentina">Argentina</SelectItem>
-                          <SelectItem value="Chilena">Chilena</SelectItem>
-                          <SelectItem value="Uruguaia">Uruguaia</SelectItem>
-                          <SelectItem value="Paraguaia">Paraguaia</SelectItem>
-                          <SelectItem value="Boliviana">Boliviana</SelectItem>
-                          <SelectItem value="Colombiana">Colombiana</SelectItem>
-                          <SelectItem value="Peruana">Peruana</SelectItem>
-                          <SelectItem value="Outra">Outra</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Input id="nacionalidade" value="Brasileira" disabled />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="genero">Gênero *</Label>
@@ -519,6 +552,8 @@ useEffect(() => {
                         </SelectContent>
                       </Select>
                     </div>
+                    {userData.nacionalidade === 'Brasileira' && (
+                      <>
                     <div className="space-y-2">
                       <Label htmlFor="cpf">CPF *</Label>
                       <Input
@@ -597,6 +632,8 @@ useEffect(() => {
                         </Select>
                       </div>
                     </div>
+                      </>
+                    )}
                     <div className="space-y-2">
                       <Label htmlFor="estadoCivil">Estado Civil *</Label>
                       <Select value={userData.estadoCivil} onValueChange={(value) => handleInputChange('estadoCivil', value)}>
@@ -863,15 +900,4 @@ useEffect(() => {
       )}
     </div>
   )
-}
-
-const handleOrgaoExpTipoChange = (value: string) => {
-  setOrgaoExpTipo(value)
-  const combined = value && orgaoExpUF ? `${value}/${orgaoExpUF}` : value || orgaoExpUF || ''
-  handleInputChange('orgaoExp', combined)
-}
-const handleOrgaoExpUFChange = (value: string) => {
-  setOrgaoExpUF(value)
-  const combined = orgaoExpTipo && value ? `${orgaoExpTipo}/${value}` : orgaoExpTipo || value || ''
-  handleInputChange('orgaoExp', combined)
 }
