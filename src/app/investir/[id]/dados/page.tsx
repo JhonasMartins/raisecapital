@@ -140,11 +140,86 @@ export default function DadosPage() {
 
   const [isLoadingUserData, setIsLoadingUserData] = useState(true)
 
+  // Helpers de formatação
+  const onlyDigits = (s: string) => s.replace(/\D/g, '')
+  const formatCPF = (value: string) => {
+    const v = onlyDigits(value).slice(0, 11)
+    const part1 = v.slice(0, 3)
+    const part2 = v.slice(3, 6)
+    const part3 = v.slice(6, 9)
+    const part4 = v.slice(9, 11)
+    let out = part1
+    if (part2) out += `.${part2}`
+    if (part3) out += `.${part3}`
+    if (part4) out += `-${part4}`
+    return out
+  }
+  const formatCEP = (value: string) => {
+    const v = onlyDigits(value).slice(0, 8)
+    const part1 = v.slice(0, 5)
+    const part2 = v.slice(5, 8)
+    return part2 ? `${part1}-${part2}` : part1
+  }
+  const formatPhoneBR = (value: string) => {
+    const v = onlyDigits(value).slice(0, 11)
+    const ddd = v.slice(0, 2)
+    const isMobile = v.length > 10
+    const mid = isMobile ? v.slice(2, 7) : v.slice(2, 6)
+    const end = isMobile ? v.slice(7, 11) : v.slice(6, 10)
+    if (!ddd) return ''
+    let out = `(${ddd}`
+    out += `) `
+    out += mid
+    if (end) out += `-${end}`
+    return out
+  }
+
+  // Busca CEP automática (BrasilAPI)
+  const [lastCepSearched, setLastCepSearched] = useState('')
+  const lookupCep = async (cepDigits: string) => {
+    try {
+      const res = await fetch(`https://brasilapi.com.br/api/cep/v2/${cepDigits}`)
+      if (!res.ok) throw new Error('CEP não encontrado')
+      const data = await res.json()
+      const street = data.street || data.logradouro || ''
+      const neighborhood = data.neighborhood || data.bairro || ''
+      const city = data.city || data.localidade || ''
+      const state = data.state || data.uf || ''
+      setUserData(prev => ({
+        ...prev,
+        endereco: prev.endereco || street,
+        bairro: prev.bairro || neighborhood,
+        cidade: prev.cidade || city,
+        estado: prev.estado || state,
+        pais: prev.pais || 'Brasil',
+      }))
+    } catch (e) {
+      console.error('Erro ao buscar CEP na BrasilAPI:', e)
+    }
+  }
+
   const handleInputChange = (field: keyof UserData, value: string | boolean) => {
     setUserData(prev => ({
       ...prev,
       [field]: value
     }))
+  }
+
+  // Handlers específicos com máscara
+  const handleCPFChange = (value: string) => {
+    handleInputChange('cpf', formatCPF(value))
+  }
+  const handleTelefoneChange = (value: string) => {
+    handleInputChange('telefone', formatPhoneBR(value))
+  }
+  const handleCEPChange = (value: string) => {
+    const masked = formatCEP(value)
+    setUserData(prev => ({ ...prev, cep: masked }))
+    const digits = onlyDigits(masked)
+    if (digits.length === 8 && digits !== lastCepSearched) {
+      setLastCepSearched(digits)
+      lookupCep(digits)
+    }
   }
 
   const handleNext = () => {
@@ -404,7 +479,9 @@ export default function DadosPage() {
                       <Input
                         id="cpf"
                         value={userData.cpf}
-                        onChange={(e) => handleInputChange('cpf', e.target.value)}
+                        onChange={(e) => handleCPFChange(e.target.value)}
+                        placeholder="000.000.000-00"
+                        inputMode="numeric"
                         required
                       />
                     </div>
@@ -504,7 +581,9 @@ export default function DadosPage() {
                       <Input
                         id="telefone"
                         value={userData.telefone}
-                        onChange={(e) => handleInputChange('telefone', e.target.value)}
+                        onChange={(e) => handleTelefoneChange(e.target.value)}
+                        placeholder="(00) 00000-0000"
+                        inputMode="numeric"
                         required
                       />
                     </div>
@@ -533,7 +612,16 @@ export default function DadosPage() {
                       <Input
                         id="cep"
                         value={userData.cep}
-                        onChange={(e) => handleInputChange('cep', e.target.value)}
+                        onChange={(e) => handleCEPChange(e.target.value)}
+                        onBlur={(e) => {
+                          const digits = onlyDigits(e.target.value)
+                          if (digits.length === 8 && digits !== lastCepSearched) {
+                            setLastCepSearched(digits)
+                            lookupCep(digits)
+                          }
+                        }}
+                        placeholder="00000-000"
+                        inputMode="numeric"
                         required
                       />
                     </div>
