@@ -40,6 +40,9 @@ export default function MeusInvestimentosPage() {
   const [investments, setInvestments] = useState<any[]>([])
   const [portfolioData, setPortfolioData] = useState<any>(null)
   const [loadingData, setLoadingData] = useState(true)
+  // Novo: armazenar link e validade do pagamento Asaas
+  const [paymentLinkUrl, setPaymentLinkUrl] = useState<string | null>(null)
+  const [paymentLinkEndDate, setPaymentLinkEndDate] = useState<string | null>(null)
 
   // Buscar dados reais das APIs
   useEffect(() => {
@@ -74,7 +77,7 @@ export default function MeusInvestimentosPage() {
   // Separar investimentos em pendentes e ativos baseado no status
   const pendentesItems = useMemo(() => {
     return investments
-      .filter(inv => inv.status === 'pendente' || inv.status === 'aguardando_pagamento')
+      .filter(inv => inv.status === 'pendente' || inv.status === 'aguardando_pagamento' || inv.status === 'pendente_pagamento')
       .map(inv => ({
         icon: getCategoryIcon(inv.categoria),
         nome: inv.titulo,
@@ -162,17 +165,25 @@ export default function MeusInvestimentosPage() {
     try {
       setIsLoading(true)
       setQrCode(null)
-      const res = await fetch("/api/asaas/create-payment", {
+      setPaymentLinkUrl(null)
+      setPaymentLinkEndDate(null)
+      const res = await fetch("/api/asaas/create-payment-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ofertaId, valor })
       })
-      if (!res.ok) throw new Error("Falha ao criar pagamento")
+      if (!res.ok) throw new Error("Falha ao criar link de pagamento")
       const data = await res.json()
-      setQrCode(data?.encodedImage || null)
+      const url: string | undefined = data?.paymentLink?.url
+      const endDate: string | undefined = data?.paymentLink?.endDate
+      if (!url) throw new Error("Link de pagamento não retornado")
+      setPaymentLinkUrl(url)
+      setPaymentLinkEndDate(endDate || null)
+      // Abrir automaticamente em nova aba
+      window.open(url, '_blank', 'noopener,noreferrer')
     } catch (e) {
       console.error(e)
-      alert("Não foi possível gerar o QRCode no momento.")
+      alert("Não foi possível gerar o link de pagamento no momento.")
     } finally {
       setIsLoading(false)
     }
@@ -374,13 +385,21 @@ export default function MeusInvestimentosPage() {
           </Tabs>
           <Separator className="my-3 sm:my-4" />
           {/* QRCode gerado */}
-          {qrCode ? (
+          {paymentLinkUrl ? (
             <div className="rounded-md border p-3 sm:p-4">
-              <div className="mb-2 text-xs sm:text-sm font-medium">Link de pagamento</div>
-              <div className="flex justify-center">
-                <img alt="QRCode PIX" src={qrCode} className="h-32 w-32 sm:h-48 sm:w-48" />
+              <div className="mb-2 text-xs sm:text-sm font-medium">Pagamento gerado</div>
+              <div className="flex flex-col items-center gap-2 sm:gap-3">
+                <Button asChild size="sm" className="h-8 sm:h-9">
+                  <a href={paymentLinkUrl} target="_blank" rel="noopener noreferrer" aria-label="Abrir página de pagamento no Asaas">
+                    Abrir página de pagamento
+                  </a>
+                </Button>
+                {paymentLinkEndDate && (
+                  <div className="text-[10px] sm:text-xs text-muted-foreground text-center">
+                    Expira em {new Date(paymentLinkEndDate).toLocaleDateString('pt-BR')}
+                  </div>
+                )}
               </div>
-              <div className="mt-2 text-[10px] sm:text-xs text-muted-foreground text-center">Após o pagamento, seu status será atualizado automaticamente.</div>
             </div>
           ) : (
             <div className="text-[10px] sm:text-xs text-muted-foreground text-center">Selecione uma oferta para prosseguir com o pagamento.</div>
