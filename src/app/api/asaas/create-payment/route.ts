@@ -26,48 +26,9 @@ export async function POST(req: Request) {
     const apiKey = process.env.ASAAS_API_KEY
     const billing = (billingType || 'PIX') as 'PIX' | 'BOLETO' | 'CREDIT_CARD'
 
-    // Fallback mock quando não há configuração do Asaas
+    // Verificar se a API key está configurada
     if (!apiKey) {
-      if (billing === 'PIX') {
-        const svg = encodeURIComponent(
-          `<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'>
-            <rect width='256' height='256' fill='white'/>
-            <rect x='16' y='16' width='224' height='224' fill='black'/>
-            <rect x='32' y='32' width='64' height='64' fill='white'/>
-            <rect x='160' y='32' width='64' height='64' fill='white'/>
-            <rect x='32' y='160' width='64' height='64' fill='white'/>
-            <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>PIX Demo</text>
-          </svg>`
-        )
-        return NextResponse.json({
-          encodedImage: `data:image/svg+xml;utf8,${svg}`,
-          payload: `PIX|DEMO|oferta:${ofertaId ?? 'n/a'}|valor:${valor}`,
-          mocked: true,
-          billingType: 'PIX',
-        })
-      }
-
-      if (billing === 'BOLETO') {
-        // Retorno mínimo para desenvolvimento sem ASAAS
-        return NextResponse.json({
-          id: `pay_mock_boleto_${Date.now()}`,
-          billingType: 'BOLETO',
-          bankSlipUrl: 'about:blank#boleto-demo',
-          identificationField: '00000.00000 00000.000000 00000.000000 0 00000000000000',
-          dueDate: dueDate || null,
-          mocked: true,
-        })
-      }
-
-      // CREDIT_CARD (mock)
-      return NextResponse.json({
-        id: `pay_mock_cc_${Date.now()}`,
-        billingType: 'CREDIT_CARD',
-        status: 'CONFIRMED',
-        authorized: true,
-        last4: '4242',
-        mocked: true,
-      })
+      return NextResponse.json({ error: 'Configuração do Asaas não encontrada' }, { status: 500 })
     }
 
     // Obter usuário autenticado

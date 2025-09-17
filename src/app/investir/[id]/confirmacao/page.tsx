@@ -132,27 +132,23 @@ export default function ConfirmacaoPage() {
         throw new Error(err?.error || 'Falha ao atualizar dados cadastrais')
       }
 
-      // 2) Criar pagamento conforme forma selecionada
-      const payload: any = { ofertaId: offerId, valor: summary.amount, billingType }
-
-      if (billingType === 'CREDIT_CARD') {
-        // Validação básica de cartão
-        const required = [card.holderName, card.number, card.expiryMonth, card.expiryYear, card.ccv, cardHolder.name]
-        if (required.some(v => !String(v || '').trim())) {
-          throw new Error('Preencha todos os dados do cartão para prosseguir.')
-        }
-        payload.creditCard = card
-        payload.creditCardHolderInfo = cardHolder
+      // 2) Criar link de pagamento
+      const payload: any = { 
+        ofertaId: offerId, 
+        valor: summary.amount, 
+        billingType,
+        description: `Investimento - ${summary.offerName}`,
+        externalReference: `oferta_${offerId}_${Date.now()}`
       }
 
-      const payRes = await fetch('/api/asaas/create-payment', {
+      const payRes = await fetch('/api/asaas/create-payment-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       })
       if (!payRes.ok) {
         const err = await payRes.json().catch(() => ({}))
-        throw new Error(err?.error || 'Falha ao criar pagamento')
+        throw new Error(err?.error || 'Falha ao criar link de pagamento')
       }
       const payData = await payRes.json()
       setPayment(payData)
@@ -170,7 +166,7 @@ export default function ConfirmacaoPage() {
     }
   }
 
-  const confirmLabel = billingType === 'PIX' ? 'Confirmar e Gerar PIX' : billingType === 'BOLETO' ? 'Confirmar e Gerar Boleto' : 'Confirmar e Pagar com Cartão'
+  const confirmLabel = 'Confirmar e Gerar Link de Pagamento'
 
   const handleBack = () => {
     router.push(`/investir/${offerId}/termos`)
@@ -322,6 +318,45 @@ export default function ConfirmacaoPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* LINK DE PAGAMENTO */}
+      {payment?.paymentLink && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              Link de Pagamento Criado
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-800 mb-3">
+                Seu link de pagamento foi criado com sucesso! Clique no botão abaixo para acessar a página de pagamento do Asaas.
+              </p>
+              <div className="flex flex-col gap-3">
+                <Button 
+                  onClick={() => window.open(payment.paymentLink.url, '_blank')}
+                  className="w-full"
+                >
+                  Acessar Página de Pagamento
+                </Button>
+                <div className="text-xs text-green-700 space-y-1">
+                  <p><strong>ID do Link:</strong> {payment.paymentLink.id}</p>
+                  <p><strong>Valor:</strong> R$ {payment.paymentLink.value?.toFixed(2)}</p>
+                  {payment.paymentLink.expirationDate && (
+                    <p><strong>Expira em:</strong> {new Date(payment.paymentLink.expirationDate).toLocaleDateString('pt-BR')}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button variant="secondary" onClick={() => router.push('/conta/investimentos')}>
+                Ir para Meus Investimentos
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* PIX */}
       {payment?.billingType === 'PIX' && (payment?.encodedImage || payment?.payload) && (

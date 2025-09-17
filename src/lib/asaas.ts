@@ -120,4 +120,8 @@ export const asaas = {
   async getPixQrCode(paymentId: string) {
     return asaasFetch<any>({ path: `/payments/${paymentId}/pixQrCode` })
   },
+  // Cria link de pagamento
+  async createPaymentLink(payload: any) {
+    return asaasFetch<any>({ method: "POST", path: "/paymentLinks", body: payload })
+  },
 }
