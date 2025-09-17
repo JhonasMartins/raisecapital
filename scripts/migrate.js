@@ -319,16 +319,56 @@ async function main() {
         oferta_id BIGINT NOT NULL REFERENCES ofertas(id) ON DELETE CASCADE,
         valor_investido NUMERIC(15,2) NOT NULL,
         data_investimento TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        status VARCHAR(20) NOT NULL DEFAULT 'ativo' CHECK (status IN ('ativo', 'resgatado', 'cancelado')),
+        status VARCHAR(20) NOT NULL DEFAULT 'pendente_pagamento' CHECK (status IN ('pendente_pagamento', 'pago', 'ativo', 'resgatado', 'cancelado')),
         tipo_investimento VARCHAR(50) NOT NULL,
         prazo_meses INTEGER,
         taxa_retorno NUMERIC(5,2),
         valor_atual NUMERIC(15,2),
+        asaas_payment_link_id TEXT,
+        asaas_payment_link_url TEXT,
+        asaas_payment_status VARCHAR(20) DEFAULT 'PENDING',
+        data_pagamento TIMESTAMPTZ,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
       CREATE INDEX IF NOT EXISTS investimentos_oferta_id_idx ON investimentos (oferta_id);
       CREATE INDEX IF NOT EXISTS investimentos_status_idx ON investimentos (status);
+    `)
+
+    // Garantir colunas essenciais da tabela investimentos em bases já existentes
+    await client.query(`
+      ALTER TABLE investimentos
+        ADD COLUMN IF NOT EXISTS asaas_payment_link_id TEXT,
+        ADD COLUMN IF NOT EXISTS asaas_payment_link_url TEXT,
+        ADD COLUMN IF NOT EXISTS asaas_payment_status VARCHAR(20) DEFAULT 'PENDING',
+        ADD COLUMN IF NOT EXISTS data_pagamento TIMESTAMPTZ;
+    `)
+
+    // Atualizar status padrão para investimentos existentes
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'investimentos' AND column_name = 'status'
+        ) THEN
+          -- Atualizar status padrão para 'pendente_pagamento' se ainda for 'ativo'
+          UPDATE investimentos SET status = 'pendente_pagamento' WHERE status = 'ativo' AND asaas_payment_link_id IS NULL;
+        END IF;
+      END$$;
+    `)
+
+    // Índices adicionais para as novas colunas
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'investimentos' AND column_name = 'asaas_payment_status'
+        ) THEN
+          EXECUTE 'CREATE INDEX IF NOT EXISTS investimentos_asaas_payment_status_idx ON investimentos (asaas_payment_status)';
+        END IF;
+      END$$;
     `)
 
     // Guard index on investimentos.user_id
