@@ -54,11 +54,11 @@ export default function DadosPage() {
   const router = useRouter()
   const params = useParams()
   const offerId = params.id as string
-  
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
   const [offer, setOffer] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  
+
   const checkAuthentication = async () => {
     try {
       const response = await fetch('/api/auth/me')
@@ -70,58 +70,75 @@ export default function DadosPage() {
 
   const fetchOffer = async () => {
     try {
-      const response = await fetch(`/api/offers/${offerId}`)
+      const response = await fetch(`/api/ofertas/${offerId}`)
       if (response.ok) {
         const offerData = await response.json()
         setOffer(offerData)
       }
     } catch (error) {
       console.error('Erro ao buscar oferta:', error)
-    } finally {
-      setLoading(false)
     }
   }
 
   useEffect(() => {
-    checkAuthentication()
-    fetchOffer()
+    Promise.all([checkAuthentication(), fetchOffer(), fetchUserData()]).finally(() => setLoading(false))
   }, [offerId])
-  
+
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch('/api/user/profile')
+      if (response.ok) {
+        const data = await response.json()
+        setUserData(data)
+      }
+    } catch (error) {
+      console.error('Erro ao buscar dados do usuário:', error)
+    } finally {
+      setIsLoadingUserData(false)
+    }
+  }
+
+  // Estado com dados reais do usuário (não mais mockados)
   const [userData, setUserData] = useState<UserData>({
-    // Mock de dados pré-preenchidos
-    nome: 'João',
-    sobrenome: 'Silva',
-    dataNascimento: '1990-05-15',
+    // Dados pessoais
+    nome: '',
+    sobrenome: '',
+    dataNascimento: '',
     nacionalidade: 'Brasileira',
-    genero: 'Masculino',
-    cpf: '123.456.789-00',
-    rg: '12.345.678-9',
-    orgaoExp: 'SSP/SP',
-    estadoCivil: 'Solteiro',
-    empresa: 'Tech Solutions Ltda',
-    profissao: 'Desenvolvedor',
-    cargo: 'Senior',
+    genero: '',
+    cpf: '',
+    rg: '',
+    orgaoExp: '',
+    estadoCivil: '',
+    empresa: '',
+    profissao: '',
+    cargo: '',
     pessoaPoliticamenteExposta: false,
     
-    email: 'joao.silva@email.com',
-    telefone: '(11) 99999-9999',
+    // Contato
+    email: '',
+    telefone: '',
     
+    // Endereço
     pais: 'Brasil',
-    cep: '01234-567',
-    endereco: 'Rua das Flores',
-    numero: '123',
-    complemento: 'Apto 45',
-    bairro: 'Centro',
-    cidade: 'São Paulo',
-    estado: 'SP',
+    cep: '',
+    endereco: '',
+    numero: '',
+    complemento: '',
+    bairro: '',
+    cidade: '',
+    estado: '',
     
-    banco: 'Banco do Brasil',
-    agencia: '1234',
-    conta: '567890',
-    digitoConta: '1',
-    pixTipo: 'CPF',
-    pixChave: '123.456.789-00'
+    // Dados bancários
+    banco: '',
+    agencia: '',
+    conta: '',
+    digitoConta: '',
+    pixTipo: '',
+    pixChave: ''
   })
+
+  const [isLoadingUserData, setIsLoadingUserData] = useState(true)
 
   const handleInputChange = (field: keyof UserData, value: string | boolean) => {
     setUserData(prev => ({
@@ -143,7 +160,7 @@ export default function DadosPage() {
       return
     }
 
-    // Validação básica dos campos obrigatórios
+    // Validação rigorosa dos campos obrigatórios
     const requiredFields = [
       'nome', 'sobrenome', 'dataNascimento', 'nacionalidade', 'genero', 'cpf', 'rg', 
       'orgaoExp', 'estadoCivil', 'empresa', 'profissao', 'cargo', 'email', 'telefone',
@@ -151,17 +168,107 @@ export default function DadosPage() {
       'banco', 'agencia', 'conta', 'digitoConta'
     ]
     
-    const missingFields = requiredFields.filter(field => !userData[field as keyof UserData])
+    const missingFields = requiredFields.filter(field => {
+      const value = userData[field as keyof UserData]
+      return !value || (typeof value === 'string' && value.trim() === '')
+    })
     
     if (missingFields.length > 0) {
-      alert('Por favor, preencha todos os campos obrigatórios.')
+      const fieldNames = {
+        nome: 'Nome',
+        sobrenome: 'Sobrenome',
+        dataNascimento: 'Data de Nascimento',
+        nacionalidade: 'Nacionalidade',
+        genero: 'Gênero',
+        cpf: 'CPF',
+        rg: 'RG',
+        orgaoExp: 'Órgão Expedidor',
+        estadoCivil: 'Estado Civil',
+        empresa: 'Empresa',
+        profissao: 'Profissão',
+        cargo: 'Cargo',
+        email: 'E-mail',
+        telefone: 'Telefone',
+        pais: 'País',
+        cep: 'CEP',
+        endereco: 'Endereço',
+        numero: 'Número',
+        bairro: 'Bairro',
+        cidade: 'Cidade',
+        estado: 'Estado',
+        banco: 'Banco',
+        agencia: 'Agência',
+        conta: 'Conta',
+        digitoConta: 'Dígito da Conta'
+      }
+      
+      const missingFieldNames = missingFields.map(field => fieldNames[field as keyof typeof fieldNames]).join(', ')
+      alert(`Por favor, preencha todos os campos obrigatórios: ${missingFieldNames}`)
+      
+      // Focar no primeiro campo vazio
+      const firstMissingField = document.querySelector(`[id="${missingFields[0]}"]`) as HTMLElement
+      if (firstMissingField) {
+        firstMissingField.focus()
+        firstMissingField.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+      
+      return
+    }
+
+    // Validações específicas de formato
+    const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/
+    if (userData.cpf && !cpfRegex.test(userData.cpf)) {
+      alert('CPF deve estar no formato 000.000.000-00')
+      document.getElementById('cpf')?.focus()
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (userData.email && !emailRegex.test(userData.email)) {
+      alert('Por favor, insira um e-mail válido')
+      document.getElementById('email')?.focus()
+      return
+    }
+
+    const phoneRegex = /^\(\d{2}\)\s\d{4,5}-\d{4}$/
+    if (userData.telefone && !phoneRegex.test(userData.telefone)) {
+      alert('Telefone deve estar no formato (00) 00000-0000')
+      document.getElementById('telefone')?.focus()
+      return
+    }
+
+    const cepRegex = /^\d{5}-\d{3}$/
+    if (userData.cep && !cepRegex.test(userData.cep)) {
+      alert('CEP deve estar no formato 00000-000')
+      document.getElementById('cep')?.focus()
       return
     }
     
-    // Salvar dados no localStorage
+    // Salvar dados atualizados no banco antes de prosseguir
+    saveUserData()
+    
+    // Salvar dados no localStorage para as próximas etapas
     localStorage.setItem('investmentData', JSON.stringify(userData))
     
     router.push(`/investir/${offerId}/termos`)
+  }
+
+  const saveUserData = async () => {
+    try {
+      const response = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      })
+      
+      if (!response.ok) {
+        console.error('Erro ao salvar dados do usuário')
+      }
+    } catch (error) {
+      console.error('Erro ao salvar dados do usuário:', error)
+    }
   }
 
   const handlePrevious = () => {
@@ -170,7 +277,7 @@ export default function DadosPage() {
 
   return (
     <div className="space-y-6">
-      {/* Carregamento */}
+      {/* Loading inicial */}
       {(loading || isAuthenticated === null) && (
         <div className="text-center py-8">
           <p>Carregando...</p>
@@ -224,342 +331,352 @@ export default function DadosPage() {
             </AlertDescription>
           </Alert>
 
-      <div className="space-y-6">
-        {/* Dados Pessoais */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Dados Pessoais</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="nome">Nome *</Label>
-                <Input
-                  id="nome"
-                  value={userData.nome}
-                  onChange={(e) => handleInputChange('nome', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="sobrenome">Sobrenome *</Label>
-                <Input
-                  id="sobrenome"
-                  value={userData.sobrenome}
-                  onChange={(e) => handleInputChange('sobrenome', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="dataNascimento">Data de Nascimento *</Label>
-                <Input
-                  id="dataNascimento"
-                  type="date"
-                  value={userData.dataNascimento}
-                  onChange={(e) => handleInputChange('dataNascimento', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="nacionalidade">Nacionalidade *</Label>
-                <Input
-                  id="nacionalidade"
-                  value={userData.nacionalidade}
-                  onChange={(e) => handleInputChange('nacionalidade', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="genero">Gênero *</Label>
-                <Select value={userData.genero} onValueChange={(value) => handleInputChange('genero', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Masculino">Masculino</SelectItem>
-                    <SelectItem value="Feminino">Feminino</SelectItem>
-                    <SelectItem value="Outro">Outro</SelectItem>
-                    <SelectItem value="Prefiro não informar">Prefiro não informar</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="cpf">CPF *</Label>
-                <Input
-                  id="cpf"
-                  value={userData.cpf}
-                  onChange={(e) => handleInputChange('cpf', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="rg">RG *</Label>
-                <Input
-                  id="rg"
-                  value={userData.rg}
-                  onChange={(e) => handleInputChange('rg', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="orgaoExp">Órgão Exp/UF *</Label>
-                <Input
-                  id="orgaoExp"
-                  value={userData.orgaoExp}
-                  onChange={(e) => handleInputChange('orgaoExp', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="estadoCivil">Estado Civil *</Label>
-                <Select value={userData.estadoCivil} onValueChange={(value) => handleInputChange('estadoCivil', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Solteiro">Solteiro(a)</SelectItem>
-                    <SelectItem value="Casado">Casado(a)</SelectItem>
-                    <SelectItem value="Divorciado">Divorciado(a)</SelectItem>
-                    <SelectItem value="Viúvo">Viúvo(a)</SelectItem>
-                    <SelectItem value="União Estável">União Estável</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="empresa">Empresa *</Label>
-                <Input
-                  id="empresa"
-                  value={userData.empresa}
-                  onChange={(e) => handleInputChange('empresa', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="profissao">Profissão *</Label>
-                <Input
-                  id="profissao"
-                  value={userData.profissao}
-                  onChange={(e) => handleInputChange('profissao', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="cargo">Cargo *</Label>
-                <Input
-                  id="cargo"
-                  value={userData.cargo}
-                  onChange={(e) => handleInputChange('cargo', e.target.value)}
-                  required
-                />
-              </div>
+          {/* Loading state para dados do usuário */}
+          {isLoadingUserData && (
+            <div className="text-center py-8">
+              <p>Carregando seus dados...</p>
             </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="pessoaPoliticamenteExposta"
-                checked={userData.pessoaPoliticamenteExposta}
-                onCheckedChange={(checked) => handleInputChange('pessoaPoliticamenteExposta', checked as boolean)}
-              />
-              <Label htmlFor="pessoaPoliticamenteExposta">
-                Sou uma pessoa politicamente exposta
-              </Label>
-            </div>
-          </CardContent>
-        </Card>
+          )}
 
-        {/* Contato */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Contato</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="email">E-mail *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={userData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="telefone">Telefone *</Label>
-                <Input
-                  id="telefone"
-                  value={userData.telefone}
-                  onChange={(e) => handleInputChange('telefone', e.target.value)}
-                  required
-                />
+          {/* Formulário de dados - só mostra quando não está carregando */}
+          {!isLoadingUserData && (
+            <div className="space-y-6">
+              {/* Dados Pessoais */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Dados Pessoais</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="nome">Nome *</Label>
+                      <Input
+                        id="nome"
+                        value={userData.nome}
+                        onChange={(e) => handleInputChange('nome', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="sobrenome">Sobrenome *</Label>
+                      <Input
+                        id="sobrenome"
+                        value={userData.sobrenome}
+                        onChange={(e) => handleInputChange('sobrenome', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="dataNascimento">Data de Nascimento *</Label>
+                      <Input
+                        id="dataNascimento"
+                        type="date"
+                        value={userData.dataNascimento}
+                        onChange={(e) => handleInputChange('dataNascimento', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="nacionalidade">Nacionalidade *</Label>
+                      <Input
+                        id="nacionalidade"
+                        value={userData.nacionalidade}
+                        onChange={(e) => handleInputChange('nacionalidade', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="genero">Gênero *</Label>
+                      <Select value={userData.genero} onValueChange={(value) => handleInputChange('genero', value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Masculino">Masculino</SelectItem>
+                          <SelectItem value="Feminino">Feminino</SelectItem>
+                          <SelectItem value="Outro">Outro</SelectItem>
+                          <SelectItem value="Prefiro não informar">Prefiro não informar</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="cpf">CPF *</Label>
+                      <Input
+                        id="cpf"
+                        value={userData.cpf}
+                        onChange={(e) => handleInputChange('cpf', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="rg">RG *</Label>
+                      <Input
+                        id="rg"
+                        value={userData.rg}
+                        onChange={(e) => handleInputChange('rg', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="orgaoExp">Órgão Exp/UF *</Label>
+                      <Input
+                        id="orgaoExp"
+                        value={userData.orgaoExp}
+                        onChange={(e) => handleInputChange('orgaoExp', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="estadoCivil">Estado Civil *</Label>
+                      <Select value={userData.estadoCivil} onValueChange={(value) => handleInputChange('estadoCivil', value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Solteiro">Solteiro(a)</SelectItem>
+                          <SelectItem value="Casado">Casado(a)</SelectItem>
+                          <SelectItem value="Divorciado">Divorciado(a)</SelectItem>
+                          <SelectItem value="Viúvo">Viúvo(a)</SelectItem>
+                          <SelectItem value="União Estável">União Estável</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="empresa">Empresa *</Label>
+                      <Input
+                        id="empresa"
+                        value={userData.empresa}
+                        onChange={(e) => handleInputChange('empresa', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="profissao">Profissão *</Label>
+                      <Input
+                        id="profissao"
+                        value={userData.profissao}
+                        onChange={(e) => handleInputChange('profissao', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="cargo">Cargo *</Label>
+                      <Input
+                        id="cargo"
+                        value={userData.cargo}
+                        onChange={(e) => handleInputChange('cargo', e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="pessoaPoliticamenteExposta"
+                      checked={userData.pessoaPoliticamenteExposta}
+                      onCheckedChange={(checked) => handleInputChange('pessoaPoliticamenteExposta', checked as boolean)}
+                    />
+                    <Label htmlFor="pessoaPoliticamenteExposta">
+                      Sou uma pessoa politicamente exposta
+                    </Label>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Contato */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Contato</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="email">E-mail *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={userData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="telefone">Telefone *</Label>
+                      <Input
+                        id="telefone"
+                        value={userData.telefone}
+                        onChange={(e) => handleInputChange('telefone', e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Endereço */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Endereço</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="pais">País *</Label>
+                      <Input
+                        id="pais"
+                        value={userData.pais}
+                        onChange={(e) => handleInputChange('pais', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="cep">CEP *</Label>
+                      <Input
+                        id="cep"
+                        value={userData.cep}
+                        onChange={(e) => handleInputChange('cep', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="endereco">Endereço *</Label>
+                      <Input
+                        id="endereco"
+                        value={userData.endereco}
+                        onChange={(e) => handleInputChange('endereco', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="numero">Número *</Label>
+                      <Input
+                        id="numero"
+                        value={userData.numero}
+                        onChange={(e) => handleInputChange('numero', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="complemento">Complemento</Label>
+                      <Input
+                        id="complemento"
+                        value={userData.complemento}
+                        onChange={(e) => handleInputChange('complemento', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="bairro">Bairro *</Label>
+                      <Input
+                        id="bairro"
+                        value={userData.bairro}
+                        onChange={(e) => handleInputChange('bairro', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="cidade">Cidade *</Label>
+                      <Input
+                        id="cidade"
+                        value={userData.cidade}
+                        onChange={(e) => handleInputChange('cidade', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="estado">Estado *</Label>
+                      <Input
+                        id="estado"
+                        value={userData.estado}
+                        onChange={(e) => handleInputChange('estado', e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Dados Bancários */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Dados Bancários</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="banco">Banco *</Label>
+                      <Input
+                        id="banco"
+                        value={userData.banco}
+                        onChange={(e) => handleInputChange('banco', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="agencia">Agência *</Label>
+                      <Input
+                        id="agencia"
+                        value={userData.agencia}
+                        onChange={(e) => handleInputChange('agencia', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="conta">Conta (sem dígito) *</Label>
+                      <Input
+                        id="conta"
+                        value={userData.conta}
+                        onChange={(e) => handleInputChange('conta', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="digitoConta">Dígito conta *</Label>
+                      <Input
+                        id="digitoConta"
+                        value={userData.digitoConta}
+                        onChange={(e) => handleInputChange('digitoConta', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="pixTipo">PIX - Tipo (Opcional)</Label>
+                      <Select value={userData.pixTipo || ''} onValueChange={(value) => handleInputChange('pixTipo', value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o tipo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="CPF">CPF</SelectItem>
+                          <SelectItem value="CNPJ">CNPJ</SelectItem>
+                          <SelectItem value="Email">Email</SelectItem>
+                          <SelectItem value="Telefone">Telefone</SelectItem>
+                          <SelectItem value="Chave Aleatória">Chave Aleatória</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="pixChave">PIX - Chave (Opcional)</Label>
+                      <Input
+                        id="pixChave"
+                        value={userData.pixChave || ''}
+                        onChange={(e) => handleInputChange('pixChave', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-between pt-6">
+                <Button variant="outline" onClick={handlePrevious}>
+                  Anterior
+                </Button>
+                <Button 
+                  onClick={handleNext}
+                  disabled={offer && (offer.status === 'encerrada' || offer.status === 'finalizada')}
+                >
+                  {offer && (offer.status === 'encerrada' || offer.status === 'finalizada') ? 'Oferta Encerrada' : 'Próximo'}
+                </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Endereço */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Endereço</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="pais">País *</Label>
-                <Input
-                  id="pais"
-                  value={userData.pais}
-                  onChange={(e) => handleInputChange('pais', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="cep">CEP *</Label>
-                <Input
-                  id="cep"
-                  value={userData.cep}
-                  onChange={(e) => handleInputChange('cep', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="endereco">Endereço *</Label>
-                <Input
-                  id="endereco"
-                  value={userData.endereco}
-                  onChange={(e) => handleInputChange('endereco', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="numero">Número *</Label>
-                <Input
-                  id="numero"
-                  value={userData.numero}
-                  onChange={(e) => handleInputChange('numero', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="complemento">Complemento</Label>
-                <Input
-                  id="complemento"
-                  value={userData.complemento}
-                  onChange={(e) => handleInputChange('complemento', e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="bairro">Bairro *</Label>
-                <Input
-                  id="bairro"
-                  value={userData.bairro}
-                  onChange={(e) => handleInputChange('bairro', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="cidade">Cidade *</Label>
-                <Input
-                  id="cidade"
-                  value={userData.cidade}
-                  onChange={(e) => handleInputChange('cidade', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="estado">Estado *</Label>
-                <Input
-                  id="estado"
-                  value={userData.estado}
-                  onChange={(e) => handleInputChange('estado', e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Dados Bancários */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Dados Bancários</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="banco">Banco *</Label>
-                <Input
-                  id="banco"
-                  value={userData.banco}
-                  onChange={(e) => handleInputChange('banco', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="agencia">Agência *</Label>
-                <Input
-                  id="agencia"
-                  value={userData.agencia}
-                  onChange={(e) => handleInputChange('agencia', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="conta">Conta (sem dígito) *</Label>
-                <Input
-                  id="conta"
-                  value={userData.conta}
-                  onChange={(e) => handleInputChange('conta', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="digitoConta">Dígito conta *</Label>
-                <Input
-                  id="digitoConta"
-                  value={userData.digitoConta}
-                  onChange={(e) => handleInputChange('digitoConta', e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="pixTipo">PIX - Tipo (Opcional)</Label>
-                <Select value={userData.pixTipo || ''} onValueChange={(value) => handleInputChange('pixTipo', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o tipo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="CPF">CPF</SelectItem>
-                    <SelectItem value="CNPJ">CNPJ</SelectItem>
-                    <SelectItem value="Email">Email</SelectItem>
-                    <SelectItem value="Telefone">Telefone</SelectItem>
-                    <SelectItem value="Chave Aleatória">Chave Aleatória</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="pixChave">PIX - Chave (Opcional)</Label>
-                <Input
-                  id="pixChave"
-                  value={userData.pixChave || ''}
-                  onChange={(e) => handleInputChange('pixChave', e.target.value)}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="flex justify-between pt-6">
-        <Button variant="outline" onClick={handlePrevious}>
-          Anterior
-        </Button>
-        <Button 
-          onClick={handleNext}
-          disabled={offer && (offer.status === 'encerrada' || offer.status === 'finalizada')}
-        >
-          {offer && (offer.status === 'encerrada' || offer.status === 'finalizada') ? 'Oferta Encerrada' : 'Próximo'}
-        </Button>
-      </div>
+          )}
         </>
       )}
     </div>
