@@ -46,80 +46,88 @@ export async function POST(request: NextRequest) {
     // Criar usuário
     const user = await createUser(email.toLowerCase(), password, name.trim(), tipoPessoaNormalized);
 
-    try {
-      // Se for empresa, criar entrada na tabela empresas
-      if (userType === 'empresa' && nomeEmpresa && document) {
-        await createCompanyEntry(user.id, nomeEmpresa, cpfCnpj);
-      }
-
-      // Criar/associar cliente no Asaas
-      // 1) Tentar localizar por CPF/CNPJ para evitar duplicidade
-      let asaasCustomerId: string | undefined
+    // Se for empresa, tentar criar entrada na tabela empresas (não bloquear cadastro em caso de falha)
+    if (userType === 'empresa' && nomeEmpresa && document) {
       try {
-        const existing = await asaas.getCustomerByCpfCnpj(cpfCnpj)
-        if (existing?.data && existing.data.length > 0) {
-          asaasCustomerId = existing.data[0]?.id
-        }
+        await createCompanyEntry(user.id, nomeEmpresa, cpfCnpj);
       } catch (e) {
-        // Se a busca falhar, vamos tentar criar abaixo
+        console.error('Falha ao criar entrada de empresa durante o registro (prosseguindo):', e);
       }
+    }
 
-      // 2) Criar cliente se não encontrado
-      if (!asaasCustomerId) {
-        const displayName = userType === 'empresa' && nomeEmpresa ? String(nomeEmpresa).trim() : String(name).trim()
-        const personType = tipoPessoaNormalized === 'pj' ? 'JURIDICA' : 'FISICA'
-        const created = await asaas.createCustomer({
-          name: displayName,
-          email: email.toLowerCase(),
-          cpfCnpj,
-          personType,
-          notificationEnabled: true,
-        })
-        asaasCustomerId = created?.id
-      }
-
-      if (!asaasCustomerId) {
-        throw new Error('Falha ao obter ID do cliente no Asaas')
-      }
-
-      // 3) Persistir no banco de dados
+    // Persistir CPF/CNPJ no banco independentemente da integração com Asaas
+    try {
       if (tipoPessoaNormalized === 'pf') {
         await query(
-          `UPDATE users SET asaas_customer_id = $1, cpf = COALESCE(cpf, $2) WHERE id = $3`,
-          [asaasCustomerId, cpfCnpj, user.id]
+          `UPDATE users SET cpf = COALESCE(cpf, $1) WHERE id = $2`,
+          [cpfCnpj, user.id]
         )
       } else {
         await query(
-          `UPDATE users SET asaas_customer_id = $1, cnpj = COALESCE(cnpj, $2) WHERE id = $3`,
-          [asaasCustomerId, cpfCnpj, user.id]
+          `UPDATE users SET cnpj = COALESCE(cnpj, $1) WHERE id = $2`,
+          [cpfCnpj, user.id]
         )
       }
-
-      // Criar sessão
-      const sessionToken = await createSession(user);
-      await setSessionCookie(sessionToken);
-
-      return NextResponse.json({
-        success: true,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          userType: user.userType,
-          asaasCustomerId,
-        },
-      });
-    } catch (err) {
-      // Rollback lógico: remover usuário criado se falhou integração Asaas
-      try {
-        await query('DELETE FROM users WHERE id = $1', [user.id])
-      } catch {}
-      console.error('Erro ao integrar com Asaas durante registro:', err)
-      return NextResponse.json(
-        { error: 'Não foi possível concluir o cadastro por uma falha na integração de pagamentos. Tente novamente em instantes.' },
-        { status: 502 }
-      );
+    } catch (e) {
+      console.error('Falha ao persistir CPF/CNPJ (prosseguindo):', e)
     }
+
+    // Best-effort: integrar com Asaas apenas se chave estiver configurada; não bloquear cadastro em caso de falha
+    let asaasCustomerId: string | undefined
+    if (process.env.ASAAS_API_KEY) {
+      try {
+        // 1) Tentar localizar por CPF/CNPJ para evitar duplicidade
+        try {
+          const existing = await asaas.getCustomerByCpfCnpj(cpfCnpj)
+          if (existing?.data && existing.data.length > 0) {
+            asaasCustomerId = existing.data[0]?.id
+          }
+        } catch (e) {
+          // Se a busca falhar, vamos tentar criar abaixo
+        }
+
+        // 2) Criar cliente se não encontrado
+        if (!asaasCustomerId) {
+          const displayName = userType === 'empresa' && nomeEmpresa ? String(nomeEmpresa).trim() : String(name).trim()
+          const personType = tipoPessoaNormalized === 'pj' ? 'JURIDICA' : 'FISICA'
+          const created = await asaas.createCustomer({
+            name: displayName,
+            email: email.toLowerCase(),
+            cpfCnpj,
+            personType,
+            notificationEnabled: true,
+          })
+          asaasCustomerId = created?.id
+        }
+
+        // 3) Persistir ID do cliente Asaas se obtido
+        if (asaasCustomerId) {
+          await query(
+            `UPDATE users SET asaas_customer_id = $1 WHERE id = $2`,
+            [asaasCustomerId, user.id]
+          )
+        }
+      } catch (err) {
+        console.warn('Integração com Asaas falhou durante o registro, prosseguindo sem asaas_customer_id:', err)
+      }
+    } else {
+      console.warn('ASAAS_API_KEY não configurada; pulando integração Asaas no registro.')
+    }
+
+    // Criar sessão sempre que usuário for criado com sucesso
+    const sessionToken = await createSession(user);
+    await setSessionCookie(sessionToken);
+
+    return NextResponse.json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        userType: user.userType,
+        asaasCustomerId,
+      },
+    });
 
   } catch (error) {
     console.error('Erro no registro:', error);
