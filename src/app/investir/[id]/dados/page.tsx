@@ -135,7 +135,7 @@ export default function DadosPage() {
     conta: '',
     digitoConta: '',
     pixTipo: '',
-    pixChave: ''
+    pixChave: '',
   })
 
   const [isLoadingUserData, setIsLoadingUserData] = useState(true)
@@ -147,6 +147,20 @@ useEffect(() => {
   }
 }, [formError])
 
+  // Estados locais para Órgão Exp/UF
+  const [orgaoExpTipo, setOrgaoExpTipo] = useState('')
+  const [orgaoExpUF, setOrgaoExpUF] = useState('')
+  useEffect(() => {
+    const s = (userData.orgaoExp || '').toUpperCase().trim()
+    if (!s) { setOrgaoExpTipo(''); setOrgaoExpUF(''); return }
+    const parts = s.split(/[\s\/\-]+/).filter(Boolean)
+    let tipo = parts[0] || ''
+    let uf = ''
+    if (parts.length >= 2) uf = parts[parts.length - 1]
+    if (uf.length !== 2) uf = ''
+    setOrgaoExpTipo(tipo)
+    setOrgaoExpUF(uf)
+  }, [userData.orgaoExp])
   // Helpers de formatação
   const onlyDigits = (s: string) => s.replace(/\D/g, '')
   const formatCPF = (value: string) => {
@@ -472,12 +486,24 @@ useEffect(() => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="nacionalidade">Nacionalidade *</Label>
-                      <Input
-                        id="nacionalidade"
-                        value={userData.nacionalidade}
-                        onChange={(e) => handleInputChange('nacionalidade', e.target.value)}
-                        required
-                      />
+                      <Select value={userData.nacionalidade} onValueChange={(value) => handleInputChange('nacionalidade', value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Brasileira">Brasileira</SelectItem>
+                          <SelectItem value="Estrangeira">Estrangeira</SelectItem>
+                          <SelectItem value="Portuguesa">Portuguesa</SelectItem>
+                          <SelectItem value="Argentina">Argentina</SelectItem>
+                          <SelectItem value="Chilena">Chilena</SelectItem>
+                          <SelectItem value="Uruguaia">Uruguaia</SelectItem>
+                          <SelectItem value="Paraguaia">Paraguaia</SelectItem>
+                          <SelectItem value="Boliviana">Boliviana</SelectItem>
+                          <SelectItem value="Colombiana">Colombiana</SelectItem>
+                          <SelectItem value="Peruana">Peruana</SelectItem>
+                          <SelectItem value="Outra">Outra</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="genero">Gênero *</Label>
@@ -515,12 +541,61 @@ useEffect(() => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="orgaoExp">Órgão Exp/UF *</Label>
-                      <Input
-                        id="orgaoExp"
-                        value={userData.orgaoExp}
-                        onChange={(e) => handleInputChange('orgaoExp', e.target.value)}
-                        required
-                      />
+                      <div className="grid grid-cols-2 gap-2">
+                        <Select value={orgaoExpTipo} onValueChange={handleOrgaoExpTipoChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Órgão" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="SSP">SSP</SelectItem>
+                            <SelectItem value="DETRAN">DETRAN</SelectItem>
+                            <SelectItem value="DPF">DPF</SelectItem>
+                            <SelectItem value="IFP">IFP</SelectItem>
+                            <SelectItem value="OAB">OAB</SelectItem>
+                            <SelectItem value="CREA">CREA</SelectItem>
+                            <SelectItem value="CRM">CRM</SelectItem>
+                            <SelectItem value="CRF">CRF</SelectItem>
+                            <SelectItem value="CRC">CRC</SelectItem>
+                            <SelectItem value="CRO">CRO</SelectItem>
+                            <SelectItem value="CRQ">CRQ</SelectItem>
+                            <SelectItem value="OUTRO">OUTRO</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select value={orgaoExpUF} onValueChange={handleOrgaoExpUFChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="UF" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="AC">AC</SelectItem>
+                            <SelectItem value="AL">AL</SelectItem>
+                            <SelectItem value="AP">AP</SelectItem>
+                            <SelectItem value="AM">AM</SelectItem>
+                            <SelectItem value="BA">BA</SelectItem>
+                            <SelectItem value="CE">CE</SelectItem>
+                            <SelectItem value="DF">DF</SelectItem>
+                            <SelectItem value="ES">ES</SelectItem>
+                            <SelectItem value="GO">GO</SelectItem>
+                            <SelectItem value="MA">MA</SelectItem>
+                            <SelectItem value="MT">MT</SelectItem>
+                            <SelectItem value="MS">MS</SelectItem>
+                            <SelectItem value="MG">MG</SelectItem>
+                            <SelectItem value="PA">PA</SelectItem>
+                            <SelectItem value="PB">PB</SelectItem>
+                            <SelectItem value="PR">PR</SelectItem>
+                            <SelectItem value="PE">PE</SelectItem>
+                            <SelectItem value="PI">PI</SelectItem>
+                            <SelectItem value="RJ">RJ</SelectItem>
+                            <SelectItem value="RN">RN</SelectItem>
+                            <SelectItem value="RS">RS</SelectItem>
+                            <SelectItem value="RO">RO</SelectItem>
+                            <SelectItem value="RR">RR</SelectItem>
+                            <SelectItem value="SC">SC</SelectItem>
+                            <SelectItem value="SP">SP</SelectItem>
+                            <SelectItem value="SE">SE</SelectItem>
+                            <SelectItem value="TO">TO</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="estadoCivil">Estado Civil *</Label>
@@ -788,4 +863,15 @@ useEffect(() => {
       )}
     </div>
   )
+}
+
+const handleOrgaoExpTipoChange = (value: string) => {
+  setOrgaoExpTipo(value)
+  const combined = value && orgaoExpUF ? `${value}/${orgaoExpUF}` : value || orgaoExpUF || ''
+  handleInputChange('orgaoExp', combined)
+}
+const handleOrgaoExpUFChange = (value: string) => {
+  setOrgaoExpUF(value)
+  const combined = orgaoExpTipo && value ? `${orgaoExpTipo}/${value}` : orgaoExpTipo || value || ''
+  handleInputChange('orgaoExp', combined)
 }
