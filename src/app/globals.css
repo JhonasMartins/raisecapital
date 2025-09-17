@@ -118,6 +118,9 @@
     @apply border-border outline-ring/50;
   }
   body {
+    /* Mapear variáveis das fontes Inter para as esperadas pelo tema */
+    --font-geist-sans: var(--font-inter);
+    --font-geist-mono: var(--font-inter-mono);
     @apply bg-background text-foreground;
   }
 

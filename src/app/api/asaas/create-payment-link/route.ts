@@ -122,8 +122,10 @@ export async function POST(req: Request) {
 
   } catch (error) {
     console.error('[create-payment-link] Erro:', error)
+    const message = error instanceof Error ? error.message : 'Erro interno do servidor'
+    // Expor a mensagem para facilitar diagnóstico em ambiente de dev
     return NextResponse.json({ 
-      error: 'Erro interno do servidor' 
+      error: message 
     }, { status: 500 })
   }
 }
