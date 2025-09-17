@@ -423,7 +423,7 @@ export default function DadosPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="nome">Nome *</Label>
                       <Input
                         id="nome"
@@ -432,7 +432,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="sobrenome">Sobrenome *</Label>
                       <Input
                         id="sobrenome"
@@ -441,7 +441,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="dataNascimento">Data de Nascimento *</Label>
                       <Input
                         id="dataNascimento"
@@ -451,7 +451,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="nacionalidade">Nacionalidade *</Label>
                       <Input
                         id="nacionalidade"
@@ -460,7 +460,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="genero">Gênero *</Label>
                       <Select value={userData.genero} onValueChange={(value) => handleInputChange('genero', value)}>
                         <SelectTrigger>
@@ -474,7 +474,7 @@ export default function DadosPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="cpf">CPF *</Label>
                       <Input
                         id="cpf"
@@ -485,7 +485,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="rg">RG *</Label>
                       <Input
                         id="rg"
@@ -494,7 +494,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="orgaoExp">Órgão Exp/UF *</Label>
                       <Input
                         id="orgaoExp"
@@ -503,7 +503,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="estadoCivil">Estado Civil *</Label>
                       <Select value={userData.estadoCivil} onValueChange={(value) => handleInputChange('estadoCivil', value)}>
                         <SelectTrigger>
@@ -518,7 +518,7 @@ export default function DadosPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="empresa">Empresa *</Label>
                       <Input
                         id="empresa"
@@ -527,7 +527,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="profissao">Profissão *</Label>
                       <Input
                         id="profissao"
@@ -536,7 +536,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="cargo">Cargo *</Label>
                       <Input
                         id="cargo"
@@ -566,7 +566,7 @@ export default function DadosPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="email">E-mail *</Label>
                       <Input
                         id="email"
@@ -576,7 +576,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="telefone">Telefone *</Label>
                       <Input
                         id="telefone"
@@ -598,7 +598,7 @@ export default function DadosPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="pais">País *</Label>
                       <Input
                         id="pais"
@@ -607,7 +607,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="cep">CEP *</Label>
                       <Input
                         id="cep"
@@ -625,7 +625,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="endereco">Endereço *</Label>
                       <Input
                         id="endereco"
@@ -634,7 +634,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="numero">Número *</Label>
                       <Input
                         id="numero"
@@ -643,7 +643,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="complemento">Complemento</Label>
                       <Input
                         id="complemento"
@@ -651,7 +651,7 @@ export default function DadosPage() {
                         onChange={(e) => handleInputChange('complemento', e.target.value)}
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="bairro">Bairro *</Label>
                       <Input
                         id="bairro"
@@ -660,7 +660,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="cidade">Cidade *</Label>
                       <Input
                         id="cidade"
@@ -669,7 +669,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="estado">Estado *</Label>
                       <Input
                         id="estado"
@@ -689,7 +689,7 @@ export default function DadosPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="banco">Banco *</Label>
                       <Input
                         id="banco"
@@ -698,7 +698,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="agencia">Agência *</Label>
                       <Input
                         id="agencia"
@@ -707,7 +707,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="conta">Conta (sem dígito) *</Label>
                       <Input
                         id="conta"
@@ -716,7 +716,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="digitoConta">Dígito conta *</Label>
                       <Input
                         id="digitoConta"
@@ -725,7 +725,7 @@ export default function DadosPage() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="pixTipo">PIX - Tipo (Opcional)</Label>
                       <Select value={userData.pixTipo || ''} onValueChange={(value) => handleInputChange('pixTipo', value)}>
                         <SelectTrigger>
@@ -740,7 +740,7 @@ export default function DadosPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="pixChave">PIX - Chave (Opcional)</Label>
                       <Input
                         id="pixChave"
