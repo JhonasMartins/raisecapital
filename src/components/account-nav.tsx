@@ -99,7 +99,7 @@ export default function AccountNav() {
             <Link href="/conta/perfil">Dados Cadastrais</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/conta/documentos">Imposto de Renda</Link>
+            <Link href="/conta/imposto">Imposto de Renda</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/material-didatico">Conteúdos</Link>

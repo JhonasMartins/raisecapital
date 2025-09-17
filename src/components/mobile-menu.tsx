@@ -41,7 +41,8 @@ export default function MobileMenu() {
           <span className="px-3 py-1.5 text-xs uppercase text-muted-foreground">Mais</span>
           <Link href="#" className="rounded px-3 py-2 hover:bg-accent/30" onClick={closeMenu}>Falar com especialista</Link>
           <Link href="/conta/perfil" className="rounded px-3 py-2 hover:bg-accent/30" onClick={closeMenu}>Dados Cadastrais</Link>
-          <Link href="/conta/documentos" className="rounded px-3 py-2 hover:bg-accent/30" onClick={closeMenu}>Imposto de Renda</Link>
+-          <Link href="/conta/documentos" className="rounded px-3 py-2 hover:bg-accent/30" onClick={closeMenu}>Imposto de Renda</Link>
++          <Link href="/conta/imposto" className="rounded px-3 py-2 hover:bg-accent/30" onClick={closeMenu}>Imposto de Renda</Link>
           <Link href="/material-didatico" className="rounded px-3 py-2 hover:bg-accent/30" onClick={closeMenu}>Conteúdos</Link>
           <Link href="/conta/assinaturas" className="rounded px-3 py-2 hover:bg-accent/30" onClick={closeMenu}>Grupos</Link>
           <div className="my-2 h-px bg-border" />
