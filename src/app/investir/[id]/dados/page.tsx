@@ -95,7 +95,7 @@ export default function DadosPage() {
       const response = await fetch('/api/user/profile')
       if (response.ok) {
         const data = await response.json()
-        setUserData(data?.profile ?? data)
+        setUserData({ ...(data?.profile ?? data), nacionalidade: 'Brasileira' })
       }
     } catch (error) {
       console.error('Erro ao buscar dados do usuário:', error)
@@ -552,8 +552,6 @@ useEffect(() => {
                         </SelectContent>
                       </Select>
                     </div>
-                    {userData.nacionalidade === 'Brasileira' && (
-                      <>
                     <div className="space-y-2">
                       <Label htmlFor="cpf">CPF *</Label>
                       <Input
@@ -632,8 +630,6 @@ useEffect(() => {
                         </Select>
                       </div>
                     </div>
-                      </>
-                    )}
                     <div className="space-y-2">
                       <Label htmlFor="estadoCivil">Estado Civil *</Label>
                       <Select value={userData.estadoCivil} onValueChange={(value) => handleInputChange('estadoCivil', value)}>

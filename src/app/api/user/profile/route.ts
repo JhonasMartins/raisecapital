@@ -35,7 +35,7 @@ export async function GET() {
       nome: userData.name ? userData.name.split(' ')[0] || '' : '',
       sobrenome: userData.name ? userData.name.split(' ').slice(1).join(' ') || '' : '',
       dataNascimento: userData.data_nascimento ? userData.data_nascimento.toISOString().split('T')[0] : '',
-      nacionalidade: userData.endereco_pais || '',
+      nacionalidade: 'Brasileira',
       genero: '', // Campo não existe no banco ainda
       cpf: userData.cpf || '',
       rg: userData.rg || '',

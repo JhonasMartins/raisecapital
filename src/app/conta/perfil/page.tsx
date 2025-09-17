@@ -264,16 +264,7 @@ export default function PerfilPage() {
                       </div>
                       <div className="grid gap-2">
                         <Label className="text-sm">Nacionalidade *</Label>
-                        <Select defaultValue="brasileiro">
-                          <SelectTrigger className="w-full h-10 sm:h-11">
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="brasileiro">Brasileiro Nato</SelectItem>
-                            <SelectItem value="naturalizado">Brasileiro Naturalizado</SelectItem>
-                            <SelectItem value="estrangeiro">Estrangeiro</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <Input id="nacionalidade" value="Brasileira" disabled className="h-10 sm:h-11" />
                       </div>
                       <div className="grid gap-2">
                         <Label className="text-sm">Gênero *</Label>
