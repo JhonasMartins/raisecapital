@@ -25,6 +25,19 @@ export default function ConfirmacaoPage() {
   const [loading, setLoading] = useState(true)
   const [summary, setSummary] = useState<InvestmentSummary | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [payment, setPayment] = useState<any>(null)
+  // Adicionar seleção de forma de pagamento e estados de cartão
+  const [billingType, setBillingType] = useState<'PIX' | 'BOLETO' | 'CREDIT_CARD'>('PIX')
+  const [card, setCard] = useState({ holderName: '', number: '', expiryMonth: '', expiryYear: '', ccv: '' })
+  const [cardHolder, setCardHolder] = useState({
+    name: '',
+    email: '',
+    cpfCnpj: '',
+    mobilePhone: '',
+    postalCode: '',
+    addressNumber: '',
+    addressComplement: ''
+  })
 
   const checkAuthentication = async () => {
     try {
@@ -69,6 +82,23 @@ export default function ConfirmacaoPage() {
     }
   }, [])
 
+  // Prefill dados do titular do cartão com base nos dados do usuário
+  useEffect(() => {
+    if (summary?.userData) {
+      const u = summary.userData || {}
+      setCardHolder((prev) => ({
+        ...prev,
+        name: `${u?.nome ?? ''} ${u?.sobrenome ?? ''}`.trim(),
+        email: u?.email ?? '',
+        cpfCnpj: String(u?.cpf ?? '').replace(/\D/g, ''),
+        mobilePhone: String(u?.telefone ?? '').replace(/\D/g, ''),
+        postalCode: String(u?.cep ?? '').replace(/\D/g, ''),
+        addressNumber: String(u?.numero ?? ''),
+        addressComplement: String(u?.complemento ?? ''),
+      }))
+    }
+  }, [summary])
+
   const handleConfirm = async () => {
     // Verificar autenticação
     if (!isAuthenticated) {
@@ -82,27 +112,65 @@ export default function ConfirmacaoPage() {
       return
     }
 
+    if (!summary) {
+      alert('Dados do investimento não encontrados.')
+      return
+    }
+
     setIsSubmitting(true)
-    
+    setPayment(null)
+
     try {
-      // Simular envio para API
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      // Limpar localStorage
+      // 1) Atualizar dados cadastrais do usuário
+      const profileRes = await fetch('/api/account/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(summary.userData)
+      })
+      if (!profileRes.ok) {
+        const err = await profileRes.json().catch(() => ({}))
+        throw new Error(err?.error || 'Falha ao atualizar dados cadastrais')
+      }
+
+      // 2) Criar pagamento conforme forma selecionada
+      const payload: any = { ofertaId: offerId, valor: summary.amount, billingType }
+
+      if (billingType === 'CREDIT_CARD') {
+        // Validação básica de cartão
+        const required = [card.holderName, card.number, card.expiryMonth, card.expiryYear, card.ccv, cardHolder.name]
+        if (required.some(v => !String(v || '').trim())) {
+          throw new Error('Preencha todos os dados do cartão para prosseguir.')
+        }
+        payload.creditCard = card
+        payload.creditCardHolderInfo = cardHolder
+      }
+
+      const payRes = await fetch('/api/asaas/create-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      if (!payRes.ok) {
+        const err = await payRes.json().catch(() => ({}))
+        throw new Error(err?.error || 'Falha ao criar pagamento')
+      }
+      const payData = await payRes.json()
+      setPayment(payData)
+
+      // Limpar localStorage depois de gerar o pagamento
       localStorage.removeItem('investmentAmount')
       localStorage.removeItem('investmentData')
       localStorage.removeItem('investmentTermsData')
       localStorage.removeItem('offerId')
-      
-      // Redirecionar para página de sucesso ou painel
-      router.push('/painel?success=investment')
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao confirmar investimento:', error)
-      alert('Erro ao processar investimento. Tente novamente.')
+      alert(error?.message || 'Erro ao processar investimento. Tente novamente.')
     } finally {
       setIsSubmitting(false)
     }
   }
+
+  const confirmLabel = billingType === 'PIX' ? 'Confirmar e Gerar PIX' : billingType === 'BOLETO' ? 'Confirmar e Gerar Boleto' : 'Confirmar e Pagar com Cartão'
 
   const handleBack = () => {
     router.push(`/investir/${offerId}/termos`)
@@ -245,8 +313,108 @@ export default function ConfirmacaoPage() {
               {summary.termsData.perfilInvestidor === 'inferior_200_mil' && 'Investimentos/Renda < R$ 200 mil'}
             </Badge>
           </div>
+
+          <Separator />
+
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={handleBack} disabled={isSubmitting}>Voltar</Button>
+            <Button onClick={handleConfirm} disabled={isSubmitting}>{isSubmitting ? 'Processando...' : confirmLabel}</Button>
+          </div>
         </CardContent>
       </Card>
+
+      {/* PIX */}
+      {payment?.billingType === 'PIX' && (payment?.encodedImage || payment?.payload) && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Pagamento PIX
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {payment?.encodedImage && (
+              <div className="flex flex-col items-center gap-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={payment.encodedImage} alt="QR Code PIX" className="h-64 w-64" />
+                <p className="text-sm text-muted-foreground">Escaneie o QR Code para pagar</p>
+              </div>
+            )}
+            {payment?.payload && (
+              <div className="space-y-2">
+                <span className="font-medium text-sm">Copia e Cola:</span>
+                <div className="rounded border p-2 text-xs break-all bg-muted/30">{payment.payload}</div>
+                <div className="flex justify-end">
+                  <Button size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(payment.payload)}>Copiar</Button>
+                </div>
+              </div>
+            )}
+            <div className="flex justify-end">
+              <Button variant="secondary" onClick={() => router.push('/conta/investimentos')}>Ir para Meus Investimentos</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* BOLETO */}
+      {payment?.billingType === 'BOLETO' && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Boleto Bancário
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {payment?.identificationField && (
+              <div className="space-y-2">
+                <span className="font-medium text-sm">Linha Digitável:</span>
+                <div className="rounded border p-2 text-xs break-all bg-muted/30">{payment.identificationField}</div>
+                <div className="flex justify-end">
+                  <Button size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(payment.identificationField)}>Copiar</Button>
+                </div>
+              </div>
+            )}
+            <div className="flex justify-between items-center">
+              <div className="text-sm text-muted-foreground">
+                {payment?.dueDate && <p>Vencimento: {payment.dueDate}</p>}
+              </div>
+              <div className="flex gap-2">
+                {payment?.bankSlipUrl && (
+                  <Button onClick={() => window.open(payment.bankSlipUrl, '_blank')}>Abrir Boleto</Button>
+                )}
+                <Button variant="secondary" onClick={() => router.push('/conta/investimentos')}>Ir para Meus Investimentos</Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* CARTÃO */}
+      {payment?.billingType === 'CREDIT_CARD' && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              Pagamento com Cartão
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm">
+              Status: <span className="font-medium">{payment?.status || (payment?.authorized ? 'CONFIRMED' : 'PENDING')}</span>
+            </p>
+            {payment?.last4 && (
+              <p className="text-sm text-muted-foreground">Cartão **** **** **** {payment.last4}</p>
+            )}
+            {payment?.id && (
+              <p className="text-xs text-muted-foreground">ID do pagamento: {payment.id}</p>
+            )}
+            <div className="flex justify-end">
+              <Button variant="secondary" onClick={() => router.push('/conta/investimentos')}>Ir para Meus Investimentos</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
