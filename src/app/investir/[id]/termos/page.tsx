@@ -34,7 +34,7 @@ export default function TermosPage() {
 
   const fetchOffer = async () => {
     try {
-      const response = await fetch(`/api/offers/${offerId}`)
+      const response = await fetch(`/api/ofertas/${offerId}`)
       if (response.ok) {
         const offerData = await response.json()
         setOffer(offerData)
