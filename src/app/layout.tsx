@@ -107,7 +107,7 @@ export default async function RootLayout({
 
   return (
     <html lang="pt-BR">
-      <body className={`${inter.variable} ${interMono.variable} antialiased`}>
+      <body className={`${inter.variable} ${interMono.variable} font-sans antialiased`}>
 
       {/* Navbar (oculta em /auth via FooterGate) */}
       <FooterGate>
@@ -238,33 +238,29 @@ export default async function RootLayout({
                 </div>
               </div>
 
-              {/* Aviso regulatório + CVM + Créditos */}
-              <div className="mt-10 border-t pt-6">
-                <div className="text-xs leading-relaxed text-muted-foreground">
-                  <p>
-                    Este website (&quot;Site&quot;) é gerido e operado pela RAISE CAPITAL LTDA, com CNPJ 52.422.948/0001-39.
-                  </p>
-                  <p className="mt-3">
-                    As sociedades empresárias de pequeno porte e as ofertas apresentadas nesta plataforma estão automaticamente dispensadas de registro pela Comissão de Valores Mobiliários - CVM. A CVM não analisa previamente as ofertas. As ofertas realizadas não implicam por parte da CVM a garantia da veracidade das informações prestadas, de adequação à legislação vigente ou julgamento sobre a qualidade da sociedade empresária de pequeno porte. Antes de aceitar uma oferta leia com atenção as informações essenciais da oferta, em especial a seção de alertas sobre riscos.
-                  </p>
-                </div>
-
-                {/* Logo CVM */}
-                <div className="mt-6 flex justify-center">
-                  <Image src="/cvm.webp" alt="CVM" width={96} height={96} className="h-10 w-auto md:h-12" />
-                </div>
-
-                {/* Créditos */}
-                <div className="mt-6 flex flex-col items-center justify-between gap-4 text-xs text-muted-foreground md:flex-row">
-                  <p>© {new Date().getFullYear()} Raise Capital</p>
-                  <p>
-                    Desenvolvido por <a href="https://codnodo.com" className="hover:underline" target="_blank" rel="noopener noreferrer">Codnodo Studio</a>
-                  </p>
+              <div className="mt-10 flex items-center justify-between border-t pt-8 text-xs text-muted-foreground">
+                <p>© {new Date().getFullYear()} Raise Capital LTDA — CNPJ 54.049.553/0001-60</p>
+                <div className="flex items-center gap-2">
+                  <Link href="/privacidade" className="hover:text-foreground">Privacidade</Link>
+                  <span aria-hidden="true">•</span>
+                  <Link href="/termos" className="hover:text-foreground">Termos</Link>
                 </div>
               </div>
             </div>
           </footer>
         </FooterGate>
+
+        {/* Banner de cookies (apenas demonstração) */}
+        {/* <div className="fixed bottom-4 left-0 right-0 mx-auto max-w-6xl px-6">
+          <div className="rounded-xl border bg-card p-4 sm:flex sm:items-center sm:justify-between">
+            <p className="text-sm text-muted-foreground">Usamos cookies para melhorar sua experiência. Ao continuar, você concorda com nossa <Link href="/privacidade" className="underline">política de cookies</Link>.</p>
+            <div className="mt-3 flex gap-2 sm:mt-0">
+              <Button size="sm" variant="secondary">Preferências</Button>
+              <Button size="sm">Aceitar</Button>
+            </div>
+          </div>
+        </div> */}
+
       </body>
     </html>
   );

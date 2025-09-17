@@ -38,21 +38,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    // Verificar se a oferta existe
+    // Buscar a oferta (usar colunas reais do schema)
     const ofertaRes = await query(
-      `SELECT id, titulo, valor_minimo FROM ofertas WHERE id = $1 AND status = 'ativa'`,
+      `SELECT id, nome, minimo_investimento, modalidade, status FROM ofertas WHERE id = $1`,
       [ofertaId]
     )
     if (ofertaRes.rows.length === 0) {
-      return NextResponse.json({ error: 'Oferta não encontrada ou inativa' }, { status: 404 })
+      return NextResponse.json({ error: 'Oferta não encontrada' }, { status: 404 })
     }
 
     const oferta = ofertaRes.rows[0] as any
 
-    // Verificar valor mínimo
-    if (valor < oferta.valor_minimo) {
+    // Opcional: validar status permitido
+    const allowedStatuses = new Set(['Em captação', 'ativa', 'Ativa'])
+    if (oferta.status && !allowedStatuses.has(oferta.status)) {
+      return NextResponse.json({ error: `Oferta com status inválido para investimento: ${oferta.status}` }, { status: 400 })
+    }
+
+    // Verificar valor mínimo (minimo_investimento é NUMERIC -> string no node-postgres)
+    const minimo = oferta.minimo_investimento != null ? parseFloat(oferta.minimo_investimento as string) : 0
+    if (minimo > 0 && valor < minimo) {
       return NextResponse.json({ 
-        error: `Valor mínimo para esta oferta é R$ ${oferta.valor_minimo}` 
+        error: `Valor mínimo para esta oferta é R$ ${minimo}` 
       }, { status: 400 })
     }
 
@@ -62,8 +69,8 @@ export async function POST(req: Request) {
 
     // Criar payload para o link de pagamento
     const paymentLinkPayload = {
-      name: description || `Investimento - ${oferta.titulo}`,
-      description: `Investimento de R$ ${valor.toFixed(2)} na oferta: ${oferta.titulo}`,
+      name: description || `Investimento - ${oferta.nome}`,
+      description: `Investimento de R$ ${valor.toFixed(2)} na oferta: ${oferta.nome}`,
       value: valor,
       billingType: billingType as 'UNDEFINED' | 'BOLETO' | 'CREDIT_CARD' | 'PIX',
       chargeType: 'DETACHED', // Cobrança avulsa
@@ -86,18 +93,20 @@ export async function POST(req: Request) {
       `INSERT INTO investimentos (
         user_id, 
         oferta_id, 
-        valor_investido, 
+        valor_investido,
+        tipo_investimento,
         status, 
         asaas_payment_link_id, 
         asaas_payment_link_url,
         asaas_payment_status,
         created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW()) 
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW()) 
       RETURNING id`,
       [
         currentUser.id,
         ofertaId,
         valor,
+        oferta.modalidade || 'equity',
         'pendente_pagamento',
         paymentLink.id,
         paymentLink.url,
