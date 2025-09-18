@@ -1,10 +1,10 @@
 {
   "meta": {
-    "project": "RaiseCapital Plataforma de Captação de Recursos",
+    "project": "RaiseCapital - Plataforma de Captação de Recursos",
     "date": "2025-09-13",
     "prepared_by": "Equipe de Produto RaiseCapital"
   },
-  "product_overview": "RaiseCapital é uma plataforma digital completa para captação de recursos, conectando empresas que buscam investimento com investidores qualificados. A plataforma oferece ferramentas avançadas de análise, dashboards interativos e um sistema robusto de gestão de relacionamento entre investidores e empresas, visando um ecossistema transparente e eficiente no mercado de investimentos.",
+  "product_overview": "RaiseCapital é uma plataforma digital completa que conecta empresas em busca de investimento com investidores qualificados, oferecendo uma solução robusta para captação, análise e gestão de investimentos com ferramentas avançadas, dashboards interativos e integração com sistemas de pagamento e blockchain.",
   "core_goals": [
     "Facilitar o processo de captação de recursos para empresas em crescimento",
     "Conectar investidores qualificados com oportunidades de investimento relevantes",
@@ -13,39 +13,39 @@
     "Criar um ecossistema transparente e eficiente para o mercado de investimentos"
   ],
   "key_features": [
-    "Dashboard Executivo com visão 360° do pipeline, métricas de performance, análise de mercado e relatórios customizáveis",
-    "Sistema de Matchmaking com algoritmo de compatibilidade, filtros avançados, score de fit e recomendações personalizadas",
-    "Data Room Virtual para upload e compartilhamento seguro de documentos, controle de acesso, auditoria e versionamento",
-    "Sistema de CRM Integrado para gestão de contatos, pipeline de vendas, automação de marketing e comunicação integrada",
-    "Ferramentas de Análise Financeira para modelagem, valuation, análise de risco e benchmarking",
-    "Sistema de Pagamentos e Compliance com integração a gateways nacionais/internacionais, KYC/AML, compliance automático e contratos inteligentes",
-    "Sistema robusto de autenticação e sessão com JWT e cookies HttpOnly",
-    "Área de cliente para investidores com dashboard de investimentos, extratos, pagamentos, notificações e segurança",
-    "Área para empresas gerenciarem investidores, ofertas e relatórios",
-    "Integração com serviços externos como Asaas para pagamentos, Alchemy para blockchain, Nodemailer para emails e Vercel Blob para armazenamento",
-    "Interface responsiva com Next.js 15, React 19, Tailwind CSS",
-    "APIs REST para gerenciamento de dados e operações diversas"
+    "Dashboard Executivo com visão 360° do pipeline, métricas de performance e relatórios customizáveis",
+    "Sistema de Matchmaking com algoritmo inteligente, filtros avançados e recomendações personalizadas",
+    "Data Room Virtual para upload seguro de documentos, controle de acesso e auditoria",
+    "Sistema CRM integrado para gestão de contatos, pipeline de vendas e comunicação unificada",
+    "Ferramentas de análise financeira incluindo modelagem, valuation automático e análise de risco",
+    "Sistema de pagamentos integrado com gateways nacionais e internacionais e compliance automático",
+    "Autenticação JWT segura com hashing de senha e sessão via cookies HttpOnly",
+    "Áreas separadas para Investidor e Empresa com funcionalidades dedicadas",
+    "Integração com Alchemy SDK para funcionalidades blockchain",
+    "APIs RESTful robustas para gerenciamento de conta, blog, investimentos, ofertas, portfólio e transações",
+    "Interface responsiva e acessível com Tailwind CSS e Radix UI, incluindo experiência mobile-first"
   ],
   "user_flow_summary": [
-    "Cadastro e onboarding guiado para empresas em múltiplas etapas",
-    "Criação e configuração do pitch deck e data room para empresas",
-    "Busca e descoberta de oportunidades de investimento para investidores com feed personalizado",
-    "Processo de due diligence com acesso ao data room e análises para investidores",
-    "Pipeline e gestão do relacionamento entre empresas e investidores via CRM integrado",
-    "Processo digital completo de investimento incluindo pagamentos e contratos",
-    "Comunicação integrada entre usuários para negociação e suporte"
+    "Empresa realiza cadastro e passa por onboarding guiado em 5 etapas",
+    "Empresa cria sua apresentação de captação com templates e assistente IA",
+    "Configura Data Room com upload e definição de permissões em documentos sensíveis",
+    "Busca investidores via filtros avançados e recebe recomendações",
+    "Investidor realiza cadastro com verificação KYC automática",
+    "Define perfil de investimento e descobre oportunidades via feed personalizado",
+    "Acessa Data Room para due diligence e utiliza ferramentas de análise financeira",
+    "Negocia via plataforma com comunicação integrada",
+    "Realiza investimento digital completo, processo suportado por pagamentos integrados e contratos inteligentes"
   ],
   "validation_criteria": [
-    "Execução bem-sucedida das funcionalidades do dashboard executivo com dados atualizados",
-    "Precisão e relevância do sistema de matchmaking na conexão entre empresas e investidores",
-    "Segurança comprovada do data room com controles de acesso e auditoria eficazes",
-    "Confiabilidade do sistema de CRM na gestão do pipeline e comunicação",
-    "Funcionamento completo das integrações de pagamento e compliance com validação de KYC/AML",
-    "Robustez e segurança do sistema de autenticação e gerenciamento de sessões",
-    "Adesão das áreas de conta para investidores e empresa com funcionalidades completas",
-    "Performance e responsividade das interfaces em múltiplos dispositivos",
-    "Cobertura completa dos testes automatizados e de integração para APIs REST",
-    "Monitoramento contínuo da estabilidade do sistema com uptime superior a 99.9%"
+    "Autenticação e sessão funcionando com segurança JWT e armazenamento via cookies HttpOnly",
+    "Upload, armazenamento e controle de acesso seguros para documentos no Data Room",
+    "Dashboard e relatórios exibindo dados corretamente com métricas atualizadas em tempo real",
+    "Matchmaking entregando recomendações relevantes baseadas em perfil e comportamento",
+    "Integração dos gateways de pagamento processando transações corretamente",
+    "Compliance e verificação KYC/AML funcionando conforme requisitos regulatórios",
+    "API RESTful estável e segura para todas áreas do sistema",
+    "Sistema responsivo e acessível em múltiplos dispositivos e navegadores",
+    "Documentação completa e testes automatizados cobrindo principais fluxos de usuário e integrações"
   ],
   "code_summary": {
     "tech_stack": [

@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
       // não precisamos de padrões remotos adicionais.
     ],
   },
+  // Define explicitamente a raiz do Turbopack para evitar seleção incorreta do workspace root
+  turbopack: {
+    root: __dirname,
+  },
 }
 
 export default nextConfig
