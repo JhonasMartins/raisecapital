@@ -13,5 +13,6 @@
     "envs": {
       "API_KEY": "sk-user-_fkOSkJ2DN_W1uUGHNlndzIjqEhq7hOQAJ6JgdQgLUzXFASjH8jQSr2wPFLLmK83yNVvSIlARghvQnjbNOPARgBUHDwz8eHtnJhmHcJwMDxwy1kQRrStacax-RLGWLaW3lk"
     }
-  }
+  },
+  "serverPort": 56764
 }
