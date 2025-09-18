@@ -1,0 +1,594 @@
+[
+  {
+    "id": "TC001",
+    "title": "User Registration and Onboarding for Companies",
+    "description": "Verify the multi-step registration and onboarding flow for companies, including validation of all mandatory fields and successful completion.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to company registration page."
+      },
+      {
+        "type": "action",
+        "description": "Fill in required fields with valid company data."
+      },
+      {
+        "type": "action",
+        "description": "Submit registration form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify registration is successful and onboarding process starts."
+      },
+      {
+        "type": "action",
+        "description": "Complete onboarding steps with required data inputs."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify onboarding completes with confirmation and access to company dashboard."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "User Registration Error Handling - Missing Required Data",
+    "description": "Check that the registration process returns appropriate validation errors when mandatory fields are missing or invalid.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to company registration page."
+      },
+      {
+        "type": "action",
+        "description": "Submit registration form without filling required fields."
+      },
+      {
+        "type": "assertion",
+        "description": "Check validation errors are displayed for each missing mandatory field."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Login Success with Valid Credentials",
+    "description": "Ensure users can login successfully using valid credentials with secure session handling.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to login page."
+      },
+      {
+        "type": "action",
+        "description": "Input correct username/email and password."
+      },
+      {
+        "type": "action",
+        "description": "Click login button."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify login success and HttpOnly JWT cookie is set."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Login Failure with Invalid Credentials",
+    "description": "Check the system correctly rejects login attempts with incorrect or missing credentials and shows error message.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to login page."
+      },
+      {
+        "type": "action",
+        "description": "Input invalid username/email and/or password."
+      },
+      {
+        "type": "action",
+        "description": "Click login button."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify login failure with clear error message to user."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Dashboard Executive Data Accuracy and Display",
+    "description": "Validate the executive dashboard displays up-to-date pipeline data, performance metrics, market analysis, and supports custom report generation.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as authenticated user with access to dashboard."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify pipeline metrics and performance data are accurate and match backend data."
+      },
+      {
+        "type": "assertion",
+        "description": "Check market analysis charts and data visualizations are rendered correctly."
+      },
+      {
+        "type": "action",
+        "description": "Generate and customize reports from available options."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm reports generate correctly with selected parameters."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Matchmaking Algorithm - Valid Investor-Company Matches",
+    "description": "Ensure that the matchmaking system correctly generates relevant connections between investors and companies based on the compatibility score and filters.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as investor user."
+      },
+      {
+        "type": "action",
+        "description": "Apply advanced filters to search for investment opportunities."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the matchmaking feed displays companies relevant to investor profile."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that each match has a valid compatibility score and recommendations."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Data Room Virtual - Document Upload, Access, and Versioning",
+    "description": "Verify secure upload, access restrictions, version control and audit logging of documents in the virtual data room.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as company user and access data room."
+      },
+      {
+        "type": "action",
+        "description": "Upload multiple document types and versions."
+      },
+      {
+        "type": "assertion",
+        "description": "Check documents upload is successful with correct metadata."
+      },
+      {
+        "type": "action",
+        "description": "Set access controls restricting certain investors."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify investors cannot access documents outside of allowed permissions."
+      },
+      {
+        "type": "action",
+        "description": "Modify document to create new version."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm version history is maintained and audit logs capture changes."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "CRM Pipeline Management - Add, Update, and Track Investor Relations",
+    "description": "Ensure CRM correctly manages contacts, tracks pipeline stages, and sends automated notifications.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as company user with CRM access."
+      },
+      {
+        "type": "action",
+        "description": "Add new investor contact with full details."
+      },
+      {
+        "type": "action",
+        "description": "Advance investor status through sales pipeline stages."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify pipeline stages update correctly and reflect in dashboard."
+      },
+      {
+        "type": "assertion",
+        "description": "Check automated notifications triggered for changes."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Financial Analysis Tools - Model and Benchmark Accuracy",
+    "description": "Confirm the financial modeling, valuation, risk analysis, and benchmarking tools operate correctly and produce reliable outputs.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access financial analysis tools logged in as authorized user."
+      },
+      {
+        "type": "action",
+        "description": "Input sample financial data for modeling and valuation."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify model outputs and valuation calculations are consistent with expectations."
+      },
+      {
+        "type": "action",
+        "description": "Run risk analysis and benchmarking comparisons."
+      },
+      {
+        "type": "assertion",
+        "description": "Check analysis results reflect correct data and are displayed properly."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Payments and Compliance Integration with KYC/AML",
+    "description": "Test full payment processing cycle including integration with Asaas gateway, KYC/AML checks, and contract execution.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as investor user."
+      },
+      {
+        "type": "action",
+        "description": "Initiate investment payment process."
+      },
+      {
+        "type": "action",
+        "description": "Submit required KYC/AML documentation."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify KYC/AML validation succeeds or failure handled correctly."
+      },
+      {
+        "type": "action",
+        "description": "Complete payment through Asaas gateway."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm payment success and smart contract activation."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Authentication and Session Security - JWT and HttpOnly Cookies",
+    "description": "Verify authentication workflow uses JWT with HttpOnly cookies, password hashing and secure session management.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Attempt login with valid credentials."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm JWT token is issued and HttpOnly cookie set."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to access protected API endpoints with and without token."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access allowed only with valid token."
+      },
+      {
+        "type": "action",
+        "description": "Validate password hashing on user creation and login."
+      },
+      {
+        "type": "assertion",
+        "description": "Check password not stored or transmitted in plain text."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Investor Area - Dashboard, Statements, and Notifications",
+    "description": "Validate investor account area features including investment portfolio display, statements, payments history, notifications and security settings.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as investor user."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm dashboard shows investments and performance data correctly."
+      },
+      {
+        "type": "action",
+        "description": "Access statements and payments sections."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify statements and payment histories match transactions."
+      },
+      {
+        "type": "action",
+        "description": "Check notifications panel for latest alerts."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify notifications are accurate and actionable."
+      },
+      {
+        "type": "action",
+        "description": "Update security settings and verify changes."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm successful update and effect on login session."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Company Area - Manage Investors, Offers and Reports",
+    "description": "Check that companies can manage investor lists, create and update offers and generate reports as per requirements.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as company user."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to investors management and add/update investor data."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify investor list reflects updates."
+      },
+      {
+        "type": "action",
+        "description": "Create and configure new investment offer."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm offer appears correctly and is accessible to investors."
+      },
+      {
+        "type": "action",
+        "description": "Generate financial and investment reports."
+      },
+      {
+        "type": "assertion",
+        "description": "Reports reflect correct data and export options work."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Search and Discovery - Personalized Investment Feed for Investors",
+    "description": "Validate the personalized feed for investors shows relevant investment opportunities according to profile and preferences.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as investor user."
+      },
+      {
+        "type": "action",
+        "description": "Update profile and preferences for investment sectors and risk."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify investment feed updates accordingly with relevant opportunities."
+      },
+      {
+        "type": "action",
+        "description": "Filter and search offers by criteria."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm search results are accurate according to filters."
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "API Integration - REST Endpoints for Data Management",
+    "description": "Test REST API endpoints for CRUD operations on accounts, investments, offers, portfolio and user data for correctness and error handling.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Perform authenticated API calls for creating, reading, updating, and deleting resources."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify responses contain correct data and status codes."
+      },
+      {
+        "type": "action",
+        "description": "Make API calls with invalid data or unauthorized tokens."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm appropriate error codes and messages are returned."
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "External Service Integration - Email Notifications via Nodemailer",
+    "description": "Confirm emails are sent correctly for key actions like registration, password recovery, notifications using Nodemailer integration.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Trigger email related actions (registration confirmation, password reset, notification)."
+      },
+      {
+        "type": "assertion",
+        "description": "Check email sent with correct content and received in target inbox."
+      },
+      {
+        "type": "action",
+        "description": "Simulate email service failure."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify system handles failure gracefully with retry or error reporting."
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Responsive UI Verification - Multi-Device Support",
+    "description": "Test UI responsiveness and functionality on desktop, tablet and mobile devices with different screen sizes.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access platform pages on desktop screen resolution."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify layout, navigation and content display correctly."
+      },
+      {
+        "type": "action",
+        "description": "Repeat access on tablet and mobile screen resolutions."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm responsive design adapts UI elements for each device properly."
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Session Timeout and Logout Handling",
+    "description": "Verify system correctly handles session expiration, logout workflows and user redirection for security.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login and remain idle until session timeout period elapses."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user is logged out and redirected to login page."
+      },
+      {
+        "type": "action",
+        "description": "Login again and perform manual logout."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm session is cleared and access to protected pages is denied."
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Error Handling for File Uploads in Data Room",
+    "description": "Test file upload component's ability to handle large files, unsupported formats, network interruptions and provide user feedback.",
+    "category": "error handling",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Attempt upload of valid file within allowed size and format."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm successful upload and metadata registration."
+      },
+      {
+        "type": "action",
+        "description": "Attempt upload of file exceeding size limits."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error message displayed preventing upload."
+      },
+      {
+        "type": "action",
+        "description": "Upload unsupported file formats."
+      },
+      {
+        "type": "assertion",
+        "description": "Check validation error appears."
+      },
+      {
+        "type": "action",
+        "description": "Simulate network interruption during upload."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify partial uploads fail gracefully with retry options."
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "System Uptime and Stability Monitoring",
+    "description": "Verify the monitoring tools detect system outages or downtime and report uptime status above 99.9%.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate backend service downtime."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm system monitoring logs the outage event accurately."
+      },
+      {
+        "type": "action",
+        "description": "Check uptime report and alerting mechanisms."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify uptime reports reflect proper calculations and alerts sent."
+      }
+    ]
+  }
+]

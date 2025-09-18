@@ -1,0 +1,265 @@
+{
+  "meta": {
+    "project": "RaiseCapital Plataforma de Captação de Recursos",
+    "date": "2025-09-13",
+    "prepared_by": "Equipe de Produto RaiseCapital"
+  },
+  "product_overview": "RaiseCapital é uma plataforma digital completa para captação de recursos, conectando empresas que buscam investimento com investidores qualificados. A plataforma oferece ferramentas avançadas de análise, dashboards interativos e um sistema robusto de gestão de relacionamento entre investidores e empresas, visando um ecossistema transparente e eficiente no mercado de investimentos.",
+  "core_goals": [
+    "Facilitar o processo de captação de recursos para empresas em crescimento",
+    "Conectar investidores qualificados com oportunidades de investimento relevantes",
+    "Fornecer ferramentas de análise e due diligence para tomada de decisão",
+    "Automatizar processos administrativos e de compliance",
+    "Criar um ecossistema transparente e eficiente para o mercado de investimentos"
+  ],
+  "key_features": [
+    "Dashboard Executivo com visão 360° do pipeline, métricas de performance, análise de mercado e relatórios customizáveis",
+    "Sistema de Matchmaking com algoritmo de compatibilidade, filtros avançados, score de fit e recomendações personalizadas",
+    "Data Room Virtual para upload e compartilhamento seguro de documentos, controle de acesso, auditoria e versionamento",
+    "Sistema de CRM Integrado para gestão de contatos, pipeline de vendas, automação de marketing e comunicação integrada",
+    "Ferramentas de Análise Financeira para modelagem, valuation, análise de risco e benchmarking",
+    "Sistema de Pagamentos e Compliance com integração a gateways nacionais/internacionais, KYC/AML, compliance automático e contratos inteligentes",
+    "Sistema robusto de autenticação e sessão com JWT e cookies HttpOnly",
+    "Área de cliente para investidores com dashboard de investimentos, extratos, pagamentos, notificações e segurança",
+    "Área para empresas gerenciarem investidores, ofertas e relatórios",
+    "Integração com serviços externos como Asaas para pagamentos, Alchemy para blockchain, Nodemailer para emails e Vercel Blob para armazenamento",
+    "Interface responsiva com Next.js 15, React 19, Tailwind CSS",
+    "APIs REST para gerenciamento de dados e operações diversas"
+  ],
+  "user_flow_summary": [
+    "Cadastro e onboarding guiado para empresas em múltiplas etapas",
+    "Criação e configuração do pitch deck e data room para empresas",
+    "Busca e descoberta de oportunidades de investimento para investidores com feed personalizado",
+    "Processo de due diligence com acesso ao data room e análises para investidores",
+    "Pipeline e gestão do relacionamento entre empresas e investidores via CRM integrado",
+    "Processo digital completo de investimento incluindo pagamentos e contratos",
+    "Comunicação integrada entre usuários para negociação e suporte"
+  ],
+  "validation_criteria": [
+    "Execução bem-sucedida das funcionalidades do dashboard executivo com dados atualizados",
+    "Precisão e relevância do sistema de matchmaking na conexão entre empresas e investidores",
+    "Segurança comprovada do data room com controles de acesso e auditoria eficazes",
+    "Confiabilidade do sistema de CRM na gestão do pipeline e comunicação",
+    "Funcionamento completo das integrações de pagamento e compliance com validação de KYC/AML",
+    "Robustez e segurança do sistema de autenticação e gerenciamento de sessões",
+    "Adesão das áreas de conta para investidores e empresa com funcionalidades completas",
+    "Performance e responsividade das interfaces em múltiplos dispositivos",
+    "Cobertura completa dos testes automatizados e de integração para APIs REST",
+    "Monitoramento contínuo da estabilidade do sistema com uptime superior a 99.9%"
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "TypeScript",
+      "Next.js 15 (App Router)",
+      "React 19",
+      "Tailwind CSS v4",
+      "PostgreSQL (pg)",
+      "Node.js",
+      "ESLint",
+      "Radix UI",
+      "Lucide Icons",
+      "Recharts",
+      "Embla Carousel",
+      "Framer Motion",
+      "Jose (JWT)",
+      "Nodemailer",
+      "@vercel/blob",
+      "Alchemy SDK"
+    ],
+    "features": [
+      {
+        "name": "Authentication & Session",
+        "description": "JWT-based session with HttpOnly cookie, password hashing with scrypt, user creation and login helpers.",
+        "files": [
+          "src/lib/auth.ts",
+          "src/lib/db.ts"
+        ]
+      },
+      {
+        "name": "Database Layer",
+        "description": "Singleton PostgreSQL pool with metrics, retries on connection errors, and helper query function.",
+        "files": [
+          "src/lib/db.ts",
+          "src/app/api/db-status",
+          "src/app/api/db-test"
+        ]
+      },
+      {
+        "name": "Email Service",
+        "description": "Email sending via Nodemailer with utility helpers.",
+        "files": [
+          "src/lib/email.ts"
+        ]
+      },
+      {
+        "name": "Storage & Uploads",
+        "description": "File storage utilities (Vercel Blob) and UI file upload component; upload APIs.",
+        "files": [
+          "src/lib/storage.ts",
+          "src/components/ui/file-upload.tsx",
+          "src/app/api/upload",
+          "src/app/api/storage"
+        ]
+      },
+      {
+        "name": "Blog",
+        "description": "Blog listing and post detail with Markdown rendering and sharing/comments UI.",
+        "files": [
+          "src/lib/blog.ts",
+          "src/app/blog/page.tsx",
+          "src/app/blog/[slug]",
+          "src/app/blog/novo",
+          "src/components/blog/comments-section.tsx",
+          "src/components/blog/filters.tsx",
+          "src/components/blog/share-bar.tsx"
+        ]
+      },
+      {
+        "name": "Offers (Investments)",
+        "description": "Public offers listing and detail pages with essential info accordion and documents navigation.",
+        "files": [
+          "src/app/ofertas/page.tsx",
+          "src/app/ofertas/[slug]",
+          "src/components/essential-info-accordion.tsx",
+          "src/components/nav-documents.tsx"
+        ]
+      },
+      {
+        "name": "Account Area (Investidor)",
+        "description": "Authenticated investor dashboard: investments, statements, tax, payments, notifications, security, etc.",
+        "files": [
+          "src/app/conta/layout.tsx",
+          "src/app/conta/page.tsx",
+          "src/app/conta/investimentos",
+          "src/app/conta/extratos",
+          "src/app/conta/imposto",
+          "src/app/conta/pagamentos",
+          "src/app/conta/notificacoes",
+          "src/app/conta/seguranca",
+          "src/app/conta/assinaturas",
+          "src/app/conta/suitability",
+          "src/app/conta/documentos",
+          "src/app/conta/dados-bancarios"
+        ]
+      },
+      {
+        "name": "Company Area (Empresa)",
+        "description": "Company-side area for managing investors, offers and reports.",
+        "files": [
+          "src/app/empresa/layout.tsx",
+          "src/app/empresa/page.tsx",
+          "src/app/empresa/investidores",
+          "src/app/empresa/ofertas",
+          "src/app/empresa/relatorios"
+        ]
+      },
+      {
+        "name": "Invest Flow",
+        "description": "Investment route with dynamic offer id for the investment process.",
+        "files": [
+          "src/app/investir/[id]"
+        ]
+      },
+      {
+        "name": "Auth Pages",
+        "description": "Public authentication pages for login, account creation and password recovery.",
+        "files": [
+          "src/app/auth/layout.tsx",
+          "src/app/auth/login",
+          "src/app/auth/criar-conta",
+          "src/app/auth/recuperar-senha"
+        ]
+      },
+      {
+        "name": "Payments (Asaas)",
+        "description": "Integration with Asaas payment APIs and related server routes.",
+        "files": [
+          "src/lib/asaas.ts",
+          "src/app/api/asaas"
+        ]
+      },
+      {
+        "name": "Blockchain (Alchemy)",
+        "description": "Alchemy SDK utilities for blockchain-related features.",
+        "files": [
+          "src/lib/alchemy.ts"
+        ]
+      },
+      {
+        "name": "Portfolio & Analytics",
+        "description": "Portfolio distribution and interactive charts using Recharts and custom UI charts.",
+        "files": [
+          "src/components/portfolio-distribution-chart.tsx",
+          "src/components/chart-area-interactive.tsx",
+          "src/components/ui/chart.tsx",
+          "src/components/ui/default-bar-chart.tsx",
+          "src/components/ui/dotted-pattern-chart.tsx",
+          "src/components/ui/gradient-bar-multiple-chart.tsx"
+        ]
+      },
+      {
+        "name": "APIs (General)",
+        "description": "REST-like API routes for account, blog, investments, newsletter, offers, portfolio, rendimentos, transactions, user and wallet.",
+        "files": [
+          "src/app/api/account",
+          "src/app/api/auth",
+          "src/app/api/blog",
+          "src/app/api/investments",
+          "src/app/api/newsletter",
+          "src/app/api/ofertas",
+          "src/app/api/portfolio",
+          "src/app/api/rendimentos",
+          "src/app/api/transactions",
+          "src/app/api/user",
+          "src/app/api/wallet",
+          "src/app/api/u"
+        ]
+      },
+      {
+        "name": "Global Layout & Navigation",
+        "description": "Root layout, header, footer, and navigation components, including mobile menu and user nav.",
+        "files": [
+          "src/app/layout.tsx",
+          "src/components/site-header.tsx",
+          "src/components/nav-main.tsx",
+          "src/components/nav-secondary.tsx",
+          "src/components/nav-mobile.tsx",
+          "src/components/nav-user.tsx",
+          "src/components/mobile-menu.tsx",
+          "src/components/footer-gate.tsx"
+        ]
+      },
+      {
+        "name": "Hooks",
+        "description": "Custom hook for responsive/mobile behavior.",
+        "files": [
+          "src/hooks/use-mobile.ts"
+        ]
+      },
+      {
+        "name": "Middleware & Config",
+        "description": "Next.js middleware and project-level configuration.",
+        "files": [
+          "middleware.ts",
+          "src/middleware.ts",
+          "next.config.ts",
+          "src/app/globals.css",
+          "eslint.config.mjs",
+          "tsconfig.json"
+        ]
+      },
+      {
+        "name": "Data & Scripts",
+        "description": "Seed/migration scripts and dashboard sample data.",
+        "files": [
+          "scripts/migrate.js",
+          "scripts/migrate-uploads-to-pg.js",
+          "scripts/newsletter-ensure.js",
+          "scripts/test-send-welcome.js",
+          "scripts/update-upload-refs.js",
+          "src/app/dashboard/data.json"
+        ]
+      }
+    ]
+  }
+}

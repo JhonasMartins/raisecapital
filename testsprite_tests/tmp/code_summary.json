@@ -1,0 +1,215 @@
+{
+  "tech_stack": [
+    "TypeScript",
+    "Next.js 15 (App Router)",
+    "React 19",
+    "Tailwind CSS v4",
+    "PostgreSQL (pg)",
+    "Node.js",
+    "ESLint",
+    "Radix UI",
+    "Lucide Icons",
+    "Recharts",
+    "Embla Carousel",
+    "Framer Motion",
+    "Jose (JWT)",
+    "Nodemailer",
+    "@vercel/blob",
+    "Alchemy SDK"
+  ],
+  "features": [
+    {
+      "name": "Authentication & Session",
+      "description": "JWT-based session with HttpOnly cookie, password hashing with scrypt, user creation and login helpers.",
+      "files": [
+        "src/lib/auth.ts",
+        "src/lib/db.ts"
+      ]
+    },
+    {
+      "name": "Database Layer",
+      "description": "Singleton PostgreSQL pool with metrics, retries on connection errors, and helper query function.",
+      "files": [
+        "src/lib/db.ts",
+        "src/app/api/db-status",
+        "src/app/api/db-test"
+      ]
+    },
+    {
+      "name": "Email Service",
+      "description": "Email sending via Nodemailer with utility helpers.",
+      "files": [
+        "src/lib/email.ts"
+      ]
+    },
+    {
+      "name": "Storage & Uploads",
+      "description": "File storage utilities (Vercel Blob) and UI file upload component; upload APIs.",
+      "files": [
+        "src/lib/storage.ts",
+        "src/components/ui/file-upload.tsx",
+        "src/app/api/upload",
+        "src/app/api/storage"
+      ]
+    },
+    {
+      "name": "Blog",
+      "description": "Blog listing and post detail with Markdown rendering and sharing/comments UI.",
+      "files": [
+        "src/lib/blog.ts",
+        "src/app/blog/page.tsx",
+        "src/app/blog/[slug]",
+        "src/app/blog/novo",
+        "src/components/blog/comments-section.tsx",
+        "src/components/blog/filters.tsx",
+        "src/components/blog/share-bar.tsx"
+      ]
+    },
+    {
+      "name": "Offers (Investments)",
+      "description": "Public offers listing and detail pages with essential info accordion and documents navigation.",
+      "files": [
+        "src/app/ofertas/page.tsx",
+        "src/app/ofertas/[slug]",
+        "src/components/essential-info-accordion.tsx",
+        "src/components/nav-documents.tsx"
+      ]
+    },
+    {
+      "name": "Account Area (Investidor)",
+      "description": "Authenticated investor dashboard: investments, statements, tax, payments, notifications, security, etc.",
+      "files": [
+        "src/app/conta/layout.tsx",
+        "src/app/conta/page.tsx",
+        "src/app/conta/investimentos",
+        "src/app/conta/extratos",
+        "src/app/conta/imposto",
+        "src/app/conta/pagamentos",
+        "src/app/conta/notificacoes",
+        "src/app/conta/seguranca",
+        "src/app/conta/assinaturas",
+        "src/app/conta/suitability",
+        "src/app/conta/documentos",
+        "src/app/conta/dados-bancarios"
+      ]
+    },
+    {
+      "name": "Company Area (Empresa)",
+      "description": "Company-side area for managing investors, offers and reports.",
+      "files": [
+        "src/app/empresa/layout.tsx",
+        "src/app/empresa/page.tsx",
+        "src/app/empresa/investidores",
+        "src/app/empresa/ofertas",
+        "src/app/empresa/relatorios"
+      ]
+    },
+    {
+      "name": "Invest Flow",
+      "description": "Investment route with dynamic offer id for the investment process.",
+      "files": [
+        "src/app/investir/[id]"
+      ]
+    },
+    {
+      "name": "Auth Pages",
+      "description": "Public authentication pages for login, account creation and password recovery.",
+      "files": [
+        "src/app/auth/layout.tsx",
+        "src/app/auth/login",
+        "src/app/auth/criar-conta",
+        "src/app/auth/recuperar-senha"
+      ]
+    },
+    {
+      "name": "Payments (Asaas)",
+      "description": "Integration with Asaas payment APIs and related server routes.",
+      "files": [
+        "src/lib/asaas.ts",
+        "src/app/api/asaas"
+      ]
+    },
+    {
+      "name": "Blockchain (Alchemy)",
+      "description": "Alchemy SDK utilities for blockchain-related features.",
+      "files": [
+        "src/lib/alchemy.ts"
+      ]
+    },
+    {
+      "name": "Portfolio & Analytics",
+      "description": "Portfolio distribution and interactive charts using Recharts and custom UI charts.",
+      "files": [
+        "src/components/portfolio-distribution-chart.tsx",
+        "src/components/chart-area-interactive.tsx",
+        "src/components/ui/chart.tsx",
+        "src/components/ui/default-bar-chart.tsx",
+        "src/components/ui/dotted-pattern-chart.tsx",
+        "src/components/ui/gradient-bar-multiple-chart.tsx"
+      ]
+    },
+    {
+      "name": "APIs (General)",
+      "description": "REST-like API routes for account, blog, investments, newsletter, offers, portfolio, rendimentos, transactions, user and wallet.",
+      "files": [
+        "src/app/api/account",
+        "src/app/api/auth",
+        "src/app/api/blog",
+        "src/app/api/investments",
+        "src/app/api/newsletter",
+        "src/app/api/ofertas",
+        "src/app/api/portfolio",
+        "src/app/api/rendimentos",
+        "src/app/api/transactions",
+        "src/app/api/user",
+        "src/app/api/wallet",
+        "src/app/api/u"
+      ]
+    },
+    {
+      "name": "Global Layout & Navigation",
+      "description": "Root layout, header, footer, and navigation components, including mobile menu and user nav.",
+      "files": [
+        "src/app/layout.tsx",
+        "src/components/site-header.tsx",
+        "src/components/nav-main.tsx",
+        "src/components/nav-secondary.tsx",
+        "src/components/nav-mobile.tsx",
+        "src/components/nav-user.tsx",
+        "src/components/mobile-menu.tsx",
+        "src/components/footer-gate.tsx"
+      ]
+    },
+    {
+      "name": "Hooks",
+      "description": "Custom hook for responsive/mobile behavior.",
+      "files": [
+        "src/hooks/use-mobile.ts"
+      ]
+    },
+    {
+      "name": "Middleware & Config",
+      "description": "Next.js middleware and project-level configuration.",
+      "files": [
+        "middleware.ts",
+        "src/middleware.ts",
+        "next.config.ts",
+        "src/app/globals.css",
+        "eslint.config.mjs",
+        "tsconfig.json"
+      ]
+    },
+    {
+      "name": "Data & Scripts",
+      "description": "Seed/migration scripts and dashboard sample data.",
+      "files": [
+        "scripts/migrate.js",
+        "scripts/migrate-uploads-to-pg.js",
+        "scripts/newsletter-ensure.js",
+        "scripts/test-send-welcome.js",
+        "scripts/update-upload-refs.js",
+        "src/app/dashboard/data.json"
+      ]
+    }
+  ]
+}

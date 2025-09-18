@@ -3,6 +3,15 @@
   "type": "frontend",
   "scope": "codebase",
   "localEndpoint": "http://localhost:3000",
-  "loginUser": "contato@jhonasleismann.com.br",
-  "loginPassword": "Soft@4512"
+  "loginUser": "jhon.dlukss@icloud.com",
+  "loginPassword": "Soft@4512",
+  "executionArgs": {
+    "projectName": "raisecapital",
+    "projectPath": "/Users/jhonasleismann/Movies/raisecapital",
+    "testIds": [],
+    "additionalInstruction": "",
+    "envs": {
+      "API_KEY": "sk-user-_fkOSkJ2DN_W1uUGHNlndzIjqEhq7hOQAJ6JgdQgLUzXFASjH8jQSr2wPFLLmK83yNVvSIlARghvQnjbNOPARgBUHDwz8eHtnJhmHcJwMDxwy1kQRrStacax-RLGWLaW3lk"
+    }
+  }
 }
